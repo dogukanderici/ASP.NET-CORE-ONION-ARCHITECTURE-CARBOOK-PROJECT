@@ -1,0 +1,55 @@
+﻿@model AdminUIFooterAddressViewModel
+
+@{
+    ViewData["Title"] = "İletişim ve Adres Bilgisi Güncelleme";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">İletişim ve Adres Bilgisi Güncelleme</h4>
+                        <p class="card-subtitle mb-4">
+                            İletişim ve Adres Bilgilerini Bu Ekrandan Güncelleyebilirsiniz!
+                        </p>
+
+                        <form id="UpdateFooterAddressForm" asp-area="Admin" asp-controller="AdminFooterAddress" asp-action="UpdateFooterAddress" method="post">
+                            @Html.HiddenFor(x => x.UpdateData.FooterAddressID)
+                            <div class="row">
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.UpdateData.Address">Adres</label>
+                                    <input type="text" asp-for="@Model.UpdateData.Address" class="form-control mb-3" placeholder="Adres"></input>
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.UpdateData.Phone">Telefon</label>
+                                    <input type="text" asp-for="@Model.UpdateData.Phone" class="form-control mb-3" placeholder="Telefon"></input>
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.UpdateData.Email">E-Posta</label>
+                                    <input type="email" asp-for="@Model.UpdateData.Email" class="form-control mb-3" placeholder="E-Posta"></input>
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.UpdateData.Description">Açıklama</label>
+                                    <input type="text" asp-for="@Model.UpdateData.Description" class="form-control mb-3" placeholder="Açıklama"></input>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success waves-effect waves-light">
+                                Güncelle
+                                <i class="mdi mdi-update ml-1 fa-lg"></i>
+                            </button>
+                            <a class="btn btn-danger mi-2" href="/admin/footeraddress">
+                                Vazgeç
+                                <i class="mdi mdi-marker-cancel ml-1 fa-lg"></i>
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

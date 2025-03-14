@@ -1,0 +1,41 @@
+﻿@model AdminUIBlogCategoryViewModel
+
+@{
+    ViewData["Title"] = "Yeni Blog Kategorisi Ekleme";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Blog Kategorisi Ekleme</h4>
+                        <p class="card-subtitle mb-4">
+                            Blog Kategorisi Alanı İçin Bilgileri Bu Ekrandan Kaydedebilirsiniz!
+                        </p>
+
+                        <form id="AddNewBlogCategoryForm" asp-area="Admin" asp-controller="AdminBlogCategory" asp-action="CreateBlogCategory" method="post">
+                            <div class="row">
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.CreateData.Name">Blog Kategorisi Adı</label>
+                                        <input asp-for="@Model.CreateData.Name" class="form-control mb-3" placeholder="Blog Kategorisi Adı"></input>
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label>Blog Kategori Durumu</label>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" asp-for="@Model.CreateData.CategoryStatus">
+                                        <label class="custom-control-label" asp-for="@Model.CreateData.CategoryStatus">Durum</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Kaydet</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

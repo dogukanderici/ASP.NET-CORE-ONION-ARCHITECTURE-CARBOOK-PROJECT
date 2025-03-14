@@ -1,0 +1,43 @@
+﻿@model AdminUIAuthorViewModel
+
+@{
+    ViewData["Title"] = "Yazar Bilgisi Güncelleme";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Yazar Güncelleme</h4>
+                        <p class="card-subtitle mb-4">
+                            Yazar Alanı İçin Bilgileri Bu Ekrandan Güncelleyebilirsiniz!
+                        </p>
+
+                        <form id="UpdateAuthorForm" asp-area="Admin" asp-controller="AdminAuthor" asp-action="UpdateAuthor" method="post">
+                            @Html.HiddenFor(x => x.UpdateData.AuthorID)
+                            <div class="row">
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.UpdateData.AuthorName">Yazar Adı</label>
+                                    <input asp-for="@Model.UpdateData.AuthorName" class="form-control mb-3" placeholder="Yazar Adı"></input>
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.UpdateData.Description">Açıklama</label>
+                                    <input asp-for="@Model.UpdateData.Description" type="text" class="form-control" placeholder="Açıklama">
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.UpdateData.ImageUrl">Görsel URL</label>
+                                    <input asp-for="@Model.UpdateData.ImageUrl" class="form-control mb-3" placeholder="Görsel URL"></input>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Güncelle</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

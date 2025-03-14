@@ -1,0 +1,427 @@
+﻿@{
+    ViewData["Title"] = "İstatistikler";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<style>
+    .text-truncate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+    }
+</style>
+
+<div class="page-content">
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-primary border-primary">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Araç Fiyatı</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.AvgRentPriceForDailyCountName</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-primary text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.AvgRentPriceForDailyCountName" data-content="@(ViewBag.AvgRentPriceForDailyCount.ToString("C"))">
+                                    <h2 class="d-flex align-items-center text-white mb-0">
+                                        @(ViewBag.AvgRentPriceForDailyCount.ToString("C"))
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-success border-success">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Araç Fiyatı</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.AvgRentPriceForHourlyCountName</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-success text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.AvgRentPriceForHourlyCountName" data-content="@(ViewBag.AvgRentPriceForHourlyCount.ToString("C"))">
+                                    <h2 class="d-flex align-items-center text-white mb-0">
+                                        @(ViewBag.AvgRentPriceForHourlyCount.ToString("C"))
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-info border-info">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Araç Fiyatı</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.AvgRentPriceForWeeklyCountName</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-info text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.AvgRentPriceForWeeklyCountName" data-content="@(ViewBag.AvgRentPriceForWeeklyCount.ToString("C"))">
+                                    <h2 class="d-flex align-items-center mb-0 text-white">
+                                        @(ViewBag.AvgRentPriceForWeeklyCount.ToString("C"))
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-warning border-warning">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Araç Fiyatı</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.AvgRentPriceForMountlyCountName</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-warning text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.AvgRentPriceForMountlyCountName" data-content="@(ViewBag.AvgRentPriceForMountlyCount.ToString("C"))">
+                                    <h2 class="d-flex align-items-center text-white mb-0">
+                                        @(ViewBag.AvgRentPriceForMountlyCount.ToString("C"))
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-primary border-primary">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Blog</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.BlogCountName</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-primary text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.BlogCountName" data-content="# @ViewBag.BlogCount">
+                                    <h2 class="d-flex align-items-center text-white mb-0">
+                                        # @ViewBag.BlogCount
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-success border-success">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Yazar</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.AuthorCountName</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-success text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.AuthorCountName" data-content="# @ViewBag.AuthorCount">
+                                    <h2 class="d-flex align-items-center mb-0 text-white">
+                                        # @ViewBag.AuthorCount
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-info border-info">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Araç</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.CarBrandAndModelByPriceDailyMaxName</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-info text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.CarBrandAndModelByPriceDailyMaxName" data-content="@ViewBag.CarBrandAndModelByPriceDailyMax">
+                                    <h2 class="d-flex align-items-center text-white mb-0 text-truncate">
+                                        @ViewBag.CarBrandAndModelByPriceDailyMax
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-warning border-warning">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Araç</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.CarBrandAndModelByPriceDailyMinName</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-warning text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.CarBrandAndModelByPriceDailyMinName" data-content="@ViewBag.CarBrandAndModelByPriceDailyMin">
+                                    <h2 class="d-flex align-items-center text-white mb-0 text-truncate">
+                                        @ViewBag.CarBrandAndModelByPriceDailyMin
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-primary border-primary">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Marka</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.BrandCountName</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-primary text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.BrandCountName" data-content="# @ViewBag.BrandCount">
+                                    <h2 class="d-flex align-items-center text-white mb-0">
+                                        # @ViewBag.BrandCount
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-success border-success">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Araç</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.CarCountName</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-success text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.CarCountName" data-content="# @ViewBag.CarCount">
+                                    <h2 class="d-flex align-items-center text-white mb-0">
+                                        # @ViewBag.CarCount
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-info border-info">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Araç</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.CarCountByFuelElectricName</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-info text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.CarCountByFuelElectricName" data-content="# @ViewBag.CarCountByFuelElectric">
+                                    <h2 class="d-flex align-items-center text-white mb-0">
+                                        # @ViewBag.CarCountByFuelElectric
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-warning border-warning">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Araç</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.CarCountByFuelGasOrDieselName</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-warning text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.CarCountByFuelGasOrDieselName" data-content="# @ViewBag.CarCountByFuelGasOrDiesel">
+                                    <h2 class="d-flex align-items-center mb-0 text-white">
+                                        # @ViewBag.CarCountByFuelGasOrDiesel
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-primary border-primary">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Blog</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.BlogTitleByMaxBlogCommentName</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-primary text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.BlogTitleByMaxBlogCommentName" data-content="@ViewBag.BlogTitleByMaxBlogComment">
+                                    <h2 class="d-flex align-items-center text-white mb-0">
+                                        @ViewBag.BlogTitleByMaxBlogComment
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-success border-success">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Marka</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.BrandNameByMaxCarName</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-success text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.BrandNameByMaxCarName" data-content="@ViewBag.BrandNameByMaxCar">
+                                    <h2 class="d-flex align-items-center mb-0 text-white text-truncate">
+                                        @ViewBag.BrandNameByMaxCar
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-info border-info">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Araç</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.CarCountByKmSmallerThan1000Name</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-info text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.CarCountByKmSmallerThan1000Name" data-content="@ViewBag.CarCountByKmSmallerThan1000">
+                                    <h2 class="d-flex align-items-center text-white mb-0">
+                                        @ViewBag.CarCountByKmSmallerThan1000
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-warning border-warning">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Araç</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.CarCountByTransmissionIsAutoName</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-warning text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.CarCountByTransmissionIsAutoName" data-content="@ViewBag.CarCountByTransmissionIsAuto">
+                                    <h2 class="d-flex align-items-center text-white mb-0">
+                                        @ViewBag.CarCountByTransmissionIsAuto
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-primary border-primary">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <span class="badge badge-soft-light float-right">Lokasyon</span>
+                            <h5 class="card-title mb-0 text-white">@ViewBag.LocationCountName</h5>
+                        </div>
+                        <div class="row d-flex align-items-center mb-4">
+                            <div class="col-8">
+
+                                <a tabindex="0" class="btn btn-primary text-truncate" role="button" data-toggle="popover" data-trigger="focus"
+                                   title="@ViewBag.LocationCountName" data-content="@ViewBag.LocationCount">
+                                    <h2 class="d-flex align-items-center mb-0 text-white">
+                                        @ViewBag.LocationCount
+                                    </h2>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

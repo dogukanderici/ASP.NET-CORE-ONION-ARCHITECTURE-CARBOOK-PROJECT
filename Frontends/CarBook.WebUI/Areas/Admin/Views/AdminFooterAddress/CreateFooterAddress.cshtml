@@ -1,0 +1,54 @@
+﻿@model AdminUIFooterAddressViewModel
+
+@{
+    ViewData["Title"] = "Yeni İletişim ve Adres Bilgisi Ekleme";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Yeni İletişim ve Adres Bilgisi Ekleme</h4>
+                        <p class="card-subtitle mb-4">
+                            Yeni İletişim ve Adres Bilgilerini Bu Ekrandan Kaydedebilirsiniz!
+                        </p>
+
+                        <form id="AddNewFooterAddressForm" asp-area="Admin" asp-controller="AdminFooterAddress" asp-action="CreateFooterAddress" method="post">
+                            <div class="row">
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.CreateData.Address">Adres</label>
+                                    <input type="text" asp-for="@Model.CreateData.Address" class="form-control mb-3" placeholder="Adres"></input>
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.CreateData.Phone">Telefon</label>
+                                    <input type="text" asp-for="@Model.CreateData.Phone" class="form-control mb-3" placeholder="Telefon"></input>
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.CreateData.Email">E-Posta</label>
+                                    <input type="email" asp-for="@Model.CreateData.Email" class="form-control mb-3" placeholder="E-Posta"></input>
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.CreateData.Description">Açıklama</label>
+                                    <input type="text" asp-for="@Model.CreateData.Description" class="form-control mb-3" placeholder="Açıklama"></input>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success waves-effect waves-light">
+                                Kaydet
+                                <i class="mdi mdi-content-save-move ml-1 fa-lg"></i>
+                            </button>
+                            <a class="btn btn-danger mi-2" href="/admin/footeraddress">
+                                Vazgeç
+                                <i class="mdi mdi-marker-cancel ml-1 fa-lg"></i>
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

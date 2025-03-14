@@ -1,0 +1,63 @@
+﻿@model BlogUIViewModel
+
+@{
+    ViewData["Title"] = "Bloglar";
+    Layout = "~/Views/UILayout/Index.cshtml";
+    int currentPage = 1;
+    int totalPage = 10;
+}
+
+<section class="ftco-section">
+    <div class="container">
+
+        <div id="TablePagination" class="row d-flex justify-content-end">
+            <div id="CurrentPageNumber" style="display: none !important;">@currentPage</div>
+            <div id="TotalPageNumber" style="display: none !important;">@totalPage</div>
+            <ul class="pagination justify-content-end">
+                <li id="PreviousPage" class="page-item">
+                    <button class="page-link previous-next-page">Önceki</button>
+                </li>
+                <li class="page-item"><button class="page-link customPaging btn btn-primary">1</button></li>
+                @for (var i = 2; i <= totalPage; ++i)
+                {
+
+                    <li class="page-item"><button class="page-link customPaging">@i</button></li>
+                }
+                <li id="NextPage" class="page-item">
+                    <button class="page-link previous-next-page">Sonraki</button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="row d-flex justify-content-center">
+            @if (Model.BlogDatas.Count() < 1)
+            {
+                <div class="col-md-12 text-center alert alert-info">
+                    Henüz Yayınlanmış Bir blog Yazısı Bulunmuyor!
+                </div>
+            }
+            else
+            {
+                @foreach (var blogItem in Model.BlogDatas)
+                {
+                    <div class="col-md-12 text-center d-flex ftco-animate">
+                        <div class="blog-entry justify-content-end mb-md-5">
+                            <a href="blog-single.html" class="block-20 img" style="background-image: url('@blogItem.CoverImageUrl');">
+                            </a>
+                            <div class="text px-md-5 pt-4">
+                                <div class="meta mb-3">
+                                    <div><a href="#">@blogItem.CreatedDate.LocalDateTime.ToString("yyyy-MM-dd HH:mm")</a></div>
+                                    <div><a href="#">@blogItem.Author.AuthorName</a></div>
+                                    <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 0</a></div>
+                                </div>
+                                <h3 class="heading mt-2"><a href="#">@blogItem.Title</a></h3>
+                                <p>@blogItem.Description.Substring(0, 200) ...</p>
+                                <p><a href="/blog/blogdetail?id=@blogItem.BlogID" class="btn btn-primary">Devamını Oku <span class="icon-long-arrow-right"></span></a></p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>

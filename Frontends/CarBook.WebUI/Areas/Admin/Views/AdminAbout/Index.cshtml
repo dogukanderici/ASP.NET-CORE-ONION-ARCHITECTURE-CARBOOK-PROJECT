@@ -1,0 +1,75 @@
+﻿@model AdminUIAboutViewModel
+
+@{
+    ViewData["Title"] = "Hakkımızda Bilgileri";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Hakkımızda Bilgileri</h4>
+                        @if (Model.ResultDatas.Count() > 0)
+                        {
+                            <p class="card-subtitle mb-4">
+                                Hakkımızda Bilgileri. Kayıtlı Bir Hakkımızda Bilgisi Varsa Yeni Ekle Butonu Aktif Olmayacaktır. Sadece Güncelleme ve Silme
+                                İşlemleri Yapılabilir!
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="card-subtitle mb-4">
+                                Kayıtlı Bir Hakkımızda Bilgisi Henüz Bulunmuyor. Yeni Ekle Butonuna Tıklayarak Yeni Bir Hakkımızda Bilgisi Ekleyebilirisniz!
+                            </p>
+                        }
+
+                        <div class="table-responsive">
+
+                            @if (Model.ResultDatas.Count() < 1)
+                            {
+                                <a class="btn btn-primary mb-4" href="/admin/about/create">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Yeni Hakkımızda Ekle
+                                </a>
+                            }
+                            else
+                            {
+
+                                <table class="table mb-0">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Başlık</th>
+                                            <th>Açıklama</th>
+                                            <th>Görsel</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var aboutItem in Model.ResultDatas)
+                                        {
+                                            <tr>
+                                                <td style="max-width: 100px;">@aboutItem.Title</td>
+                                                <td style="max-width: 250px;">@aboutItem.Description</td>
+                                                <td>
+                                                    <a class="btn btn-danger" href="/admin/about/delete?id=@aboutItem.AboutID" title="Sil">
+                                                        <i class="fa fa-trash fa-lg" aria-hidden="true"></i>
+                                                    </a>
+                                                    <a class="btn btn-warning" href="/admin/about/update?id=@aboutItem.AboutID" title="Güncelle">
+                                                        <i class="fa fa-pen fa-lg" aria-hidden="true"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

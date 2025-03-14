@@ -1,0 +1,11 @@
+﻿@model List<ResultBlogTagCloudForBlogDto>
+
+<div class="sidebar-box ftco-animate">
+    <h3>Etiket Bulutu</h3>
+    <div class="tagcloud">
+        @foreach (var blogTagCloudItem in Model)
+        {
+            <a href="#" class="tag-cloud-link">@blogTagCloudItem.TagCloud.TagName</a>
+        }
+    </div>
+</div>

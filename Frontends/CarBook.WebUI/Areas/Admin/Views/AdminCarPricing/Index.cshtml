@@ -1,0 +1,51 @@
+﻿@model AdminUICarPricingViewModel
+
+@{
+    ViewData["Title"] = "Araca Ait Kiralama/Ödeme Seçenekleri";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-xl-10">
+
+                <div class="d-flex justify-content-left align-items-center">
+                    <a class="btn btn-outline-danger mt-4 mb-2 mx-2 btn-rounded" href="/admin/car">
+                        <i class="mdi mdi-backburger fa-lg mx-sm-2"></i>Geri
+                    </a>
+                    <a class="btn btn-success mt-4 mb-2 mx-2 btn-rounded" href="/admin/carpricing/create?id=@Model.ResultForCarDatas[0].CarID">
+                        <i class="mdi mdi-book-multiple-plus fa-lg mx-sm-2"></i>Yeni Ödeme Türü Ekle
+                    </a>
+                </div>
+
+                <h5 class="form-control text-center font-weight-bold mt-4 text-uppercase">Araca Ait Kiralama/Ödeme Seçenekleri</h5>
+
+                <div class="row mt-sm-5 mt-3 mb-3">
+                    @foreach (var carPricingItem in Model.ResultForCarDatas)
+                    {
+                        <div class="col-md-4">
+                            <div class="card card-pricing">
+                                <div class="card-body text-center">
+                                    <i class="card-pricing-icon mdi mdi-airplane text-white bg-primary"></i>
+                                    <h5 class="font-weight-bold mt-4 text-uppercase">@carPricingItem.PricingType.Name</h5>
+
+                                    <h2 class="mt-4">@carPricingItem.Amount.ToString("C")</h2>
+                                    <p class="text-muted">@carPricingItem.PricingType.Name</p>
+                                    <a class="btn btn-primary mt-4 mb-2 btn-rounded" href="/admin/carpricing/update?id=@carPricingItem.CarPricingID">
+                                        Güncelle
+                                        <i class="mdi mdi-update ml-1"></i>
+                                    </a>
+                                    <a class="btn btn-danger mt-4 mb-2 btn-rounded" href="/admin/carpricing/delete?id=@carPricingItem.CarPricingID">
+                                        Sil
+                                        <i class="mdi mdi-tag-remove ml-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

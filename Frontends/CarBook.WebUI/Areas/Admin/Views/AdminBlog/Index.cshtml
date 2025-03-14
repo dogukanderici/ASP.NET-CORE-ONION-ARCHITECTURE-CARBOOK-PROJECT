@@ -1,0 +1,92 @@
+﻿@model AdminUIBlogViewModel
+
+@{
+    ViewData["Title"] = "Blog Listesi";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Blog Listesi</h4>
+                        @if (Model.ResultDatas.Count() < 1)
+                        {
+                            <p class="card-subtitle mb-4">
+                                Henüz Kayıtlı Bir Blog Bulunmuyor. Yeni Ekle Butonuna Tıklayarak Yeni Bir Blog Ekleyebilirisniz!
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="card-subtitle mb-4">
+                                Kayıtlı Bloglar Listelenmektedir. Ekleme, Güncelleme, Silme veya Blog Detaylarını Görüntüleme İşlemlerini Yapabilirsiniz!
+                            </p>
+                        }
+
+                        <a class="btn btn-primary mb-4" href="/admin/blog/create">
+                            <i class="fa fa-plus" aria-hidden="true"></i> Yeni Blog Ekle
+                        </a>
+
+                        <div class="table-responsive">
+                            @if (Model.ResultDatas.Count() > 0)
+                            {
+                                <table class="table mb-0">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Başlık</th>
+                                            <th>Yazar</th>
+                                            <th>Blog Kategorisi</th>
+                                            <th>Oluşturulma Tarihi</th>
+                                            <th>Blog Detayı</th>
+                                            <th>Yayın Durumu</th>
+                                            <th>Güncelle</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var blogItem in Model.ResultDatas)
+                                        {
+                                            <tr>
+                                                <td>@blogItem.Title</td>
+                                                <td>@blogItem.Author.AuthorName</td>
+                                                <td>@blogItem.BlogCategory.Name</td>
+                                                <td>@blogItem.CreatedDate.LocalDateTime.ToString("dd.MM.yyyy HH:mm")</td>
+                                                <td>
+                                                    <a class="btn btn-info" href="/blog/blogdetail?id=@blogItem.BlogID" title="Blog Detayları">
+                                                        <i class="fa fa-info-circle fa-lg" aria-hidden="true"></i>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    @if (blogItem.PublishState)
+                                                    {
+                                                        <a class="btn btn-danger" href="/admin/blog/changepublishstate?id=@blogItem.BlogID&state=@(!blogItem.PublishState)" title="Yayından Kaldır">
+                                                            <i class="fa fa-times fa-lg" aria-hidden="true"></i>
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+
+                                                        <a class="btn btn-success" href="/admin/blog/changepublishstate?id=@blogItem.BlogID&state=@(!blogItem.PublishState)" title="Yayınla">
+                                                            <i class="fas fa-fast-forward fa-lg" aria-hidden="true"></i>
+                                                        </a>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-warning" href="/admin/blog/update?id=@blogItem.BlogID" title="Güncelle">
+                                                        <i class="fa fa-pen fa-lg" aria-hidden="true"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

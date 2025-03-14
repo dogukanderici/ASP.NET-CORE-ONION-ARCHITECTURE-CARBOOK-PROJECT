@@ -1,0 +1,50 @@
+﻿@model AdminUIBlogCommentViewModel
+
+@{
+    ViewData["Title"] = "Blog Yazısına Ait Yorumlar";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Blog Yazısına Ait Yorumlar</h4>
+                        @if (Model.ResultDatas.Count() < 1)
+                        {
+                            <p class="card-subtitle mb-4">
+                                Bu Blog İçin Henüz Bir Yorum Yapılmamıştır!
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="card-subtitle mb-4">
+                                Blog Yazısına Ait Yorumlar Listelenmektedir. Yorumlarla İlgili İşlemleri Altlarında Yer Alan Butonlarla Gerçekleştirebilirsiniz!
+                            </p>
+
+                            @foreach (var blogCommentItem in Model.ResultDatas)
+                            {
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <h5 class="card-header">@blogCommentItem.Name</h5>
+                                        <div class="card-body">
+                                            <h4 class="card-title">@blogCommentItem.CreatedDate.LocalDateTime.ToString("dd.MM.yyyy HH:mm")</h4>
+                                            <p class="card-text">
+                                                @blogCommentItem.Description
+                                            </p>
+                                            <a href="#" class="btn btn-outline-danger waves-effect waves-light">Yorumu Kaldır</a>
+                                            <a href="#" class="btn btn-info waves-effect waves-light">Yorumu Güncelle</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

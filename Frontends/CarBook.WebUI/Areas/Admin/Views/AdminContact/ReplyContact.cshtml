@@ -1,0 +1,49 @@
+﻿@model AdminUIContactViewModel
+
+@{
+    ViewData["Title"] = "Mesaj Detayı";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Gönd: @Model.ResultData.Email
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">@Model.ResultData.Subject</h4>
+                        <blockquote class="card-bodyquote">
+                            <p>
+                                @Model.ResultData.Message
+                            </p>
+                            <footer class="blockquote-footer text-muted">
+                                @Model.ResultData.Name - @Model.ResultData.SendDate.ToString("dd.MM.yyyy HH:mm")
+                            </footer>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <form id="ReplyMessageForm" asp-area="Admin" asp-controller="AdminContact" asp-action="ReplyContact" method="post">
+                    <input type="hidden" asp-for="@Model.CreateData.ReplyID" value="@Model.ResultData.ContactID" />
+                    <div class="card">
+                        <h5 class="card-header">Alıcı: @Model.ResultData.Email</h5>
+                        <div class="card-body">
+                            <h4 class="card-title">Konu: @Model.ResultData.Subject</h4>
+                            <input type="hidden" asp-for="@Model.CreateData.Subject" value="@Model.ResultData.Subject" />
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <textarea asp-for="@Model.CreateData.Message" rows="6" class="form-control card-text" placeholder="Yanıtınızı Buraya Yazabilirsiniz..."></textarea>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-info waves-effect waves-light"><i class="mdi mdi-reply fa-lg mx-2"></i>Cevapla</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

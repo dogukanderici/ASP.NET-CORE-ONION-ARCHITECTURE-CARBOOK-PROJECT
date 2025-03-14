@@ -1,0 +1,48 @@
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# User-specific files
+*.rsuser
+*.sln.docstates
+*.csproj.user
+*.vcxproj.user
+*.code-workspace
+
+# Visual Studio
+.vscode/
+.vs/
+*.suo
+*.user
+*.userosscache
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Sensitive information
+appsettings.json
+appsettings.Development.json
+PortNumbers.txt
+
+# Logs
+logs/
+*.log
+
+# Temp files
+tmp/
+temp/
+*.tmp
+
+# Media files
+*.mp4
+*.mp3
+*.jpg
+*.jpeg
+*.png

@@ -1,0 +1,34 @@
+﻿@model AdminUIBrandViewModel
+
+@{
+    ViewData["Title"] = "Yeni Araç Markası Ekleme";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Yeni Araç Markası Ekleme</h4>
+                        <p class="card-subtitle mb-4">
+                            Yeni Araç Markasına Ait Bilgileri Bu Ekrandan Kaydedebilirsiniz!
+                        </p>
+
+                        <form id="AddNewBrand" asp-area="Admin" asp-controller="AdminBrand" asp-action="CreateBrand" method="post">
+                            <div class="row">
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.CreateData.BrandName">Marka</label>
+                                    <input asp-for="@Model.CreateData.BrandName" type="text" class="form-control" placeholder="Marka">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Kaydet</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

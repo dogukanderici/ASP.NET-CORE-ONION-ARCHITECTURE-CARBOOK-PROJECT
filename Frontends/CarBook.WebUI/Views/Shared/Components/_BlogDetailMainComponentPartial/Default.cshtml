@@ -1,0 +1,24 @@
+﻿@using Newtonsoft.Json
+@model BlogUIViewModel
+@{
+    string blogModelData = "";
+    string blogTagCloudData = "";
+    string blogAuthorData = "";
+    string blogCommentData = "";
+}
+
+@if (Model.BlogByIdData != null)
+{
+    blogModelData = JsonConvert.SerializeObject(Model);
+    blogAuthorData = JsonConvert.SerializeObject(Model.BlogByIdData.Author);
+    blogTagCloudData = JsonConvert.SerializeObject(Model.BlogByIdData.BlogTagClouds);
+    blogCommentData = JsonConvert.SerializeObject(Model);
+}
+
+@await Component.InvokeAsync("_BlogDetailContentComponentPartial", new { blogContent = blogModelData })
+
+@await Component.InvokeAsync("_BlogDetailTagCloudByBlogComponentPartial", new { blogTagCloudData = blogTagCloudData })
+
+@await Component.InvokeAsync("_BlogDetailAuthorDetailComponentPartial", new { blogAuthorData = blogAuthorData })
+
+@await Component.InvokeAsync("_BlogDetailCommentComponentPartial", new { blogCommentData = blogCommentData })

@@ -1,0 +1,72 @@
+﻿@model AdminUIAuthorViewModel
+
+@{
+    ViewData["Title"] = "Yazar Listesi";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Yazar Bilgileri</h4>
+                        @if (Model.ResultDatas.Count() > 0)
+                        {
+                            <p class="card-subtitle mb-4">
+                                Yazar Bilgilerini Bu Ekrandan Güncelleyebilir, Silebilir Veya Yeni Yazar Bilgisi Ekleyebilirsiniz.
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="card-subtitle mb-4">
+                                Kayıtlı Bir Yazar Bilgisi Henüz Bulunmuyor. Yeni Ekle Butonuna Tıklayarak Yeni Bir Yazar Bilgisi Ekleyebilirisniz!
+                            </p>
+                        }
+
+                        <div class="table-responsive">
+
+                            <a class="btn btn-primary mb-4" href="/admin/author/create">
+                                <i class="fa fa-plus" aria-hidden="true"></i> Yeni Yazar Ekle
+                            </a>
+
+                            @if (Model.ResultDatas.Count() > 0)
+                            {
+                                <table class="table mb-0">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Yazar Adı</th>
+                                            <th>Açıklama</th>
+                                            <th>Görsel</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var authorItem in Model.ResultDatas)
+                                        {
+                                            <tr>
+                                                <td style="max-width: 100px;">@authorItem.AuthorName</td>
+                                                <td style="max-width: 250px;">@authorItem.Description</td>
+                                                <td>@authorItem.ImageUrl</td>
+                                                <td>
+                                                    <a class="btn btn-danger" href="/admin/author/delete?id=@authorItem.AuthorID" title="Sil">
+                                                        <i class="fa fa-trash fa-lg" aria-hidden="true"></i>
+                                                    </a>
+                                                    <a class="btn btn-warning" href="/admin/author/update?id=@authorItem.AuthorID" title="Güncelle">
+                                                        <i class="fa fa-pen fa-lg" aria-hidden="true"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

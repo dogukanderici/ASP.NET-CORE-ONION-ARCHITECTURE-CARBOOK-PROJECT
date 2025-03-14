@@ -1,0 +1,75 @@
+﻿@model AdminUICarViewModel
+
+@{
+    ViewData["Title"] = "Kayıtlı Araç Güncelleme";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+    List<SelectListItem> brandList = ViewBag.BrandList;
+    List<SelectListItem> transmissionList = ViewBag.TransmissionList;
+    List<SelectListItem> fuelTypeList = ViewBag.FuelTypeList;
+}
+
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Kayıtlı Araç Güncelleme</h4>
+                        <p class="card-subtitle mb-4">
+                            Kayıtlı Aracınıza Ait Bilgileri Bu Ekrandan Güncelleyebilirsiniz!
+                        </p>
+
+                        <form id="UpdateCar" asp-area="Admin" asp-controller="AdminCar" asp-action="UpdateCar" method="post">
+                            @Html.HiddenFor(x => x.UpdateCarData.CarID)
+                            <div class="row">
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.UpdateCarData.BrandID">Marka</label>
+                                    <select asp-for="@Model.UpdateCarData.BrandID" asp-items="@brandList" class="form-control mb-3"></select>
+                                </div>
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.UpdateCarData.Model">Araç Modeli</label>
+                                    <input asp-for="@Model.UpdateCarData.Model" type="text" class="form-control" placeholder="Araç Modeli">
+                                </div>
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.UpdateCarData.Fuel">Yakıt Türü</label>
+                                    <select asp-for="@Model.UpdateCarData.Fuel" asp-items="@fuelTypeList" class="form-control mb-3"></select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.UpdateCarData.KM">Araç KM</label>
+                                    <input asp-for="@Model.UpdateCarData.KM" type="text" class="form-control" placeholder="Araç KM">
+                                </div>
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.UpdateCarData.Transmission">Şanzıman Türü</label>
+                                    <select asp-for="@Model.UpdateCarData.Transmission" asp-items="@transmissionList" class="form-control mb-3"></select>
+                                </div>
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.UpdateCarData.Seat">Koltuk Sayısı</label>
+                                    <input asp-for="@Model.UpdateCarData.Seat" type="text" class="form-control" placeholder="Koltuk Sayısı">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.UpdateCarData.Luggage">Luggage</label>
+                                    <input asp-for="@Model.UpdateCarData.Luggage" type="text" class="form-control" placeholder="Bagaj">
+                                </div>
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.UpdateCarData.CoverImageURL">Cover Image URL</label>
+                                    <input asp-for="@Model.UpdateCarData.CoverImageURL" type="text" class="form-control" placeholder="Cover Image">
+                                </div>
+                                <div class="form-group  col-xl-4">
+                                    <label asp-for="@Model.UpdateCarData.BigImageURL">Big Image URL</label>
+                                    <input asp-for="@Model.UpdateCarData.BigImageURL" type="text" class="form-control" placeholder="Big Image">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Kaydet</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

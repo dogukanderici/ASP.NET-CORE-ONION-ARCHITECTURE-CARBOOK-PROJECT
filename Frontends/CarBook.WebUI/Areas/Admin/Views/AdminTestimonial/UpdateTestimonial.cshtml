@@ -1,0 +1,56 @@
+﻿@model AdminUITestimonialViewModel
+
+@{
+    ViewData["Title"] = "Müşteri Yorumu Güncelleme";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Müşteri Yorumu Güncelleme</h4>
+                        <p class="card-subtitle mb-4">
+                            Müşteri Yorumu Bilgisi Alanı İçin Bilgileri Bu Ekrandan Güncelleyebilirsiniz!
+                        </p>
+
+                        <form id="UpdateTestimonialForm" asp-area="Admin" asp-controller="AdminTestimonial" asp-action="UpdateTestimonial" method="post">
+                            @Html.HiddenFor(x => x.UpdateData.TestimonialID)
+                            <div class="row">
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.UpdateData.Name">Ad / Soyad</label>
+                                    <input asp-for="@Model.UpdateData.Name" type="text" class="form-control mb-3" placeholder="Ad / Soyad"></input>
+                                </div>
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.UpdateData.Title">Unvan</label>
+                                    <input asp-for="@Model.UpdateData.Title" class="form-control mb-3" placeholder="Unvan"></input>
+                                </div>
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.UpdateData.ImageURL">Görsel</label>
+                                    <input asp-for="@Model.UpdateData.ImageURL" type="text" class="form-control mb-3" placeholder="Görsel" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xl-12">
+                                    <label asp-for="@Model.UpdateData.Comment">Yorum</label>
+                                    <textarea asp-for="@Model.UpdateData.Comment" rows="8" class="form-control mb-3" placeholder="Yorumunuzu Buraya Yazabilirsiniz..."></textarea>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success waves-effect waves-light">
+                                Güncelle
+                                <i class="mdi mdi-update ml-1"></i>
+                            </button>
+                            <a class="btn btn-danger mi-2" href="/admin/testimonial">
+                                Vazgeç
+                                <i class="mdi mdi-marker-cancel ml-1"></i>
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

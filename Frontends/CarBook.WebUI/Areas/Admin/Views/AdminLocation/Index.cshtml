@@ -1,0 +1,74 @@
+﻿@model AdminUILocationViewModel
+
+@{
+    ViewData["Title"] = "Araç Lokasyon Bilgileri";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Araç Lokasyon Bilgileri</h4>
+                        @if (Model.ResultDatas.Count() > 0)
+                        {
+                            <p class="card-subtitle mb-4">
+                                Araç Lokasyon Bilgilerini Bu Ekrandan Güncelleyebilir, Silebilir Veya Yeni Araç Lokasyon Bilgisi Ekleyebilirsiniz.
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="card-subtitle mb-4">
+                                Kayıtlı Bir Araç Lokasyon Bilgisi Henüz Bulunmuyor. Yeni Ekle Butonuna Tıklayarak Yeni Bir Araç Lokasyon Bilgisi Ekleyebilirisniz!
+                            </p>
+                        }
+
+                        <div class="table-responsive">
+
+                            <a class="btn btn-primary mb-4" href="/admin/location/create">
+                                <i class="fa fa-plus" aria-hidden="true"></i> Yeni Araç Lokasyonu Ekle
+                            </a>
+
+                            @if (Model.ResultDatas.Count() > 0)
+                            {
+                                <table class="table mb-0">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Lokasyon Adı</th>
+                                            <th>Harita</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var locationItem in Model.ResultDatas)
+                                        {
+                                            <tr>
+                                                <td>@locationItem.LocationName</td>
+                                                <td>
+                                                    <a class="btn btn-outline-info" href="/admin/location/detail?id=@locationItem.LocationID" title="Haritada Göster">
+                                                        <i class="fas fa-map-marked-alt fa-lg" aria-hidden="true"></i>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-danger" href="/admin/location/delete?id=@locationItem.LocationID" title="Sil">
+                                                        <i class="fa fa-trash fa-lg" aria-hidden="true"></i>
+                                                    </a>
+                                                    <a class="btn btn-warning" href="/admin/location/update?id=@locationItem.LocationID" title="Güncelle">
+                                                        <i class="fa fa-pen fa-lg" aria-hidden="true"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+﻿@model AdminUIFeatureViewModel
+
+@{
+    ViewData["Title"] = "Özellik Güncelleme";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Özellik Güncelleme</h4>
+                        <p class="card-subtitle mb-4">
+                            Araçlara Tanımlanacak Özelliği Bu Ekrandan Güncelleyebilirsiniz!
+                        </p>
+
+                        <form id="UpdateFeature" asp-area="Admin" asp-controller="AdmincarFeatureDescription" asp-action="UpdateFeature" method="post">
+                            @Html.HiddenFor(x => x.UpdateDatas.FeatureID)
+                            <div class="row">
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.UpdateDatas.FeatureName">Özellik Adı</label>
+                                    <input asp-for="@Model.UpdateDatas.FeatureName" type="text" class="form-control" placeholder="Özellik Adı">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Güncelle</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

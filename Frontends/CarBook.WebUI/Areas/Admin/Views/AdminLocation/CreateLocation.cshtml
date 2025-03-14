@@ -1,0 +1,42 @@
+﻿@model AdminUILocationViewModel
+
+@{
+    ViewData["Title"] = "Yeni Lokasyon Bilgisi Ekleme";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Yeni Lokasyon Bilgisi Ekleme</h4>
+                        <p class="card-subtitle mb-4">
+                            Lokasyon Bilgisi Alanı İçin Bilgileri Bu Ekrandan Kaydedebilirsiniz!
+                        </p>
+
+                        <form id="AddNewLocationForm" asp-area="Admin" asp-controller="AdminLocation" asp-action="CreateLocation" method="post">
+                            <div class="row">
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.CreateData.LocationName">Lokasyon Adı</label>
+                                    <input asp-for="@Model.CreateData.LocationName" class="form-control mb-3" placeholder="Lokasyon Adı"></input>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success waves-effect waves-light">
+                                Kaydet
+                                <i class="mdi mdi-content-save-move ml-1"></i>
+                            </button>
+                            <a class="btn btn-danger mi-2" href="/admin/location">
+                                Vazgeç
+                                <i class="mdi mdi-marker-cancel ml-1"></i>
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

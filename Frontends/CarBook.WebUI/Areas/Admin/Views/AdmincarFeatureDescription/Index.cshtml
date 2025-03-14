@@ -1,0 +1,56 @@
+﻿@model AdminUIFeatureViewModel
+
+@{
+    ViewData["Title"] = "Araç Özellikleri Listesi";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Özellik Listesi</h4>
+                        <p class="card-subtitle mb-4">
+                            Araçların Sahip Olabileceği Özellikleri Bu Ekrandan Tanımlayabilirisniz!
+                        </p>
+                        <div class="table-responsive">
+
+                            <a class="btn btn-primary mb-4" href="/admin/feature/create">
+                                <i class="fa fa-plus" aria-hidden="true"></i> Yeni Özellik Ekle
+                            </a>
+
+                            <table class="table mb-0">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Özellik</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var featureItem in Model.FeatureDatas)
+                                    {
+                                        <tr>
+                                            <th>@featureItem.FeatureID</th>
+                                            <td>@featureItem.FeatureName</td>
+                                            <td class="d-flex justify-content-end aling-items-center">
+                                                <a class="btn btn-danger mx-2" href="/admin/feature/delete?id=@featureItem.FeatureID" title="Sil">
+                                                    <i class="fa fa-trash fa-lg" aria-hidden="true"></i>
+                                                </a>
+                                                <a class="btn btn-warning" href="/admin/feature/update?id=@featureItem.FeatureID" title="Güncelle">
+                                                    <i class="fa fa-pen fa-lg" aria-hidden="true"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

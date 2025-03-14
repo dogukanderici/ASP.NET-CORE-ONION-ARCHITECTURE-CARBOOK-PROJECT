@@ -1,0 +1,25 @@
+﻿@model BlogUIViewModel
+
+<div class="pt-5 mt-5">
+    <h3 class="mb-5">@Model.BlogByIdData.BlogComments.Count() Yorum</h3>
+    <ul class="comment-list">
+
+        @foreach (var blogCommentItem in Model.BlogByIdData.BlogComments)
+        {
+            <li class="comment">
+                <div class="vcard bio">
+                    <img src="@Model.BlogByIdData.Author.ImageUrl" alt="author-image">
+                </div>
+                <div class="comment-body">
+                    <h3>@Model.BlogByIdData.Author.AuthorName</h3>
+                    <div class="meta">@blogCommentItem.CreatedDate.LocalDateTime.ToString("dd.MM.yyyy HH:mm")</div>
+                    <p>@blogCommentItem.Description</p>
+                    <p><a href="#" class="reply">Cevapla</a></p>
+                </div>
+            </li>
+        }
+    </ul>
+
+    @await Component.InvokeAsync("_BlogDetailLeaveACommentComponentPartial")
+
+</div>

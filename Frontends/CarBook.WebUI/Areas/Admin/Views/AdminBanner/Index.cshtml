@@ -1,0 +1,76 @@
+﻿@model AdminUIBannerViewModel
+
+@{
+    ViewData["Title"] = "Ana Sayfa Banner Bilgileri";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Ana Sayfa Banner Bilgileri</h4>
+                        @if (Model.ResultDatas.Count() > 0)
+                        {
+                            <p class="card-subtitle mb-4">
+                                Ana Sayfa Banner Bilgileri. Kayıtlı Bir Banner Bilgisi Varsa Yeni Ekle Butonu Aktif Olmayacaktır. Sadece Güncelleme ve Silme
+                                İşlemleri Yapılabilir!
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="card-subtitle mb-4">
+                                Kayıtlı Bir Banner Bilgisi Henüz Bulunmuyor. Yeni Ekle Butonuna Tıklayarak Yeni Bir Banner Bilgisi Ekleyebilirisniz!
+                            </p>
+                        }
+
+                        <div class="table-responsive">
+
+                            @if (Model.ResultDatas.Count() < 1)
+                            {
+                                <a class="btn btn-primary mb-4" href="/admin/banner/create">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Yeni Banner Ekle
+                                </a>
+                            }
+                            else
+                            {
+
+                                <table class="table mb-0">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Başlık</th>
+                                            <th>Açıklama</th>
+                                            <th>Video Açıklama</th>
+                                            <th>Video URL</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var bannerItem in Model.ResultDatas)
+                                        {
+                                            <tr>
+                                                <td>@bannerItem.Description</td>
+                                                <td>@bannerItem.VideoDescription</td>
+                                                <td><a class="btn btn-danger" href="@bannerItem.VideoURL"><i class="fab fa-youtube fa-lg"></i></a></td>
+                                                <td>
+                                                    <a class="btn btn-danger" href="/admin/banner/delete?id=@bannerItem.BannerID" title="Sil">
+                                                        <i class="fa fa-trash fa-lg" aria-hidden="true"></i>
+                                                    </a>
+                                                    <a class="btn btn-warning" href="/admin/banner/update?id=@bannerItem.BannerID" title="Güncelle">
+                                                        <i class="fa fa-pen fa-lg" aria-hidden="true"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

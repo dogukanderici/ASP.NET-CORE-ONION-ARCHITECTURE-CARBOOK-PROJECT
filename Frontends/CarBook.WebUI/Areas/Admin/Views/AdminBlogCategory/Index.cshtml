@@ -1,0 +1,79 @@
+﻿@model AdminUIBlogCategoryViewModel
+
+@{
+    ViewData["Title"] = "Blog Kategori Listesi";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Blog Kategorileri Bilgileri</h4>
+                        @if (Model.ResultDatas.Count() > 0)
+                        {
+                            <p class="card-subtitle mb-4">
+                                Blog Kategorileri Bilgilerini Bu Ekrandan Güncelleyebilir, Silebilir Veya Yeni Blog Kategorileri Bilgisi Ekleyebilirsiniz.
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="card-subtitle mb-4">
+                                Kayıtlı Bir Blog Kategorileri Bilgisi Henüz Bulunmuyor. Yeni Ekle Butonuna Tıklayarak Yeni Bir Blog Kategorileri Bilgisi Ekleyebilirisniz!
+                            </p>
+                        }
+
+                        <div class="table-responsive">
+
+                            <a class="btn btn-primary mb-4" href="/admin/blogcategory/create">
+                                <i class="fa fa-plus" aria-hidden="true"></i> Yeni Blog Kategorileri Ekle
+                            </a>
+
+                            @if (Model.ResultDatas.Count() > 0)
+                            {
+                                <table class="table mb-0">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Kategori Adı</th>
+                                            <th>Kategori Durumu</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var blogCategoryItem in Model.ResultDatas)
+                                        {
+                                            <tr>
+                                                <td>@blogCategoryItem.Name</td>
+                                                <td>
+                                                    @if (@blogCategoryItem.CategoryStatus)
+                                                    {
+                                                        <span class="text-success">Aktif</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-danger">Pasif</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-danger" href="/admin/blogcategory/delete?id=@blogCategoryItem.BlogCategoryID" title="Sil">
+                                                        <i class="fa fa-trash fa-lg" aria-hidden="true"></i>
+                                                    </a>
+                                                    <a class="btn btn-warning" href="/admin/blogcategory/update?id=@blogCategoryItem.BlogCategoryID" title="Güncelle">
+                                                        <i class="fa fa-pen fa-lg" aria-hidden="true"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

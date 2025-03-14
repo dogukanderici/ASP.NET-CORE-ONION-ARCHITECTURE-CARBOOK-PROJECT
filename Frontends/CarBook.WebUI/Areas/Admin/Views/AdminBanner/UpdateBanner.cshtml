@@ -1,0 +1,48 @@
+﻿@model AdminUIBannerViewModel
+
+@{
+    ViewData["Title"] = "Ana Sayfa Banner Bilgisi Düzenleme";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Ana Sayfa Banner Alanı Düzenleme</h4>
+                        <p class="card-subtitle mb-4">
+                            Ana Sayfada Görüntülenecek olan Banner Alanını İçin Bilgileri Bu Ekrandan Düzenleyebilirsiniz!
+                        </p>
+
+                        <form id="UpdateBannerForm" asp-area="Admin" asp-controller="AdminBanner" asp-action="UpdateBanner" method="post">
+                            @Html.HiddenFor(x => x.UpdateData.BannerID)
+                            <div class="row">
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.UpdateData.Title">Başlık</label>
+                                    <input asp-for="@Model.UpdateData.Title" class="form-control mb-3" placeholder="Başlık"></input>
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.UpdateData.Description">Açıklama</label>
+                                    <input asp-for="@Model.UpdateData.Description" type="text" class="form-control" placeholder="Açıklama">
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.UpdateData.VideoDescription">Video Açıklaması</label>
+                                    <input asp-for="@Model.UpdateData.VideoDescription" class="form-control mb-3" placeholder="Video Açıklaması"></input>
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.UpdateData.VideoURL">Video URL</label>
+                                    <input asp-for="@Model.UpdateData.VideoURL" class="form-control mb-3" placeholder="Video URL"></input>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Kaydet</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

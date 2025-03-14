@@ -1,0 +1,51 @@
+﻿@model AdminUIServiceViewModel
+
+@{
+    ViewData["Title"] = "Yeni Hizmet Bilgisi Ekleme";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Yeni Hizmet Bilgisi Ekleme</h4>
+                        <p class="card-subtitle mb-4">
+                            Hizmet Bilgisi Alanı İçin Bilgileri Bu Ekrandan Kaydedebilirsiniz!
+                        </p>
+
+                        <form id="AddNewServiceForm" asp-area="Admin" asp-controller="AdminService" asp-action="CreateService" method="post">
+                            <div class="row">
+                                <div class="form-group col-xl-6">
+                                    <label asp-for="@Model.CreateData.Title">Hizmet Adı</label>
+                                    <input type="text" asp-for="@Model.CreateData.Title" class="form-control mb-3" placeholder="Hizmet Adı"></input>
+                                </div>
+                                <div class="form-group col-xl-6">
+                                    <label asp-for="@Model.CreateData.IconURL">Hizmet İkon</label>
+                                    <input type="text" asp-for="@Model.CreateData.IconURL" class="form-control mb-3" placeholder="Hizmet İkon"></input>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xl-12">
+                                    <label asp-for="@Model.CreateData.Description">Açıklama</label>
+                                    <textarea asp-for="@Model.CreateData.Description" rows="6" class="form-control mb-3" placeholder="Açıklama"></textarea>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success waves-effect waves-light">
+                                Kaydet
+                                <i class="mdi mdi-content-save-move ml-1"></i>
+                            </button>
+                            <a class="btn btn-danger mi-2" href="/admin/service">
+                                Vazgeç
+                                <i class="mdi mdi-marker-cancel ml-1"></i>
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,71 @@
+﻿@model AdminUISocialMediaViewModel
+
+@{
+    ViewData["Title"] = "Sosyal Medya Hesapları";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Sosyal Medya Bilgileri</h4>
+                        @if (Model.ResultDatas.Count() > 0)
+                        {
+                            <p class="card-subtitle mb-4">
+                                Sosyal Medya Bilgilerini Bu Ekrandan Güncelleyebilir, Silebilir Veya Yeni Sosyal Medya Bilgisi Ekleyebilirsiniz.
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="card-subtitle mb-4">
+                                Kayıtlı Bir Sosyal Medya Bilgisi Henüz Bulunmuyor. Yeni Ekle Butonuna Tıklayarak Yeni Bir Sosyal Medya Bilgisi Ekleyebilirisniz!
+                            </p>
+                        }
+
+                        <div class="table-responsive">
+
+                            <a class="btn btn-primary mb-4" href="/admin/socialmedia/create">
+                                <i class="fa fa-plus" aria-hidden="true"></i> Yeni Sosyal Medya Ekle
+                            </a>
+
+                            @if (Model.ResultDatas.Count() > 0)
+                            {
+                                <table class="table mb-0">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Sosyal Medya Adı</th>
+                                            <th>Sosyal Medya İkonu</th>
+                                            <th>Sosyal Medya URL</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var socialmediaItem in Model.ResultDatas)
+                                        {
+                                            <tr>
+                                                <td>@socialmediaItem.Name</td>
+                                                <td><i class="@socialmediaItem.Icon fa-lg" aria-hidden="true"></i></td>
+                                                <td>@socialmediaItem.Url</td>
+                                                <td>
+                                                    <a class="btn btn-danger" href="/admin/socialmedia/delete?id=@socialmediaItem.SocialMediaID" title="Sil">
+                                                        <i class="fa fa-trash fa-lg" aria-hidden="true"></i>
+                                                    </a>
+                                                    <a class="btn btn-warning" href="/admin/socialmedia/update?id=@socialmediaItem.SocialMediaID" title="Güncelle">
+                                                        <i class="fa fa-pen fa-lg" aria-hidden="true"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

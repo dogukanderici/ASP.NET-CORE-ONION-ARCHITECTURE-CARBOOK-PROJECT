@@ -1,0 +1,36 @@
+﻿@model AdminUIPricingTypeViewModel
+
+@{
+    ViewData["Title"] = "Yeni Ödeme Planı Ekleme";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Yeni Ödeme Planı Ekleme</h4>
+                        <p class="card-subtitle mb-4">
+                            Yeni Ödeme Planı Bilgilerinizi Bu Ekrandan Kaydedebilirsiniz!
+                        </p>
+
+                        <form id="AddNewPricingTypeForm" asp-area="Admin" asp-controller="AdminPricingType" asp-action="CreatePricingType" method="post">
+                            <div class="row">
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.CreateData.Name">Ödeme Planı Türü</label>
+                                    <input asp-for="@Model.CreateData.Name" class="form-control mb-3" placeholder="Ödeme Planı Türü"></input>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Kaydet</button>
+                            <a class="btn btn-outline-danger" href="/admin/pricingtype">Vazgeç</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

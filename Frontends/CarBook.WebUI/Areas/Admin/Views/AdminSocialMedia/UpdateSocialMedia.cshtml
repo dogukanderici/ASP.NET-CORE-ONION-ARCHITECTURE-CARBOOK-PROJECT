@@ -1,0 +1,50 @@
+﻿@model AdminUISocialMediaViewModel
+
+@{
+    ViewData["Title"] = "Sosyal Medya Güncelleme";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Sosyal Medya Bilgisi Güncelleme</h4>
+                        <p class="card-subtitle mb-4">
+                            Sosyal Medya Bilgisi Alanı İçin Bilgileri Bu Ekrandan Güncelleyebilirsiniz!
+                        </p>
+
+                        <form id="UpdateSocialMediaForm" asp-area="Admin" asp-controller="AdminSocialMedia" asp-action="UpdateSocialMedia" method="post">
+                            @Html.HiddenFor(x => x.UpdateData.SocialMediaID)
+                            <div class="row">
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.UpdateData.Name">Sosyal Medya Adı</label>
+                                    <input type="text" asp-for="@Model.UpdateData.Name" class="form-control mb-3" placeholder="Sosyal Medya Adı"></input>
+                                </div>
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.UpdateData.Icon">Sosyal Medya İkon</label>
+                                    <input type="text" asp-for="@Model.UpdateData.Icon" class="form-control mb-3" placeholder="Sosyal Medya İkon"></input>
+                                </div>
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.UpdateData.Url">Sosyal Medya URL</label>
+                                    <input asp-for="@Model.UpdateData.Url" type="text" class="form-control mb-3" placeholder="Sosyal Medya URL" />
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success waves-effect waves-light">
+                                Güncelle
+                                <i class="mdi mdi-update ml-1"></i>
+                            </button>
+                            <a class="btn btn-danger mi-2" href="/admin/socialmedia">
+                                Vazgeç
+                                <i class="mdi mdi-marker-cancel ml-1"></i>
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

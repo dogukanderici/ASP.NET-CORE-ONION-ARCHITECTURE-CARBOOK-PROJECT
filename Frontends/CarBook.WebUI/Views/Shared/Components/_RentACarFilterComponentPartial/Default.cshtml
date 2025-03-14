@@ -1,0 +1,92 @@
+﻿@model FilterRentACarDto
+
+@{
+    List<SelectListItem> locationList = ViewBag.LocationList;
+}
+
+<style>
+    #SearchRentACarForm select option {
+        background: #white;
+        color: #004d99;
+    }
+</style>
+
+<section class="ftco-section ftco-no-pt bg-light">
+    <div class="container">
+        <div class="row no-gutters">
+            <div class="col-md-12	featured-top">
+                <div class="row no-gutters">
+                    <div class="col-md-4 d-flex align-items-center">
+                        <form id="SearchRentACarForm" asp-controller="RentACarList" asp-action="Index" class="request-form ftco-animate bg-primary" method="get">
+                            <h2>Aracınızı Hemen Kiralayın</h2>
+                            <div class="form-group">
+                                <label asp-for="@Model.PickUpLocationID" for="" class="label">Araç Alış Lokasyonu</label>
+                                @* <input asp-for="@Model.LocationID" type="text" class="form-control" placeholder="Şehir, Havaalanı, Terminal vb."> *@
+                                <select asp-for="@Model.PickUpLocationID" asp-items="@locationList" class="form-control"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="label">Araç Teslim Lokasyonu</label>
+                                @* <input type="text" class="form-control" placeholder="Şehir, Havaalanı, Terminal vb."> *@
+                                <select asp-for="@Model.DropOffLocationID" asp-items="@locationList" class="form-control"></select>
+                            </div>
+                            <div class="d-flex">
+                                <div class="form-group mr-2">
+                                    <label asp-for="@Model.PickUpDate" for="" class="label">Araç Alış Tarihi</label>
+                                    <input asp-for="@Model.PickUpDate" type="date" class="form-control" placeholder="Araç Alış Tarihi">
+                                </div>
+                                <div class="form-group ml-2">
+                                    <label asp-for="@Model.DropOffDate" for="" class="label">Araç Teslim Tarihi</label>
+                                    <input asp-for="@Model.DropOffDate" type="date" class="form-control" placeholder="Araç Teslim Tarihi">
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <div class="form-group mr-2">
+                                    <label asp-for="@Model.PickUpTime" for="" class="label">Araç Alış Saati</label>
+                                    <input asp-for="@Model.PickUpTime" type="text" class="form-control" id="baslangic_saat" placeholder="Araç Alış Saati">
+                                </div>
+                                <div class="form-group ml-2">
+                                    <label asp-for="@Model.DropOffTime" for="" class="label">Araç Teslim Saati</label>
+                                    <input asp-for="@Model.DropOffTime" type="text" class="form-control" id="bitis_saat" placeholder="Araç Teslim Saati">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Uygun Araçları Görüntüle" class="btn btn-secondary py-3 px-4">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-8 d-flex align-items-center">
+                        <div class="services-wrap rounded-right w-100">
+                            <h3 class="heading-section mb-4">En İyi Araçları Kiralamanın Mükemmel Yolu</h3>
+                            <div class="row d-flex mb-4">
+                                <div class="col-md-4 d-flex align-self-stretch ftco-animate">
+                                    <div class="services w-100 text-center">
+                                        <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-route"></span></div>
+                                        <div class="text w-100">
+                                            <h3 class="heading mb-2">Almak İstediğiniz Konumu Seçiniz</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 d-flex align-self-stretch ftco-animate">
+                                    <div class="services w-100 text-center">
+                                        <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-handshake"></span></div>
+                                        <div class="text w-100">
+                                            <h3 class="heading mb-2">En İyi Teklifleri Gör</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 d-flex align-self-stretch ftco-animate">
+                                    <div class="services w-100 text-center">
+                                        <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-rent"></span></div>
+                                        <div class="text w-100">
+                                            <h3 class="heading mb-2">Kiralamayı Tamamla, Hepsi Bu</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p><a href="#" class="btn btn-primary py-3 px-4">Aracını Kirala</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>

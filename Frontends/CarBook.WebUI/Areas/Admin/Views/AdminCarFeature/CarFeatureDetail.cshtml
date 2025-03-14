@@ -1,0 +1,97 @@
+﻿@model AdminUICarFeatureViewModel
+
+@{
+    ViewData["Title"] = "Araca Ait Özellikler";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+    List<SelectListItem> featureList = ViewBag.FeatureList;
+    int carId = ViewBag.CarID;
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Araca Ait Özellikler Listesi</h4>
+                        <p class="card-subtitle mb-4">
+                            Araca Ait Özellikleri Görüntüleyebilir, Yeni Ekle ile yeni özellikler ekleyebilir ve Kaydet ile eklediğiniz özellikleri kaydedebilirsiniz!
+                        </p>
+
+                        <div class="row">
+                            @foreach (var item in Model.CarFeatureForCarDatas)
+                            {
+                                <div class="form-group col-xl-4 d-flex justify-content-between align-item-center">
+                                    <label class="text-success px-1"><i class="fas fa-check fa-lg"></i> @item.Feature.FeatureName</label>
+                                    <a class="btn btn-outline-danger" href="/admin/carfeature/remove?id=@item.CarFeatureID" style="height: 33px;">
+                                        <i class="fas fa-times"></i>
+                                        </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Yeni Özellik Ekleme</h4>
+                        <p class="card-subtitle mb-4">
+                            Araca Ait Yeni Özellikleri Buradan Ekleyebilirsiniz! Değişikliklerin kaydedilmesi için lütfen
+                            <button class="btn btn-success mi-4" disabled>Kaydet</button>
+                            butonuna tıklayınız!
+                        </p>
+
+                        <div class="row">
+                            <div class="table-responsive col-xl-6">
+                                <form id="addNewCarFeatureForm" asp-area="Admin" asp-controller="AdmincarFeature" asp-action="CarFeatureDetail" method="post">
+                                    <table id="carFeatureTable" class="table">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th style="width: 0px;"></th>
+                                                <th>Özellik</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="carFeatureTableBody">
+                                        </tbody>
+                                    </table>
+                                    <button type="button" id="addNewRow" class="btn btn-info">Yeni Ekle</button>
+                                    <button type="submit" class="btn btn-success">Kaydet</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let rowIndex = 0;
+
+        $("#addNewRow").click(function () {
+            let newRowHtml = `
+                        <tr>
+                            <td>@Html.Hidden("CreateCarFeatureDatas[${rowIndex}].CarID",@carId)</td>
+                            <td><select class="form-control" name="CreateCarFeatureDatas[${rowIndex}].FeatureID">${getDropDownOptions(@Html.Raw(Json.Serialize(featureList)))}</select></td>
+                            <td class="text-right"><button type="button" class="btn btn-danger removeRow"><i class="fas fa-trash fa-lg"></i></button></td>
+                        </tr>`;
+
+            $("#carFeatureTableBody").append(newRowHtml);
+            rowIndex++;
+        });
+
+        $(document).on("click", ".removeRow", function () {
+            $(this).closest("tr").remove();
+        });
+
+        function getDropDownOptions(options) {
+            return options.map(option => `<option value=${option.value}>${option.text}</option>`);
+        }
+
+    </script>
+}

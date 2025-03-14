@@ -1,0 +1,11 @@
+﻿@model BlogCategoryUIViewModel
+
+<div class="sidebar-box ftco-animate">
+    <div class="categories">
+        <h3>Kategoriler</h3>
+        @foreach(var blogCategoryItem in Model.BlogCategoryDatas)
+        {
+            <li><a href="#">@blogCategoryItem.Name <span>(0)</span></a></li>            
+        }
+    </div>
+</div>

@@ -1,0 +1,34 @@
+﻿@model AdminUIFeatureViewModel
+
+@{
+    ViewData["Title"] = "Yeni Özellik Ekleme";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Yeni Özellik Ekleme</h4>
+                        <p class="card-subtitle mb-4">
+                            Araçlara Tanımlanacak Özellikleri Bu Ekrandan Oluşturabilirsiniz!
+                        </p>
+
+                        <form id="AddNewFeature" asp-area="Admin" asp-controller="AdmincarFeatureDescription" asp-action="CreateFeature" method="post">
+                            <div class="row">
+                                <div class="form-group col-xl-4">
+                                    <label asp-for="@Model.CreateDatas.FeatureName">Özellik Adı</label>
+                                    <input asp-for="@Model.CreateDatas.FeatureName" type="text" class="form-control" placeholder="Özellik Adı">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Kaydet</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
