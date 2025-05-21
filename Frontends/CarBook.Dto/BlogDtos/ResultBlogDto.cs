@@ -20,6 +20,7 @@ namespace CarBook.Dto.BlogDtos
         public string Description { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public int BlogCategoryID { get; set; }
+        public int BlogCommentCount { get; set; }
         public bool PublishState { get; set; }
         public ResultBlogCategoryDto BlogCategory { get; set; }
         public List<ResultBlogTagCloudForBlogDto> BlogTagClouds { get; set; }

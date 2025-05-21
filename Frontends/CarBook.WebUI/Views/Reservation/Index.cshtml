@@ -1,0 +1,116 @@
+﻿@model ReservationUIViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/UILayout/Index.cshtml";
+
+    List<SelectListItem> locationList = ViewBag.LocationList;
+}
+
+<section class="ftco-section contact-section">
+    <div class="container">
+        @if (ViewBag.ResponseMessage != null)
+        {
+            <div class="row mb-2 d-flex justify-content-center align-items-center">
+                <div class="alert alert-danger">@ViewBag.ResponseMessage</div>
+            </div>
+        }
+        <form asp-controller="Reservation" asp-action="Index" class="bg-light p-5 contact-form" method="post">
+            <div class="col-md-12">
+                <div class="row mb-2 d-flex flex-row">
+                    <div class="col-md-6">
+                        <div class="border w-100 p-2 rounded mb-2 d-flex bg-white">
+                            <div class="icon mr-3">
+                                <span class="icon-map-o"></span>
+                            </div>
+                            <div class="w-100"><span>Alış Lokasyonu: </span> <select asp-for="@Model.CreateData.PickUpLocationID" asp-items="@locationList" class="form-control" disabled></select></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="border w-100 p-2 rounded mb-2 d-flex bg-white">
+                            <div class="icon mr-3">
+                                <span class="icon-map-o"></span>
+                            </div>
+                            <div class="w-100"><span>Teslim Ediş Lokasyonu: </span> <select asp-for="@Model.CreateData.DropOffLocationID" asp-items="@locationList" class="form-control" disabled></select></a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-2 d-flex flex-row">
+                    <div class="col-md-6">
+                        <div class="border w-100 p-2 rounded mb-2 d-flex bg-white">
+                            <div class="icon mr-3">
+                                <span class="icon-date_range"></span>
+                            </div>
+                            <p><span class="mr-2">Alış Tarih / Saat: </span><span style="font-weight: bold;">@Model.CreateData.PickUpDate.LocalDateTime.ToString("dd.MM.yyyy HH:mm")</span></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="border w-100 p-2 rounded mb-2 d-flex bg-white">
+                            <div class="icon mr-3">
+                                <span class="icon-date_range"></span>
+                            </div>
+                            <p><span class="mr-2">Teslim Ediş Tarih / Saat: </span><span style="font-weight: bold;">@Model.CreateData.DropOffDate.LocalDateTime.ToString("dd.MM.yyyy HH:mm")</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-2 d-flex flex-row">
+                    <div class="col-md-12">
+                        <div class="border w-100 p-2 rounded mb-2 d-flex bg-white">
+                            <div class="icon mr-3">
+                                <span class="icon-car"></span>
+                            </div>
+                            <p><span class="mr-2">Araç: </span><span style="font-weight: bold;">@ViewBag.CarModel - @ViewBag.CarBrand</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 block-9 mb-md-5">
+                <div class="form-group">
+                    @Html.HiddenFor(x => x.CreateData.CarID)
+                    @Html.HiddenFor(x => x.CreateData.PickUpLocationID)
+                    @Html.HiddenFor(x => x.CreateData.DropOffLocationID)
+                    @Html.HiddenFor(x => x.CreateData.PickUpDate)
+                    @Html.HiddenFor(x => x.CreateData.DropOffDate)
+                    @* <input type="text" class="form-control" readonly placeholder="Almak İstediğiniz Araç" value="@Model.CreateData.CarID"> *@
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <input asp-for="@Model.CreateData.Name" type="text" class="form-control" placeholder="Adınız">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <input asp-for="@Model.CreateData.Surname" type="text" class="form-control" placeholder="Soyadınız">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <input asp-for="@Model.CreateData.Email" type="email" class="form-control" placeholder="E-Posta Adresiniz">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <input asp-for="@Model.CreateData.Phone" type="text" class="form-control" placeholder="Telefon Numaranız">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <lable asp-for="@Model.CreateData.Age">Yaşınız</lable>
+                        <input asp-for="@Model.CreateData.Age" type="number" min="20" max="99" class="form-control" placeholder="Yaşınız" value="20">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <lable asp-for="@Model.CreateData.DriverLicenceAge">Ehliyet Yaşınız</lable>
+                        <input asp-for="@Model.CreateData.DriverLicenceAge" type="number" min="2" max="99" value="2" class="form-control" placeholder="Ehliyet Yaşınız">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <textarea asp-for="@Model.CreateData.Description" cols="30" rows="7" class="form-control" placeholder="Eklemek İstedikleriniz..."></textarea>
+                </div>
+                <div class="form-group">
+                    @if (ViewBag.ResponseMessage == null)
+                    {
+                        <input type="submit" value="Rezervasyonu Tamamla" class="btn btn-primary py-3 px-4">
+                    }
+                    <a href="/default" class="btn btn-outline-danger py-3 px-4">Vazgeç</a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</section>

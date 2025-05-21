@@ -4,8 +4,10 @@ namespace CarBook.WebUI.ViewComponents.BlogViewComponents
 {
     public class _BlogDetailLeaveACommentComponentPartial : ViewComponent
     {
-        public IViewComponentResult Invoke()
+        public IViewComponentResult Invoke(Guid id)
         {
+            ViewBag.BlogId = id;
+
             return View();
         }
     }

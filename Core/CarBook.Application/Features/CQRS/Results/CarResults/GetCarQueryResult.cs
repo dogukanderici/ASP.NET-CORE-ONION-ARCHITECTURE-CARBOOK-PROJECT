@@ -28,6 +28,6 @@ namespace CarBook.Application.Features.CQRS.Results.CarResults
 
         public List<GetCarPricingForCarQueryResult> CarPricings { get; set; }
         public List<GetCarFeatureForCarQueryResult> CarFeatures { get; set; }
-        public List<GetRentACarForCarQueryResult> RentACar { get; set; }
+        public List<GetRentACarForCarQueryResult> RentACars { get; set; }
     }
 }

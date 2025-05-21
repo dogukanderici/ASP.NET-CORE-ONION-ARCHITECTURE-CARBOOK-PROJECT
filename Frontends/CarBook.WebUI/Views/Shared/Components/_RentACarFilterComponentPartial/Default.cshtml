@@ -21,12 +21,10 @@
                             <h2>Aracınızı Hemen Kiralayın</h2>
                             <div class="form-group">
                                 <label asp-for="@Model.PickUpLocationID" for="" class="label">Araç Alış Lokasyonu</label>
-                                @* <input asp-for="@Model.LocationID" type="text" class="form-control" placeholder="Şehir, Havaalanı, Terminal vb."> *@
                                 <select asp-for="@Model.PickUpLocationID" asp-items="@locationList" class="form-control"></select>
                             </div>
                             <div class="form-group">
                                 <label for="" class="label">Araç Teslim Lokasyonu</label>
-                                @* <input type="text" class="form-control" placeholder="Şehir, Havaalanı, Terminal vb."> *@
                                 <select asp-for="@Model.DropOffLocationID" asp-items="@locationList" class="form-control"></select>
                             </div>
                             <div class="d-flex">

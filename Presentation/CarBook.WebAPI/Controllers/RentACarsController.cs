@@ -41,6 +41,15 @@ namespace CarBook.WebAPI.Controllers
             return Ok(value);
         }
 
+
+        [HttpGet("GetRentACarWithCarId")]
+        public async Task<IActionResult> GetRentACarWithCarId(int id)
+        {
+            var value = await _mediator.Send(new GetRentACarByCarIdQuery(id));
+
+            return Ok(value);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateRentACar(CreateRentACarCommand createRentACarCommand)
         {

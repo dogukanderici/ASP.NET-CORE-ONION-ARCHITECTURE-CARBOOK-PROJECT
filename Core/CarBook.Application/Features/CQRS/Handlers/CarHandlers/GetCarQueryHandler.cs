@@ -26,7 +26,7 @@ namespace CarBook.Application.Features.CQRS.Handlers.CarHandlers
         public async Task<List<GetCarQueryResult>> Handle()
         {
             Dictionary<Expression<Func<Car, object>>, List<Expression<Func<object, object>>>> thenIncludes =
-                new Dictionary<Expression<Func<Car, object>>, List<System.Linq.Expressions.Expression<Func<object, object>>>>
+                new Dictionary<Expression<Func<Car, object>>, List<Expression<Func<object, object>>>>
                 {
                     {
                         c=>c.Brand,

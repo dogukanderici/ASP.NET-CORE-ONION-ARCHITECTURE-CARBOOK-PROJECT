@@ -11,7 +11,7 @@
                     <img src="@Model.BlogByIdData.Author.ImageUrl" alt="author-image">
                 </div>
                 <div class="comment-body">
-                    <h3>@Model.BlogByIdData.Author.AuthorName</h3>
+                    <h3>@blogCommentItem.Name</h3>
                     <div class="meta">@blogCommentItem.CreatedDate.LocalDateTime.ToString("dd.MM.yyyy HH:mm")</div>
                     <p>@blogCommentItem.Description</p>
                     <p><a href="#" class="reply">Cevapla</a></p>
@@ -20,6 +20,24 @@
         }
     </ul>
 
-    @await Component.InvokeAsync("_BlogDetailLeaveACommentComponentPartial")
+    <div class="comment-form-wrap pt-5">
+        <div class="form-group">
+            <button type="button" id="PostNewComment" class="btn py-3 px-4 btn-primary"> Yorum Yap</button>
+        </div>
+    </div>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/carbook-master/js/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $("#PostNewComment").click(function(){
+            Swal.fire({
+                html: `@await Component.InvokeAsync("_BlogDetailLeaveACommentComponentPartial", new { id = @Model.BlogByIdData.BlogID })`,
+                width: 1250,
+                showConfirmButton: false
+            });
+        });
+    });
+</script>

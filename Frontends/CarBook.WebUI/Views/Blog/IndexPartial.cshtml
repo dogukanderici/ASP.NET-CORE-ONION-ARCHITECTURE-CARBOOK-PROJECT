@@ -1,0 +1,32 @@
+﻿@model BlogUIViewModel
+
+<div class="row d-flex justify-content-center">
+    @if (Model.BlogDatas.Count() < 1)
+    {
+        <div class="col-md-12 text-center alert alert-info">
+            Henüz Yayınlanmış Bir blog Yazısı Bulunmuyor!!!
+        </div>
+    }
+    else
+    {
+        @foreach (var blogItem in Model.BlogDatas)
+        {
+            @* <div>Deneme</div> *@
+            <div class="col-md-12 text-center d-flex">
+                <div class="blog-entry justify-content-end mb-md-5">
+                     <a href="blog-single.html" class="block-20 img" style="background-image: url('@blogItem.CoverImageUrl');"></a>
+                    <div class="text px-md-5 pt-4">
+                        <div class="meta mb-3">
+                            <div><a href="#">@blogItem.CreatedDate.LocalDateTime.ToString("yyyy-MM-dd HH:mm")</a></div>
+                            <div><a href="#">@blogItem.Author.AuthorName</a></div>
+                            <div><a href="#" class="meta-chat"><span class="icon-chat"></span> @blogItem.BlogCommentCount</a></div>
+                        </div>
+                        <h3 class="heading mt-2"><a href="#">@blogItem.Title</a></h3>
+                        <p>@blogItem.Description.Substring(0, 200) ...</p>
+                        <p><a href="/blog/blogdetail?id=@blogItem.BlogID" class="btn btn-primary">Devamını Oku <span class="icon-long-arrow-right"></span></a></p>
+                    </div> 
+                </div>
+            </div>
+        }
+    }
+</div>

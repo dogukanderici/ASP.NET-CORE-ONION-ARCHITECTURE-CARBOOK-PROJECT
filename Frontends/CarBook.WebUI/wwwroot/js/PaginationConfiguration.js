@@ -63,7 +63,7 @@ $(document).ready(function () {
 
         $(".customPaging").filter(function () {
             return $(this).text().trim() == tempCurrentPage;
-        }).addClass("btn btn-primary");
+        }).addClass("btn btn-primary get-page-data");
 
         $(".customPaging").filter(function () {
             return $(this).text().trim() != tempCurrentPage;
@@ -76,58 +76,58 @@ function adjustPaging() {
     let currentPageNumber = parseInt($("#CurrentPageNumber").text());
     let totalPageNumber = parseInt($("#TotalPageNumber").text());
 
-    let tempPagingHtmlStringData = '<li class="page-item"><button class="page-link customPaging">1</button></li>';
+    let tempPagingHtmlStringData = '<li class="page-item"><button class="page-link customPaging get-page-data">1</button></li>';
 
     if (totalPageNumber > 4) {
         if (currentPageNumber == 1) {
-            tempPagingHtmlStringData += '<li class="page-item"><button class="page-link customPaging">2</button></li>' +
+            tempPagingHtmlStringData += '<li class="page-item"><button class="page-link customPaging get-page-data">2</button></li>' +
                 '<li class="page-item disabled"><button class="page-link">...</button></li>';
         }
         else if (currentPageNumber == totalPageNumber) {
             tempPagingHtmlStringData += '<li class="page-item disabled"><button class="page-link">...</button></li>' +
-                '<li class="page-item"><button class="page-link customPaging customPaging">' + (totalPageNumber - 1) + '</button></li>';
+                '<li class="page-item"><button class="page-link customPaging get-page-data">' + (totalPageNumber - 1) + '</button></li>';
         }
         else {
             if (currentPageNumber == 2) {
-                tempPagingHtmlStringData += '<li class="page-item"><button class="page-link customPaging">' + currentPageNumber + '</button></li>' +
-                    '<li class="page-item"><button class="page-link customPaging">' + (currentPageNumber + 1) + '</button></li>' +
+                tempPagingHtmlStringData += '<li class="page-item"><button class="page-link customPaging get-page-data">' + currentPageNumber + '</button></li>' +
+                    '<li class="page-item"><button class="page-link customPaging get-page-data">' + (currentPageNumber + 1) + '</button></li>' +
                     '<li class="page-item disabled"><button class="page-link">...</button></li>';
             }
             else if (currentPageNumber == (totalPageNumber - 1)) {
                 tempPagingHtmlStringData += '<li class="page-item disabled"><button class="page-link">...</button></li>' +
-                    '<li class="page-item"><button class="page-link customPaging">' + (currentPageNumber - 1) + '</button></li>' +
-                    '<li class="page-item"><button class="page-link customPaging">' + currentPageNumber + '</button></li>';
+                    '<li class="page-item"><button class="page-link customPaging get-page-data">' + (currentPageNumber - 1) + '</button></li>' +
+                    '<li class="page-item"><button class="page-link customPaging get-page-data">' + currentPageNumber + '</button></li>';
             }
             else {
                 if (currentPageNumber != 3)
                     tempPagingHtmlStringData += '<li class="page-item disabled"><button class="page-link">...</button></li>';
 
-                tempPagingHtmlStringData += '<li class="page-item"><button class="page-link customPaging">' + (currentPageNumber - 1) + '</button></li>' +
-                    '<li class="page-item"><button class="page-link customPaging">' + (currentPageNumber) + '</button></li>' +
-                    '<li class="page-item"><button class="page-link customPaging">' + (currentPageNumber + 1) + '</button></li>';
+                tempPagingHtmlStringData += '<li class="page-item"><button class="page-link customPaging get-page-data">' + (currentPageNumber - 1) + '</button></li>' +
+                    '<li class="page-item"><button class="page-link customPaging get-page-data">' + (currentPageNumber) + '</button></li>' +
+                    '<li class="page-item"><button class="page-link customPaging get-page-data">' + (currentPageNumber + 1) + '</button></li>';
 
                 if ((currentPageNumber + 2) != totalPageNumber)
                     tempPagingHtmlStringData += '<li class="page-item disabled"><button class="page-link">...</button></li>';
             }
         }
 
-        tempPagingHtmlStringData += '<li class="page-item"><button class="page-link customPaging">' + totalPageNumber + '</button></li>';
+        tempPagingHtmlStringData += '<li class="page-item"><button class="page-link customPaging get-page-data">' + totalPageNumber + '</button></li>';
     }
     else {
         for (let i = 2; i <= totalPageNumber; ++i) {
-            tempPagingHtmlStringData += '<li class="page-item"><button class="page-link customPaging">' + i + '</button></li>';
+            tempPagingHtmlStringData += '<li class="page-item"><button class="page-link customPaging get-page-data">' + i + '</button></li>';
         }
     }
 
     $(".pagination").empty();
     let dataString = '<li id="PreviousPage" class="page-item">' +
-        '<button class="page-link previous-next-page">Önceki</button>' +
+        '<button class="page-link previous-next-page get-page-data">Önceki</button>' +
         '</li>' +
 
         tempPagingHtmlStringData +
 
         '<li id="NextPage" class="page-item">' +
-        '<button class="page-link previous-next-page">Sonraki</button>' +
+        '<button class="page-link previous-next-page get-page-data">Sonraki</button>' +
         '</li>';
 
     $(".pagination").html(dataString);

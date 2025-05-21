@@ -4,7 +4,48 @@
     ViewData["Title"] = "Bloglar";
     Layout = "~/Views/UILayout/Index.cshtml";
     int currentPage = 1;
-    int totalPage = 10;
+    int totalPage = Convert.ToInt32(Math.Ceiling((decimal)Model.TotalData / 5));
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function(){
+            $(".first-page-button").trigger("click");
+        });
+
+        $(document).on("click", ".page-link", function () {
+            var currentPage = parseInt($(this).text());
+            if(!currentPage){
+                currentPage = parseInt($(".btn-primary").text())+1;
+            }
+
+            loadData(5,currentPage);
+        });
+
+        function loadData(pageDataSize,pageNumber) {
+            console.log("pageNumber: ", pageDataSize);
+            console.log("pageNumber: ", pageNumber);
+
+            let dataJson = {
+                pageDataSize: pageDataSize,
+                pageNumber: pageNumber
+            }
+
+            $.ajax({
+                url:"@Url.Action("IndexPartial", "Blog")",
+                data: dataJson,
+                type: "POST",
+                success:function(response){
+                    $("#PartialContainer").empty();
+                    $("#PartialContainer").append(response);
+                },
+                error: function(xhr,status, error){
+                    console.error(`ajax Error: ${status} - ${error}`);
+                }
+            });
+        }
+
+    </script>
 }
 
 <section class="ftco-section">
@@ -14,22 +55,27 @@
             <div id="CurrentPageNumber" style="display: none !important;">@currentPage</div>
             <div id="TotalPageNumber" style="display: none !important;">@totalPage</div>
             <ul class="pagination justify-content-end">
-                <li id="PreviousPage" class="page-item">
-                    <button class="page-link previous-next-page">Önceki</button>
-                </li>
-                <li class="page-item"><button class="page-link customPaging btn btn-primary">1</button></li>
-                @for (var i = 2; i <= totalPage; ++i)
-                {
 
-                    <li class="page-item"><button class="page-link customPaging">@i</button></li>
-                }
+                <li id="PreviousPage" class="page-item" ">
+                    <button class="page-link previous-next-page" onclick="">Önceki</button>
+                </li>
+
+                <li class="page-item"><button class="page-link customPaging btn btn-primary first-page-button">1</button></li>
+
                 <li id="NextPage" class="page-item">
                     <button class="page-link previous-next-page">Sonraki</button>
                 </li>
             </ul>
         </div>
 
-        <div class="row d-flex justify-content-center">
+        <div id="PartialContainer">
+                @* @await Html.PartialAsync("~/Views/Blog/IndexPartial.cshtml") *@
+        </div>
+
+    </div>
+</section>
+
+                @* <div class="row d-flex justify-content-center">
             @if (Model.BlogDatas.Count() < 1)
             {
                 <div class="col-md-12 text-center alert alert-info">
@@ -48,7 +94,7 @@
                                 <div class="meta mb-3">
                                     <div><a href="#">@blogItem.CreatedDate.LocalDateTime.ToString("yyyy-MM-dd HH:mm")</a></div>
                                     <div><a href="#">@blogItem.Author.AuthorName</a></div>
-                                    <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 0</a></div>
+                                    <div><a href="#" class="meta-chat"><span class="icon-chat"></span> @blogItem.BlogCommentCount</a></div>
                                 </div>
                                 <h3 class="heading mt-2"><a href="#">@blogItem.Title</a></h3>
                                 <p>@blogItem.Description.Substring(0, 200) ...</p>
@@ -58,6 +104,4 @@
                     </div>
                 }
             }
-        </div>
-    </div>
-</section>
+        </div> *@

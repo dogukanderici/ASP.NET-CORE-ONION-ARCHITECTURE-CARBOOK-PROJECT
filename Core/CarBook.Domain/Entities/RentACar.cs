@@ -16,6 +16,8 @@ namespace CarBook.Domain.Entities
         public int CarID { get; set; }
         public Car Car { get; set; }
         public bool Available { get; set; }
+        public Guid? ReservationID { get; set; }
+        public Reservation? Reservation { get; set; }
         public DateTimeOffset PickUpDate { get; set; }
         public DateTimeOffset DropOffDate { get; set; }
     }

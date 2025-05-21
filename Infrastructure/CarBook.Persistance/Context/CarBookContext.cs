@@ -15,6 +15,21 @@ namespace CarBook.Persistance.Context
 
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Reservation>()
+                .HasOne(x => x.PickUpLocation)
+                .WithMany(y => y.PickUpReservations)
+                .HasForeignKey(fk => fk.PickUpLocationID)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            modelBuilder.Entity<Reservation>()
+                .HasOne(x => x.DropOffLocation)
+                .WithMany(y => y.DropOffReservations)
+                .HasForeignKey(fk => fk.DropOffLocationID)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+        }
+
         public DbSet<About> Abouts { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Banner> Banners { get; set; }
@@ -37,6 +52,7 @@ namespace CarBook.Persistance.Context
         public DbSet<BlogTagCloud> BlogTagClouds { get; set; }
         public DbSet<BlogComment> BlogComments { get; set; }
         public DbSet<RentACar> RentACars { get; set; }
-        public DbSet<Customer> CustomerS { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
     }
 }

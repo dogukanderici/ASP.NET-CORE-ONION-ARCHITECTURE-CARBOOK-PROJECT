@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CarBook.Application.Features.Mediator.Queries.BlogCommentQueries;
 using CarBook.Application.Features.Mediator.Queries.BlogQueries;
 using CarBook.Application.Features.Mediator.Results.BlogResults;
 using CarBook.Application.Interfaces;
@@ -18,11 +19,13 @@ namespace CarBook.Application.Features.Mediator.Handlers.BlogHandlers
     {
         private readonly IRepository<Blog> _repository;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public GetLast3BlogQueryHandler(IRepository<Blog> repository, IMapper mapper)
+        public GetLast3BlogQueryHandler(IRepository<Blog> repository, IMapper mapper, IMediator mediator)
         {
             _repository = repository;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         public async Task<List<GetLast3BlogQueryResult>> Handle(GetLast3BlogQuery request, CancellationToken cancellationToken)
@@ -43,7 +46,16 @@ namespace CarBook.Application.Features.Mediator.Handlers.BlogHandlers
 
             List<Blog> values = await _repository.GetAllAsync(dbQueryOptions);
 
+            var blogIds = values.Select(b => b.BlogID).ToList();
+
+            var blogCommentValue = await _mediator.Send(new GetBlogCommentCountByBlogIdQuery(blogIds));
+
             List<GetLast3BlogQueryResult> valueToDto = _mapper.Map<List<GetLast3BlogQueryResult>>(values);
+
+            foreach (var item in valueToDto)
+            {
+                item.BlogCommentCount = blogCommentValue.BlogCommentCount.ContainsKey(item.BlogID) ? blogCommentValue.BlogCommentCount[item.BlogID] : 0;
+            }
 
             return valueToDto;
         }

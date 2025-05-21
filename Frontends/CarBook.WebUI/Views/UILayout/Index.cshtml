@@ -16,8 +16,10 @@
     @RenderBody()
 
     @await Component.InvokeAsync("_UILayoutFooterComponentPartial")
-    
+
     @await Component.InvokeAsync("_UILayoutScriptComponentPartial")
+
+    @await RenderSectionAsync("Scripts", required: false)
 
 </body>
 </html>

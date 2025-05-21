@@ -11,13 +11,16 @@ namespace CarBook.WebAPI.Controllers
     public class CarsController : ControllerBase
     {
         private readonly GetCarQueryHandler _getCarQueryHandler;
+        private readonly GetCarForOnlyCarPricingQueryHandler _getCarForOnlyCarPricingQueryHandler;
         private readonly GetLast5CarsQueryHandler _getLast5CarsQueryHandler;
         private readonly GetCarByIdQueryHandler _getCarByIdQueryHandler;
         private readonly CreateCarCommandHandler _createCarCommandHandler;
         private readonly UpdateCarCommandHandler _updateCarCommandHandler;
         private readonly RemoveCarCommandHandler _removeCarCommandHandler;
 
-        public CarsController(GetCarQueryHandler getCarQueryHandler,
+        public CarsController(
+            GetCarQueryHandler getCarQueryHandler,
+            GetCarForOnlyCarPricingQueryHandler getCarForOnlyCarPricingQueryHandler,
             GetCarByIdQueryHandler getCarByIdQueryHandler,
             GetLast5CarsQueryHandler getLast5CarsQueryHandler,
             CreateCarCommandHandler createCarCommandHandler,
@@ -25,6 +28,7 @@ namespace CarBook.WebAPI.Controllers
             RemoveCarCommandHandler removeCarCommandHandler)
         {
             _getCarQueryHandler = getCarQueryHandler;
+            _getCarForOnlyCarPricingQueryHandler = getCarForOnlyCarPricingQueryHandler;
             _getLast5CarsQueryHandler = getLast5CarsQueryHandler;
             _getCarByIdQueryHandler = getCarByIdQueryHandler;
             _createCarCommandHandler = createCarCommandHandler;
@@ -36,6 +40,14 @@ namespace CarBook.WebAPI.Controllers
         public async Task<IActionResult> CarList()
         {
             var values = await _getCarQueryHandler.Handle();
+
+            return Ok(values);
+        }
+
+        [HttpGet("GetCarForOnlyWithPricing")]
+        public async Task<IActionResult> GetCarForOnlyWithPricing()
+        {
+            var values = await _getCarForOnlyCarPricingQueryHandler.Handle();
 
             return Ok(values);
         }

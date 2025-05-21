@@ -16,7 +16,9 @@ namespace CarBook.Application.Features.MappingProfiles.RentACarMappings
         {
             CreateMap<RentACar, GetRentACarQueryResult>().ReverseMap();
             CreateMap<RentACar, GetRentACarForCarQueryResult>().ReverseMap();
+            CreateMap<RentACar, GetRentACarForReservationQueryResult>().ReverseMap();
             CreateMap<RentACar, GetRentACarByIdQueryResult>().ReverseMap();
+            CreateMap<RentACar, GetRentACarByCarIdQueryResult>().ReverseMap();
             CreateMap<RentACar, GetRentACarByAvailablityQueryResult>().ReverseMap();
             CreateMap<RentACar, CreateRentACarCommand>().ReverseMap();
             CreateMap<RentACar, UpdateRentACarCommand>().ReverseMap();

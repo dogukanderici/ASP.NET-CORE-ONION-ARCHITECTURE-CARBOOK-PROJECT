@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CarBook.Application.Features.Mediator.Queries.BlogCommentQueries;
 using CarBook.Application.Features.Mediator.Queries.BlogQueries;
 using CarBook.Application.Features.Mediator.Results.BlogResults;
 using CarBook.Application.Interfaces;
@@ -18,49 +19,43 @@ namespace CarBook.Application.Features.Mediator.Handlers.BlogHandlers
     {
         private readonly IRepository<Blog> _repository;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public GetBlogWithPublishStateQueryHandler(IRepository<Blog> repository, IMapper mapper)
+        public GetBlogWithPublishStateQueryHandler(IRepository<Blog> repository, IMapper mapper, IMediator mediator)
         {
             _repository = repository;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         public async Task<List<GetBlogWithPublishStateQueryResult>> Handle(GetBlogWithPublishStateQuery request, CancellationToken cancellationToken)
         {
-            Dictionary<Expression<Func<Blog, object>>, List<Expression<Func<object, object>>>> thenIncludes =
-                new Dictionary<Expression<Func<Blog, object>>, List<Expression<Func<object, object>>>>
-                {
-                    {
-                        b=>b.Author,
-                        new List<Expression<Func<object, object>>>{}
-                    },
-                    {
-                        b=>b.BlogCategory,
-                        new List<Expression<Func<object, object>>>{}
-                    },
-                    {
-                        b=>b.BlogTagClouds,
-                        new List<Expression<Func<object, object>>>
-                        {
-                            btc=>((BlogTagCloud)btc).TagCloud
-                        }
-                    },
-                    {
-                        b=>b.BlogComments,
-                        new List<Expression<Func<object, object>>>{}
-                    }
-                };
+            List<Expression<Func<Blog, object>>> includes = new List<Expression<Func<Blog, object>>>
+            {
+                b => b.Author
+            };
 
             Expression<Func<Blog, bool>> filter = b => b.PublishState == request.PublishState;
 
             DbQueryOptions<Blog> dbQueryOptions = new DbQueryOptions<Blog>();
 
-            dbQueryOptions.thenIncludes = thenIncludes;
             dbQueryOptions.filter = filter;
+            dbQueryOptions.includes = includes;
 
-            List<Blog> values = await _repository.GetAllAsync(dbQueryOptions);
+            List<Blog> values = _repository.GetQueryableEntity(dbQueryOptions)
+                .Skip((request.PageDataSize * (request.PageNumber - 1)))
+                .Take(request.PageDataSize).ToList();
+
+            var blogIdList = values.Select(b => b.BlogID).ToList();
+
+            var blogCommentCount = await _mediator.Send(new GetBlogCommentCountByBlogIdQuery(blogIdList));
 
             List<GetBlogWithPublishStateQueryResult> valueToDto = _mapper.Map<List<GetBlogWithPublishStateQueryResult>>(values);
+
+            foreach (var item in valueToDto)
+            {
+                item.BlogCommentCount = blogCommentCount.BlogCommentCount.ContainsKey(item.BlogID) ? blogCommentCount.BlogCommentCount[item.BlogID] : 0;
+            }
 
             return valueToDto;
 

@@ -42,14 +42,21 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         }
 
         [HttpGet("Create")]
-        public IActionResult CreateBlog()
+        public async Task<IActionResult> CreateBlog()
         {
+            List<SelectListItem> blogCategoryList = await GetBlogCategoryAsync();
+            ViewBag.BlogCategoryList = blogCategoryList;
+
             return View();
         }
 
         [HttpPost("Create")]
         public async Task<IActionResult> CreateBlog(AdminUIBlogViewModel adminUIBlogViewModel)
         {
+            adminUIBlogViewModel.CreateData.CreatedDate = new DateTimeOffset(DateTime.Now, TimeSpan.FromHours(3));
+            adminUIBlogViewModel.CreateData.CoverImageUrl = "deneme";
+            adminUIBlogViewModel.CreateData.AuthorID = Guid.Parse("D471ED04-AAFC-48D9-FA7F-08DD572FE794");
+
             var client = _httpClientFactory.CreateClient();
             var responseMessage = await client.PostAsJsonAsync<CreateBlogDto>($"{_apiSettings.ApiBaseUrl}/blogs", adminUIBlogViewModel.CreateData);
 

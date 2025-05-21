@@ -38,6 +38,10 @@ namespace CarBook.WebUI.Controllers
             var client = _httpClientFactory.CreateClient();
             var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/RentACars/GetRentACarWithAvailablity?{query}");
 
+            query["dropOffLocationId"] = filterRentACarDto.DropOffLocationID.ToString();
+
+            ViewBag.QueryString = query;
+
             if (responseMessage.IsSuccessStatusCode)
             {
                 var jsonData = await responseMessage.Content.ReadAsStringAsync();

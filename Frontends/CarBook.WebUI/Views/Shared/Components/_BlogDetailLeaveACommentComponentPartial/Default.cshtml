@@ -1,26 +1,30 @@
-﻿<div class="comment-form-wrap pt-5">
-    <h3 class="mb-5">Yorum Ekleyin</h3>
-    <form action="#" class="p-5 bg-light">
-        <div class="form-group">
-            <label for="name">Name *</label>
-            <input type="text" class="form-control" id="name">
-        </div>
-        <div class="form-group">
-            <label for="email">Email *</label>
-            <input type="email" class="form-control" id="email">
-        </div>
-        <div class="form-group">
-            <label for="website">Website</label>
-            <input type="url" class="form-control" id="website">
-        </div>
+﻿@model BlogUIViewModel
 
-        <div class="form-group">
-            <label for="message">Message</label>
-            <textarea name="" id="message" cols="30" rows="10" class="form-control"></textarea>
-        </div>
-        <div class="form-group">
-            <input type="submit" value="Yorumu Gönder" class="btn py-3 px-4 btn-primary">
-        </div>
-
-    </form>
+<div class="d-flex justify-content-center align-items-center p-4">
+    <div class="comment-form-wrap pt-5 col-md-12">
+        <h3 class="mb-5">Yorum Ekleyin</h3>
+        <form id="NewBlogCommentForm" class="p-5 bg-light" asp-controller="Blog" asp-action="PostBlogComment" method="post">
+            <input type="hidden" asp-for="@Model.CreateBlogCommentData.BlogID" value="@ViewBag.BlogId" />
+            <div class="row d-flex justify-content-center m-2">
+                <div class="text-danger font-italic" style="font-size: 12px">(*) Alanların Doldurulması Zorunludur!</div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label asp-for="@Model.CreateBlogCommentData.Name">Ad / Soyad *</label>
+                    <input asp-for="@Model.CreateBlogCommentData.Name" type="text" class="form-control">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="email">E-Posta</label>
+                    <input type="email" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.CreateBlogCommentData.Description">Yorumunuz *</label>
+                <textarea asp-for="@Model.CreateBlogCommentData.Description" rows="8" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Yorumu Gönder" class="btn py-3 px-4 btn-primary">
+            </div>
+        </form>
+    </div>
 </div>

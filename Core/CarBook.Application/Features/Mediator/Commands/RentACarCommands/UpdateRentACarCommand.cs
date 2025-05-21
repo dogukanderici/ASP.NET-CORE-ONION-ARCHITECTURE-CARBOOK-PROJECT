@@ -15,6 +15,7 @@ namespace CarBook.Application.Features.Mediator.Commands.RentACarCommands
         public int LocationID { get; set; }
         public int CarID { get; set; }
         public bool Available { get; set; }
+        public Guid ReservationID { get; set; }
         public DateTimeOffset PickUpDate { get; set; }
         public DateTimeOffset DropOffDate { get; set; }
     }

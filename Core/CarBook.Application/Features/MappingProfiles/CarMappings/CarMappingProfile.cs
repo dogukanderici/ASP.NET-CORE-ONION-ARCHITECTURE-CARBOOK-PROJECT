@@ -16,6 +16,7 @@ namespace CarBook.Application.Features.MappingProfiles.CarMappings
         {
             CreateMap<Car, GetCarQueryResult>().ReverseMap();
             CreateMap<Car, GetCarForCarFeatureQueryResult>().ReverseMap();
+            CreateMap<Car, GetCarForOnlyCarPricingQueryResult>().ReverseMap();
             CreateMap<Car, GetCarForRentACarQueryResult>().ReverseMap();
             CreateMap<Car, GetLast5CarsQueryResult>().ReverseMap();
             CreateMap<Car, GetCarByIdQueryResult>().ReverseMap();

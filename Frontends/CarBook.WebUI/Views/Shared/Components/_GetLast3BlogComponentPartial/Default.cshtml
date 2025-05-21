@@ -20,10 +20,10 @@
                             <div class="meta mb-3">
                                 <div><a href="#">@blogItem.CreatedDate.LocalDateTime.ToString("yyyy-MM-dd HH:mm")</a></div>
                                 <div><a href="#">@blogItem.Author.AuthorName</a></div>
-                                <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 0</a></div>
+                                <div><a href="#" class="meta-chat"><span class="icon-chat"></span> @blogItem.BlogCommentCount</a></div>
                             </div>
-                            <h3 class="heading mt-2"><a href="#">@blogItem.Title</a></h3>
-                            <p><a href="#" class="btn btn-primary">Devamını Oku</a></p>
+                            <h3 class="heading mt-2"><a href="/blog/blogdetail?id=@blogItem.BlogID">@blogItem.Title</a></h3>
+                            <p><a href="/blog/blogdetail?id=@blogItem.BlogID" class="btn btn-primary">Devamını Oku</a></p>
                         </div>
                     </div>
                 </div>

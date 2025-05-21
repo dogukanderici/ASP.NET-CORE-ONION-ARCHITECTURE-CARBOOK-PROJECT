@@ -50,11 +50,19 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetBlogWithPublishState")]
-        public async Task<IActionResult> GetBlogWithPublishState(bool state)
+        public async Task<IActionResult> GetBlogWithPublishState(bool publishState, int pageDataSize, int pageNumber)
         {
-            var value = await _mediator.Send(new GetBlogWithPublishStateQuery(state));
+            var value = await _mediator.Send(new GetBlogWithPublishStateQuery(publishState, pageDataSize, pageNumber));
 
             return Ok(value);
+        }
+
+        [HttpGet("GetBlogTotalCount")]
+        public async Task<IActionResult> GetBlogTotalCount(bool publishState)
+        {
+            var totalBlogCount = await _mediator.Send(new GetBlogWithCountQuery(publishState));
+
+            return Ok(totalBlogCount.TotalBlogCount);
         }
 
         [HttpPost]

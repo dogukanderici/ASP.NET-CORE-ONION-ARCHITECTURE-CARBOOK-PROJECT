@@ -1,0 +1,75 @@
+﻿@model CarUIViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/UILayout/Index.cshtml";
+    int pricingCount = 4;
+}
+
+<section class="ftco-section ftco-cart">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 ftco-animate">
+                <div class="car-list">
+                    <table class="table">
+                        <thead class="thead-primary">
+                            <tr class="text-center">
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                                <th class="bg-primary heading">Saatlik Araç Ücreti</th>
+                                <th class="bg-dark heading">Günlük Araç Ücreti</th>
+                                <th class="bg-black heading">Haftalık Araç Ücreti</th>
+                                <th class="bg-black heading">Aylık Araç Ücreti</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var carItem in Model.CarDatas)
+                            {
+                                <tr class="">
+                                    <td class="car-image"><div class="img mr-2" style="background-image:url(@carItem.BigImageURL);"></div></td>
+                                    <td class="product-name">
+                                        <h3>@carItem.Brand.BrandName - @carItem.Model</h3>
+                                        <p class="mb-0 rated">
+                                            <span>rated:</span>
+                                            <span class="ion-ios-star"></span>
+                                            <span class="ion-ios-star"></span>
+                                            <span class="ion-ios-star"></span>
+                                            <span class="ion-ios-star"></span>
+                                            <span class="ion-ios-star"></span>
+                                        </p>
+                                    </td>
+
+                                    @foreach (var carPricingItem in carItem.CarPricings)
+                                    {
+                                        <td class="price">
+                                            <p class="btn-custom"><a href="#">Kirala</a></p>
+                                            <div class="price-rate">
+                                                <h3>
+                                                    <span class="num"><small class="currency">₺ </small> @carPricingItem.Amount.ToString("00.00")</span>
+                                                </h3>
+                                                <span class="subheading">/@carPricingItem.PricingType.Name</span>
+                                            </div>
+                                        </td>
+                                    }
+
+                                    @for (int i = 0; i < (pricingCount - carItem.CarPricings.Count()); i++)
+                                    {
+                                        <td class="price">
+                                            @* <p class="btn-custom"><a href="#">Kirala</a></p> *@
+                                            <div class="price-rate">
+                                                <h3>
+                                                    <span class="num"><small class="currency">₺ </small> Fiyat Bilgisi Bulunamadı</span>
+                                                </h3>
+                                                <span class="subheading">/Ödeme Tipi Bulunamadı</span>
+                                            </div>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

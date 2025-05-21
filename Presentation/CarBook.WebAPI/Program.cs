@@ -1,21 +1,16 @@
 using CarBook.Application;
-using CarBook.Application.Features.CQRS.Handlers.AboutHandlers;
-using CarBook.Application.Features.CQRS.Handlers.BannerHandlers;
-using CarBook.Application.Features.CQRS.Handlers.BlogCategoryHandlers;
-using CarBook.Application.Features.CQRS.Handlers.BrandHandlers;
-using CarBook.Application.Features.CQRS.Handlers.CarHandlers;
-using CarBook.Application.Features.CQRS.Handlers.ContactHandlers;
-using CarBook.Application.Features.MappingProfiles.AboutMappings;
 using CarBook.Application.Interfaces;
 using CarBook.Application.Interfaces.CarInterfaces;
+using CarBook.Application.Interfaces.RentACarInterfaces;
 using CarBook.Application.Interfaces.StatisticsInterfaces;
 using CarBook.Application.Services;
 using CarBook.Persistance.Context;
 using CarBook.Persistance.Repositories;
 using CarBook.Persistance.Repositories.CarRepositories;
+using CarBook.Persistance.Repositories.RentACarRepositories;
 using CarBook.Persistance.Repositories.StatisticsRepositories;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +23,20 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(typeof(ApplicationAssemblyMarker).Assembly);
 
+// Serilog yapýlandýrmasý
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug() // Minimum log seviyesi (en düþük: Debug)
+    .WriteTo.Console() // Konsola log yaz
+    .WriteTo.Debug()
+    .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day) // Dosyaya log yaz (günlük dosya)
+    .CreateLogger();
+
+builder.Host.ConfigureLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddSerilog();
+});
+
 builder.Services.AddDbContext<CarBookContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("CarBookDbSettings"));
@@ -36,6 +45,7 @@ builder.Services.AddDbContext<CarBookContext>(options =>
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped(typeof(IStatisticsRepository), typeof(StatisticsRepository));
 builder.Services.AddScoped(typeof(ICarRepository), typeof(CarRepository));
+builder.Services.AddScoped(typeof(IRentACarRepository), typeof(RentACarRepository));
 
 // Service Class'larý Dahil Edilir.
 builder.Services.CQRSApplicationService();

@@ -20,9 +20,7 @@ namespace CarBook.Application.Features.Mediator.Results.BlogResults
         public string Description { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public int BlogCategoryID { get; set; }
+        public int BlogCommentCount { get; set; }
         public bool PublishState { get; set; } = true;
-        public GetBlogCategoryQueryResult BlogCategory { get; set; }
-        public List<GetBlogTagCloudForBlogQueryResult> BlogTagClouds { get; set; }
-        public List<GetBlogCommentForBlogQueryResult> BlogComments { get; set; }
     }
 }
