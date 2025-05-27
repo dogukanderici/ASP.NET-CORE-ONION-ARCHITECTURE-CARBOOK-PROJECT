@@ -5,6 +5,7 @@ using CarBook.Application.Features.CQRS.Handlers.BrandHandlers;
 using CarBook.Application.Features.CQRS.Handlers.CarFeatureHandlers;
 using CarBook.Application.Features.CQRS.Handlers.CarHandlers;
 using CarBook.Application.Features.CQRS.Handlers.CarPricingHandlers;
+using CarBook.Application.Features.CQRS.Handlers.CarReviewHandlers;
 using CarBook.Application.Features.CQRS.Handlers.ContactHandlers;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -78,6 +79,14 @@ namespace CarBook.Application.Services
             services.AddScoped<CreateCarFeatureCommandHandler>();
             services.AddScoped<UpdateCarFeatureCommandHandler>();
             services.AddScoped<RemoveCarFeatureCommandHandler>();
+
+            // CarReviews
+            services.AddScoped<GetCarReviewQueryHandler>();
+            services.AddScoped<GetCarReviewByIdQueryHandler>();
+            services.AddScoped<GetCarReviewByCarIdQueryHandler>();
+            services.AddScoped<CreateCarReviewCommandHandler>();
+            services.AddScoped<UpdateCarReviewCommandHandler>();
+            services.AddScoped<RemoveCarReviewCommandHandler>();
         }
     }
 }

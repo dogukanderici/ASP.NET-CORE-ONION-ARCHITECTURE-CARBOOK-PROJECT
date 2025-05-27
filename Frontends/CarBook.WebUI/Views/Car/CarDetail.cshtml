@@ -1,0 +1,181 @@
+﻿@using System.Globalization
+@using Newtonsoft.Json
+@model CarUIViewModel
+
+@{
+    ViewData["Title"] = ViewBag.PageRouteTitle;
+    Layout = "~/Views/UILayout/Index.cshtml";
+
+    string carFeatureStringData = JsonConvert.SerializeObject(Model.CarData.CarFeatures);
+}
+
+<section class="ftco-section ftco-car-details">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="car-details">
+                    <div class="img rounded" style="background-image: url(@Model.CarData.BigImageURL);"></div>
+                    <div class="text text-center">
+                        <span class="subheading">@Model.CarData.Brand.BrandName</span>
+                        <h2>@Model.CarData.Model</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md d-flex align-self-stretch ftco-animate">
+                <div class="media block-6 services">
+                    <div class="media-body py-md-4">
+                        <div class="d-flex mb-3 align-items-center">
+                            <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-dashboard"></span></div>
+                            <div class="text">
+                                <h3 class="heading mb-0 pl-3">
+                                    Araç KM
+                                    <span>@Model.CarData.KM.ToString("N2", new CultureInfo("tr-TR"))</span>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md d-flex align-self-stretch ftco-animate">
+                <div class="media block-6 services">
+                    <div class="media-body py-md-4">
+                        <div class="d-flex mb-3 align-items-center">
+                            <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-pistons"></span></div>
+                            <div class="text">
+                                <h3 class="heading mb-0 pl-3">
+                                    Şanzıman
+                                    <span>@Model.CarData.Transmission</span>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md d-flex align-self-stretch ftco-animate">
+                <div class="media block-6 services">
+                    <div class="media-body py-md-4">
+                        <div class="d-flex mb-3 align-items-center">
+                            <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-car-seat"></span></div>
+                            <div class="text">
+                                <h3 class="heading mb-0 pl-3">
+                                    Koltuk Sayısı
+                                    <span>@Model.CarData.Seat Yetişkin</span>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md d-flex align-self-stretch ftco-animate">
+                <div class="media block-6 services">
+                    <div class="media-body py-md-4">
+                        <div class="d-flex mb-3 align-items-center">
+                            <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-backpack"></span></div>
+                            <div class="text">
+                                <h3 class="heading mb-0 pl-3">
+                                    Bagaj
+                                    <span>@Model.CarData.Luggage Bags</span>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md d-flex align-self-stretch ftco-animate">
+                <div class="media block-6 services">
+                    <div class="media-body py-md-4">
+                        <div class="d-flex mb-3 align-items-center">
+                            <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-diesel"></span></div>
+                            <div class="text">
+                                <h3 class="heading mb-0 pl-3">
+                                    Yakıt Tipi
+                                    <span>@Model.CarData.Fuel</span>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 pills">
+                <div class="bd-example bd-example-tabs">
+
+                    @* Tabbed Theme *@
+                    @await Component.InvokeAsync("_CarDetailTabThemeComponentPartial")
+
+                    <div class="tab-content" id="pills-tabContent">
+
+                        @* Car Features *@
+                        @await Component.InvokeAsync("_CarDetailCarFeatureByCarIdComponentPartial", new { carFeatures = carFeatureStringData })
+
+                        @* Car Description *@
+                        @await Component.InvokeAsync("_CarDetailCarDescriptionByCarIdComponentPartial")
+
+                        @* @CarBook Reviews *@
+                        @await Component.InvokeAsync("_CarDetailReviewByCarIdComponentPartial")
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* Related Car *@
+<section class="ftco-section ftco-no-pt">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12 heading-section text-center ftco-animate mb-5">
+                <span class="subheading">Choose Car</span>
+                <h2 class="mb-2">Related Cars</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="car-wrap rounded ftco-animate">
+                    <div class="img rounded d-flex align-items-end" style="background-image: url(images/car-1.jpg);">
+                    </div>
+                    <div class="text">
+                        <h2 class="mb-0"><a href="car-single.html">Mercedes Grand Sedan</a></h2>
+                        <div class="d-flex mb-3">
+                            <span class="cat">Cheverolet</span>
+                            <p class="price ml-auto">$500 <span>/day</span></p>
+                        </div>
+                        <p class="d-flex mb-0 d-block"><a href="#" class="btn btn-primary py-2 mr-1">Book now</a> <a href="car-single.html" class="btn btn-secondary py-2 ml-1">Details</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="car-wrap rounded ftco-animate">
+                    <div class="img rounded d-flex align-items-end" style="background-image: url(images/car-2.jpg);">
+                    </div>
+                    <div class="text">
+                        <h2 class="mb-0"><a href="car-single.html">Range Rover</a></h2>
+                        <div class="d-flex mb-3">
+                            <span class="cat">Subaru</span>
+                            <p class="price ml-auto">$500 <span>/day</span></p>
+                        </div>
+                        <p class="d-flex mb-0 d-block"><a href="#" class="btn btn-primary py-2 mr-1">Book now</a> <a href="car-single.html" class="btn btn-secondary py-2 ml-1">Details</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="car-wrap rounded ftco-animate">
+                    <div class="img rounded d-flex align-items-end" style="background-image: url(images/car-3.jpg);">
+                    </div>
+                    <div class="text">
+                        <h2 class="mb-0"><a href="car-single.html">Mercedes Grand Sedan</a></h2>
+                        <div class="d-flex mb-3">
+                            <span class="cat">Cheverolet</span>
+                            <p class="price ml-auto">$500 <span>/day</span></p>
+                        </div>
+                        <p class="d-flex mb-0 d-block"><a href="#" class="btn btn-primary py-2 mr-1">Book now</a> <a href="car-single.html" class="btn btn-secondary py-2 ml-1">Details</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

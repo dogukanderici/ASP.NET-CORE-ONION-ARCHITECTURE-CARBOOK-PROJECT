@@ -18,6 +18,7 @@ namespace CarBook.WebUI.Controllers
             _apiSettings = apiSettings.Value;
         }
 
+
         public async Task<IActionResult> Index()
         {
             ViewBag.PageRouteTitle = "Araçlarımız";
@@ -32,6 +33,26 @@ namespace CarBook.WebUI.Controllers
                 var jsonData = await responseMessage.Content.ReadAsStringAsync();
                 var value = JsonConvert.DeserializeObject<List<ResultCarDto>>(jsonData);
                 model.CarDatas = value;
+            }
+
+            return View(model);
+        }
+
+
+        public async Task<IActionResult> CarDetail(int id)
+        {
+            ViewBag.PageRouteTitle = "Araç Detayı";
+
+            var client = _httpClientFactory.CreateClient();
+            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/cars/{id}");
+
+            CarUIViewModel model = new CarUIViewModel();
+
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                var jsonData = await responseMessage.Content.ReadAsStringAsync();
+                var value = JsonConvert.DeserializeObject<ResultCarDto>(jsonData);
+                model.CarData = value;
             }
 
             return View(model);

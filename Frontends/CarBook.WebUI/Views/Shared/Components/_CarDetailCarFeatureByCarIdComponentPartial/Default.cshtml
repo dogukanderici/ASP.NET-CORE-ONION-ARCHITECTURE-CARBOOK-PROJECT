@@ -1,0 +1,32 @@
+﻿@model CarUIViewModel
+
+@{
+    int featureCount = Model.CarData.CarFeatures.Count();
+}
+
+<div class="tab-pane fade show active" id="pills-description" role="tabpanel" aria-labelledby="pills-description-tab">
+    <div class="row">
+
+        @if (featureCount < 1)
+        {
+            <div class="col-md-12">
+                <div class="alert alert-info text-center">Araca Ait Özellik Bulunamadı!</div>
+            </div>
+        }
+
+        @for (var i = 0; i < Math.Ceiling((double)featureCount / 5); i++)
+        {
+            <div class="col-md-4">
+                <ul class="features">
+                    @for (var j = 0; j < 5; j++)
+                    {
+                        if (((j) + (i * 5)) < featureCount)
+                        {
+                            <li class="check"><span class="ion-ios-checkmark"></span>@Model.CarData.CarFeatures[(j) + (i * 5)].Feature.FeatureName</li>
+                        }
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+</div>

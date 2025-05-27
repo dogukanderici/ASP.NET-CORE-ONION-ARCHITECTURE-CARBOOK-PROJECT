@@ -46,12 +46,12 @@ namespace CarBook.Application.Features.CQRS.Handlers.CarHandlers
                             cf=>((CarFeature)cf).Feature
                         }
                     },
-                    {
-                        c=>c.RentACar,
-                        new List<Expression<Func<object, object>>>{
-                            r=>((RentACar)r).Location
-                        }
-                    }
+                    //{
+                    //    c=>c.RentACar,
+                    //    new List<Expression<Func<object, object>>>{
+                    //        r=>((RentACar)r).Location
+                    //    }
+                    //}
                 };
 
             DbQueryOptions<Car> dbQueryOptions = new DbQueryOptions<Car>();
