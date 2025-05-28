@@ -24,7 +24,7 @@ namespace CarBook.Application.Features.CQRS.Handlers.CarReviewHandlers
         public async Task Handle(CreateCarReviewCommand createCarReviewCommand)
         {
             createCarReviewCommand.CarReviewID = Guid.NewGuid();
-            createCarReviewCommand.ReviewDate = DateTimeOffset.Now;
+            createCarReviewCommand.ReviewDate = new DateTimeOffset(DateTime.Now, TimeSpan.FromHours(3));
             createCarReviewCommand.IsAvailable = false;
 
             CarReview valueFromDto = _mapper.Map<CarReview>(createCarReviewCommand);

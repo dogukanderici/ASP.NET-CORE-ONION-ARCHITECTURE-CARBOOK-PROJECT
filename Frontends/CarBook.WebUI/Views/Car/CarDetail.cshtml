@@ -116,7 +116,7 @@
                         @await Component.InvokeAsync("_CarDetailCarDescriptionByCarIdComponentPartial")
 
                         @* @CarBook Reviews *@
-                        @await Component.InvokeAsync("_CarDetailReviewByCarIdComponentPartial")
+                        @await Component.InvokeAsync("_CarDetailReviewByCarIdComponentPartial", new { carId = Model.CarData.CarID })
                     </div>
                 </div>
             </div>

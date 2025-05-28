@@ -23,7 +23,6 @@ namespace CarBook.Application.Features.CQRS.Handlers.CarReviewHandlers
 
         public async Task Handle(UpdateCarReviewCommand updateCarReviewCommand)
         {
-
             CarReview valueFromDto = _mapper.Map<CarReview>(updateCarReviewCommand);
 
             await _repository.UpdateAsync(valueFromDto);

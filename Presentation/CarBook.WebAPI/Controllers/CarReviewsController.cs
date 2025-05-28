@@ -1,6 +1,7 @@
 ﻿using CarBook.Application.Features.CQRS.Commands.CarReviewCommands;
 using CarBook.Application.Features.CQRS.Handlers.CarReviewHandlers;
 using CarBook.Application.Features.CQRS.Queries.CarReviewQueries;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,13 +17,17 @@ namespace CarBook.WebAPI.Controllers
         private readonly CreateCarReviewCommandHandler _createCarReviewCommandHandler;
         private readonly UpdateCarReviewCommandHandler _updateCarReviewCommandHandler;
         private readonly RemoveCarReviewCommandHandler _removeCarReviewCommandHandler;
+        private readonly IValidator<CreateCarReviewCommand> _createValidator;
+        private readonly IValidator<UpdateCarReviewCommand> _updateValidator;
 
         public CarReviewsController(GetCarReviewQueryHandler getCarReviewQueryHandler,
             GetCarReviewByIdQueryHandler getCarReviewByIdQueryHandler,
             GetCarReviewByCarIdQueryHandler getCarReviewByCarIdQueryHandler,
             CreateCarReviewCommandHandler createCarReviewCommandHandler,
             UpdateCarReviewCommandHandler updateCarReviewCommandHandler,
-            RemoveCarReviewCommandHandler removeCarReviewCommandHandler)
+            RemoveCarReviewCommandHandler removeCarReviewCommandHandler,
+            IValidator<CreateCarReviewCommand> createValidator,
+            IValidator<UpdateCarReviewCommand> updateValidator)
         {
             _getCarReviewQueryHandler = getCarReviewQueryHandler;
             _getCarReviewByIdQueryHandler = getCarReviewByIdQueryHandler;
@@ -30,6 +35,8 @@ namespace CarBook.WebAPI.Controllers
             _createCarReviewCommandHandler = createCarReviewCommandHandler;
             _updateCarReviewCommandHandler = updateCarReviewCommandHandler;
             _removeCarReviewCommandHandler = removeCarReviewCommandHandler;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
 
         [HttpGet]
@@ -82,9 +89,18 @@ namespace CarBook.WebAPI.Controllers
         {
             try
             {
-                await _createCarReviewCommandHandler.Handle(createCarReviewCommand);
+                var validator = _createValidator.Validate(createCarReviewCommand);
 
-                return Ok($"{createCarReviewCommand.CarID} Araca Ait Yeni Değerlendirme Başarıyla Eklendi!");
+                if (validator.IsValid)
+                {
+                    await _createCarReviewCommandHandler.Handle(createCarReviewCommand);
+
+                    return Ok($"{createCarReviewCommand.CarID} Araca Ait Yeni Değerlendirme Başarıyla Eklendi!");
+                }
+                else
+                {
+                    return StatusCode(500, validator.Errors);
+                }
             }
             catch (Exception ex)
             {
