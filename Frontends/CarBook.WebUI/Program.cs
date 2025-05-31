@@ -1,3 +1,5 @@
+using CarBook.WebUI.Services.IdentityServices.LoginServices;
+using CarBook.WebUI.Services.IdentityServices.RegisterServices;
 using CarBook.WebUI.Utilities.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,8 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
+
+// Extention sýnýf yazýlacak.
+builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IRegisterService, RegisterService>();
 
 var app = builder.Build();
 

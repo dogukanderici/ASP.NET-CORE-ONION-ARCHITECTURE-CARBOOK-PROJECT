@@ -3,16 +3,21 @@ using CarBook.Application.Interfaces;
 using CarBook.Application.Interfaces.CarInterfaces;
 using CarBook.Application.Interfaces.RentACarInterfaces;
 using CarBook.Application.Interfaces.StatisticsInterfaces;
+using CarBook.Application.Interfaces.TokenInterfaces;
 using CarBook.Application.Services;
+using CarBook.Configurations;
 using CarBook.Persistance.Context;
 using CarBook.Persistance.Repositories;
 using CarBook.Persistance.Repositories.CarRepositories;
 using CarBook.Persistance.Repositories.RentACarRepositories;
 using CarBook.Persistance.Repositories.StatisticsRepositories;
+using CarBook.Persistance.Services.TokenServices;
 using CarBook.WebAPI.Utilities.Extentions;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Reflection;
 
@@ -26,6 +31,28 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// JWT BEARER CONFUGURATIONS
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.Authority = builder.Configuration["IdentityServerUrl"]; // IdentityServer Url
+        options.Audience = "CarBookFullPermission"; // Config dosyasýndaki API Resource
+        options.RequireHttpsMetadata = false;
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            RoleClaimType = "role",
+            NameClaimType = "name",
+            ValidateAudience = true,
+            ValidateIssuer = true,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
 
 builder.Services.AddAutoMapper(typeof(ApplicationAssemblyMarker).Assembly);
 
@@ -57,6 +84,11 @@ builder.Services.AddScoped(typeof(IRentACarRepository), typeof(RentACarRepositor
 // Service Class'larý Dahil Edilir.
 builder.Services.CQRSApplicationService();
 builder.Services.AddApplicationService(builder.Configuration);
+
+builder.Services.AddHttpClient();
+builder.Services.Configure<ApiUrlOptions>(builder.Configuration.GetSection("ApiUrlOptions"));
+builder.Services.Configure<IdentityServerOptions>(builder.Configuration.GetSection("IdentityServerOptions"));
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 

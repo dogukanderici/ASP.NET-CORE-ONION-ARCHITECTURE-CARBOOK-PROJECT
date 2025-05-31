@@ -1,0 +1,6 @@
+@CarBook.IdentityServer_HostAddress = http://localhost:5158
+
+GET {{CarBook.IdentityServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
