@@ -1,11 +1,14 @@
 ﻿using CarBook.Dto.BlogCommentDtos;
 using CarBook.Dto.BlogDtos;
 using CarBook.WebUI.Models;
+using CarBook.WebUI.Services.BlogCommentServices;
+using CarBook.WebUI.Services.BlogServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -14,31 +17,25 @@ namespace CarBook.WebUI.Controllers
     [Route("Blog")]
     public class BlogController : Controller
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
+        private readonly IBlogService _blogService;
+        private readonly IBlogCommentService _blogCommentService;
 
-        public BlogController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public BlogController(IBlogService blogService, IBlogCommentService blogCommentService)
         {
-            _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
+            _blogService = blogService;
+            _blogCommentService = blogCommentService;
         }
 
         [HttpGet("")]
         public async Task<IActionResult> Index()
         {
-            ViewBag.PageRouteTitle = "Bloglar"; var client = _httpClientFactory.CreateClient();
+            ViewBag.PageRouteTitle = "Bloglar";
 
             BlogUIViewModel model = new BlogUIViewModel();
 
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/blogs/getblogtotalcount?publishstate=true");
+            int value = await _blogService.GetBlogCountWithPublishStateAsync(true);
 
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<int>(jsonData);
-
-                model.TotalData = value;
-            }
+            model.TotalData = value;
 
             return View(model);
         }
@@ -52,18 +49,11 @@ namespace CarBook.WebUI.Controllers
             queryString["pageDataSize"] = pageDataSize.ToString();
             queryString["pageNumber"] = pageNumber.ToString();
 
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/blogs/getblogwithpublishstate?{queryString}");
+            List<ResultBlogDto> values = await _blogService.GetBlogWithPublishStateAsync(queryString);
 
             BlogUIViewModel model = new BlogUIViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultBlogDto>>(jsonData);
-
-                model.BlogDatas = value;
-            }
+            model.BlogDatas = values;
 
             return PartialView(model);
         }
@@ -81,10 +71,9 @@ namespace CarBook.WebUI.Controllers
         public async Task<IActionResult> PostBlogComment(BlogUIViewModel blogUIViewModel)
         {
             blogUIViewModel.CreateBlogCommentData.CreatedDate = new DateTimeOffset(DateTime.Now, TimeSpan.FromHours(3));
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PostAsJsonAsync<CreateBlogCommentDto>($"{_apiSettings.ApiBaseUrl}/blogcomments", blogUIViewModel.CreateBlogCommentData);
+            bool response = await _blogCommentService.CreateNewBlogCommentAsync(blogUIViewModel.CreateBlogCommentData);
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (response)
             {
                 return RedirectToAction("BlogDetail", "Blog", new { id = blogUIViewModel.CreateBlogCommentData.BlogID });
             }

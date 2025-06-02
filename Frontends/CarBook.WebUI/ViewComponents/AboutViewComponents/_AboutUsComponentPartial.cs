@@ -1,5 +1,6 @@
 ﻿using CarBook.Dto.AboutDtos;
 using CarBook.WebUI.Models;
+using CarBook.WebUI.Services.AboutServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -10,29 +11,22 @@ namespace CarBook.WebUI.ViewComponents.AboutViewComponents
 {
     public class _AboutUsComponentPartial : ViewComponent
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
+        private readonly IAboutService _aboutService;
 
-        public _AboutUsComponentPartial(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public _AboutUsComponentPartial(IAboutService aboutService)
         {
-            _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
+            _aboutService = aboutService;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var client = _httpClientFactory.CreateClient();
-
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/abouts");
+            List<ResultAboutDto> values = await _aboutService.GetAboutAsync();
 
             AboutUIViewModel model = new AboutUIViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (values.Count() > 0)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultAboutDto>>(jsonData);
-
-                model.AboutDatas = value;
+                model.AboutDatas = values;
             }
 
             return View(model);

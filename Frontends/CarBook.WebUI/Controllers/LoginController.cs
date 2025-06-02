@@ -1,4 +1,5 @@
 ﻿using CarBook.Dto.IdentityDtos;
+using CarBook.WebUI.Models;
 using CarBook.WebUI.Services.IdentityServices.LoginServices;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
@@ -21,14 +22,15 @@ namespace CarBook.WebUI.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            ViewBag.PageTitle = "Kullanıcı Girişi";
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(LoginDto loginDto)
+        public async Task<IActionResult> Index(AuthUIViewModel authUIViewModel)
         {
             // TODO - Login validasyonları yapılacak.
-            await _loginService.Login(loginDto);
+            await _loginService.Login(authUIViewModel.UserLogin);
 
             // TODO - Kullanıcı Rolüne Göre Kullanıcı Sayfası veya Admin Sayfasına Yönlendirme Yapacak Controller Yazılacak.
             return RedirectToAction("Index", "Default");

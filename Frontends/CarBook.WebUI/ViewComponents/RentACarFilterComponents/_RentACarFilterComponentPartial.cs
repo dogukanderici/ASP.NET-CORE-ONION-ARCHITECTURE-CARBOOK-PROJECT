@@ -1,6 +1,7 @@
 ﻿using CarBook.Dto.LocationDtos;
 using CarBook.WebUI.Areas.Admin.Models;
 using CarBook.WebUI.Models;
+using CarBook.WebUI.Services.LocationServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,13 +14,11 @@ namespace CarBook.WebUI.ViewComponents.RentACarFilterComponents
 {
     public class _RentACarFilterComponentPartial : ViewComponent
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
+        private readonly ILocationService _locationService;
 
-        public _RentACarFilterComponentPartial(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public _RentACarFilterComponentPartial(ILocationService locationService)
         {
-            _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
+            _locationService = locationService;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
@@ -31,17 +30,13 @@ namespace CarBook.WebUI.ViewComponents.RentACarFilterComponents
 
         private async Task<List<SelectListItem>> GetLocationListAsync()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/locations");
+            List<ResultLocationDto> values = await _locationService.GetLocationsAsync();
 
             List<SelectListItem> locationList = new List<SelectListItem>();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (values.Count() > 0)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultLocationDto>>(jsonData);
-
-                locationList = (from item in value
+                locationList = (from item in values
                                 select new SelectListItem
                                 {
                                     Text = item.LocationName,

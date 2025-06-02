@@ -27,8 +27,8 @@ namespace CarBook.WebUI.Services.IdentityServices.LoginServices
 
         public async Task<bool> Login(LoginDto loginDto)
         {
-            HttpClient client = _httpClientFactory.CreateClient();
-            HttpResponseMessage response = await client.PostAsJsonAsync<LoginDto>($"{_apiSettings.ApiBaseUrl}/logins", loginDto);
+            HttpClient client = _httpClientFactory.CreateClient("LoginClient");
+            HttpResponseMessage response = await client.PostAsJsonAsync<LoginDto>("logins", loginDto);
 
             if (response.IsSuccessStatusCode)
             {
