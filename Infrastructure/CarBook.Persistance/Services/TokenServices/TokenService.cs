@@ -38,7 +38,40 @@ namespace CarBook.Persistance.Services.TokenServices
             throw new NotImplementedException();
         }
 
-        public async Task<TokenResponseDto> SignIn(LoginDto loginDto)
+        public async Task<TokenResponseDto> SignInWithClientCredentials()
+        {
+            HttpClient client = _httpClientFactory.CreateClient();
+
+            var discoveryEndPoint = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
+            {
+                Address = _apiUrlOptions.IdentityServerUrl,
+                Policy = new DiscoveryPolicy
+                {
+                    RequireHttps = false
+                }
+            });
+
+            ClientCredentialsTokenRequest tokenRequest = new ClientCredentialsTokenRequest
+            {
+                ClientId = "CarBookMember",
+                ClientSecret = "carbookmemberkeycarbookmemberkey",
+                Address = discoveryEndPoint.TokenEndpoint
+            };
+
+            var token = await client.RequestClientCredentialsTokenAsync(tokenRequest);
+
+            return new TokenResponseDto
+            {
+                Status = true,
+                Message = "client Credentials Token has created successfully!",
+                AccessToken = token.AccessToken,
+                RefreshToken = token.RefreshToken,
+                ExpiresIn = DateTime.Now.AddMinutes(token.ExpiresIn).ToString(),
+                Claims = null
+            };
+        }
+
+        public async Task<TokenResponseDto> SignInWithResourceOwnerPassword(LoginDto loginDto)
         {
             HttpClient client = _httpClientFactory.CreateClient();
 

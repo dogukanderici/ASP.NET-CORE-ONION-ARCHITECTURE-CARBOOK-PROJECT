@@ -1,6 +1,6 @@
 ﻿namespace CarBook.WebUI.Services.IdentityServices.IdentityServerServices.ClientCredentialTokenServices
 {
-    public interface IClientCredentialTokenService
+    public interface IResourceOwnerPasswordTokenService
     {
         Task<string> GetTokenAsync();
     }

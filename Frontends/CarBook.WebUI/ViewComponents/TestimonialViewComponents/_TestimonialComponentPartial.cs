@@ -1,38 +1,31 @@
 ﻿using CarBook.Dto.TestimonialDtos;
 using CarBook.WebUI.Models;
+using CarBook.WebUI.Services.TestimonialServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CarBook.WebUI.ViewComponents.TestimonialViewComponents
 {
     public class _TestimonialComponentPartial : ViewComponent
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
+        private readonly ITestimonialService _testimonialService;
 
-        public _TestimonialComponentPartial(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public _TestimonialComponentPartial(ITestimonialService testimonialService)
         {
-            _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
+            _testimonialService = testimonialService;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var client = _httpClientFactory.CreateClient();
 
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/testimonials");
+            List<ResultTestimonialDto> values = await _testimonialService.GetTestimonialsAsync();
 
             TestimonailUIViewModel model = new TestimonailUIViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultTestimonialDto>>(jsonData);
-
-                model.TestimonialDatas = value;
-            }
+            model.TestimonialDatas = values;
 
             return View(model);
         }

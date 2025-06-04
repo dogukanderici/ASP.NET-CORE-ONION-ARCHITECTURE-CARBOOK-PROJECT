@@ -1,64 +1,40 @@
 ﻿using CarBook.Dto.StatisticsDtos;
+using CarBook.WebUI.Services.StatisticsServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CarBook.WebUI.ViewComponents.DefaultViewComponents
 {
     public class _DefaultStatisticsComponentPartial : ViewComponent
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
+        private readonly IStatisticsService _statisticsService;
 
-        public _DefaultStatisticsComponentPartial(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public _DefaultStatisticsComponentPartial(IStatisticsService statisticsService)
         {
-            _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
+            _statisticsService = statisticsService;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var client = _httpClientFactory.CreateClient();
-            var getCarCount = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/Statistics/GetCarCount");
-            if (getCarCount.IsSuccessStatusCode)
-            {
-                var jsonData = await getCarCount.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<ResultStatisticsDto>(jsonData);
+            int getCarCount = await _statisticsService.GetCarCountAsync();
+            int getLocationCount = await _statisticsService.GetLocationCountAsync();
+            int getBrandCount = await _statisticsService.GetBrandCountAsync();
+            int getCarCountByFuelElectric = await _statisticsService.GetCarCountByFuelElectricAsync();
 
-                ViewBag.CarCount = value.CarCount;
-                ViewBag.CarCountName = "Araç Sayısı";
-            }
+            ViewBag.CarCount = getCarCount;
+            ViewBag.CarCountName = "Araç Sayısı";
 
-            var getLocationCount = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/Statistics/GetLocationCount");
-            if (getLocationCount.IsSuccessStatusCode)
-            {
-                var jsonData = await getLocationCount.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<ResultStatisticsDto>(jsonData);
+            ViewBag.LocationCount = getLocationCount;
+            ViewBag.LocationCountName = "Lokasyon Sayısı";
 
-                ViewBag.LocationCount = value.LocationCount;
-                ViewBag.LocationCountName = "Lokasyon Sayısı";
-            }
+            ViewBag.BrandCount = getBrandCount;
+            ViewBag.BrandCountName = "Marka Sayısı";
 
-            var getBrandCount = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/Statistics/GetBrandCount");
-            if (getBrandCount.IsSuccessStatusCode)
-            {
-                var jsonData = await getBrandCount.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<ResultStatisticsDto>(jsonData);
-
-                ViewBag.BrandCount = value.BrandCount;
-                ViewBag.BrandCountName = "Marka Sayısı";
-            }
-
-            var getCarCountByFuelElectric = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/Statistics/GetCarCountByFuelElectric");
-            if (getCarCountByFuelElectric.IsSuccessStatusCode)
-            {
-                var jsonData = await getCarCountByFuelElectric.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<ResultStatisticsDto>(jsonData);
-
-                ViewBag.CarCountByFuelElectric = value.CarCountByFuelElectric;
-                ViewBag.CarCountByFuelElectricName = "Elektrikli Araç Sayısı";
-            }
+            ViewBag.CarCountByFuelElectric = getCarCountByFuelElectric;
+            ViewBag.CarCountByFuelElectricName = "Elektrikli Araç Sayısı";
 
             return View();
         }

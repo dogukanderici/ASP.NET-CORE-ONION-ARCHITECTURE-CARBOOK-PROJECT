@@ -8,5 +8,6 @@ namespace CarBook.WebUI.Services.BlogServices
         Task<int> GetBlogCountWithPublishStateAsync(bool publishState);
         Task<List<ResultBlogDto>> GetBlogWithPublishStateAsync(NameValueCollection nameValueCollection);
         Task<bool> CreateNewBlogAsync(CreateBlogDto createBlogDto);
+        Task<List<ResultBlogDto>> GetLast3BlogsAsync();
     }
 }

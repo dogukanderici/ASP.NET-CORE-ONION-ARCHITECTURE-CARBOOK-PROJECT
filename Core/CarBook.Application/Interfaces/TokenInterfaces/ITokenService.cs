@@ -9,7 +9,8 @@ namespace CarBook.Application.Interfaces.TokenInterfaces
 {
     public interface ITokenService
     {
-        Task<TokenResponseDto> SignIn(LoginDto loginDto);
+        Task<TokenResponseDto> SignInWithResourceOwnerPassword(LoginDto loginDto);
+        Task<TokenResponseDto> SignInWithClientCredentials();
         Task<TokenResponseDto> RefreshToken();
         Task<bool> SignUp(RegisterDto registerDto);
     }

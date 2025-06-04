@@ -5,18 +5,18 @@ using System.Net.Http.Headers;
 
 namespace CarBook.WebUI.Handlers.IdentityServerHandlers
 {
-    public class ClientCredentialTokenHandler : DelegatingHandler
+    public class ResourceOwnerPasswordTokenHandler : DelegatingHandler
     {
-        private readonly IClientCredentialTokenService _clientCredentialTokenService;
+        private readonly IResourceOwnerPasswordTokenService _resourcePasswordTokenTokenService;
 
-        public ClientCredentialTokenHandler(IClientCredentialTokenService clientCredentialTokenService)
+        public ResourceOwnerPasswordTokenHandler(IResourceOwnerPasswordTokenService resourcePasswordTokenTokenService)
         {
-            _clientCredentialTokenService = clientCredentialTokenService;
+            _resourcePasswordTokenTokenService = resourcePasswordTokenTokenService;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            string accessToken = await _clientCredentialTokenService.GetTokenAsync();
+            string accessToken = await _resourcePasswordTokenTokenService.GetTokenAsync();
 
             request.Headers.Authorization = new AuthenticationHeaderValue("Header", accessToken);
 

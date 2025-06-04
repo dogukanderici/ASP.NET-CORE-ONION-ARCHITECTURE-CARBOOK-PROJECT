@@ -1,7 +1,7 @@
-﻿using Duende.IdentityServer;
+﻿using CarBook.Configurations;
+using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
-using Microsoft.OpenApi.Writers;
-using System.Security.Cryptography;
+using Client = Duende.IdentityServer.Models.Client;
 
 namespace CarBook.IdentityServer
 {
@@ -56,7 +56,7 @@ namespace CarBook.IdentityServer
                     IdentityServerConstants.StandardScopes.Email,
                     IdentityServerConstants.StandardScopes.Profile
                 },
-                AccessTokenLifetime=3600
+                AccessTokenLifetime=CacheKeys.TokenExpireInSeconds
             },
 
             new Client()
@@ -74,7 +74,7 @@ namespace CarBook.IdentityServer
                     IdentityServerConstants.StandardScopes.Email,
                     IdentityServerConstants.StandardScopes.Profile
                 },
-                AccessTokenLifetime=3600
+                AccessTokenLifetime=CacheKeys.TokenExpireInSeconds
             }
         };
 

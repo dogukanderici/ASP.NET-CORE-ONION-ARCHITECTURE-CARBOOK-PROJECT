@@ -1,6 +1,7 @@
 ﻿using CarBook.Application.Features.CQRS.Commands.AboutCommands;
 using CarBook.Application.Features.CQRS.Handlers.AboutHandlers;
 using CarBook.Application.Features.CQRS.Queries.AboutQueries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,7 @@ namespace CarBook.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AboutsController : ControllerBase
+    public class AboutsController : BaseController
     {
         private readonly GetAboutQueryHandler _getAboutQueryHandler;
         private readonly GetAboutByIdQueryHandler _getAboutByIdQueryHandler;
@@ -30,6 +31,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> AboutList()
         {
             var values = await _getAboutQueryHandler.Handle();

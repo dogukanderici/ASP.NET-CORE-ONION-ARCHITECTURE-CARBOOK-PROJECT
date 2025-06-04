@@ -17,7 +17,7 @@ namespace CarBook.WebUI.Services.AboutServices
         public async Task<List<ResultAboutDto>> GetAboutAsync()
         {
 
-            HttpClient client = _httpClientFactory.CreateClient("AboutClient");
+            HttpClient client = _httpClientFactory.CreateClient("AboutReadOnlyClient");
 
             HttpResponseMessage response = await client.GetAsync("abouts");
 

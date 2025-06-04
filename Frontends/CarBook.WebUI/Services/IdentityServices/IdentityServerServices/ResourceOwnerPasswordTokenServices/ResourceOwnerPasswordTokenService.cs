@@ -5,11 +5,11 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace CarBook.WebUI.Services.IdentityServices.IdentityServerServices.ClientCredentialTokenServices
 {
-    public class ClientCredentialTokenService : IClientCredentialTokenService
+    public class ResourceOwnerPasswordTokenService : IResourceOwnerPasswordTokenService
     {
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public ClientCredentialTokenService(IHttpContextAccessor contextAccessor)
+        public ResourceOwnerPasswordTokenService(IHttpContextAccessor contextAccessor)
         {
             _contextAccessor = contextAccessor;
         }

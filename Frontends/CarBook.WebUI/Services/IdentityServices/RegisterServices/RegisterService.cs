@@ -8,18 +8,16 @@ namespace CarBook.WebUI.Services.IdentityServices.RegisterServices
     public class RegisterService : IRegisterService
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
 
-        public RegisterService(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public RegisterService(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
         }
 
         public async Task<bool> Register(RegisterDto registerDto)
         {
-            HttpClient client = _httpClientFactory.CreateClient();
-            HttpResponseMessage response = await client.PostAsJsonAsync<RegisterDto>($"{_apiSettings.ApiBaseUrl}/registers", registerDto);
+            HttpClient client = _httpClientFactory.CreateClient("RegisterClient");
+            HttpResponseMessage response = await client.PostAsJsonAsync<RegisterDto>("registers", registerDto);
 
             if (response.IsSuccessStatusCode)
             {

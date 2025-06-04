@@ -21,7 +21,7 @@ namespace CarBook.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
-            TokenResponseDto loginResponse = await _tokenService.SignIn(loginDto);
+            TokenResponseDto loginResponse = await _tokenService.SignInWithResourceOwnerPassword(loginDto);
 
             if (loginResponse.Status)
             {

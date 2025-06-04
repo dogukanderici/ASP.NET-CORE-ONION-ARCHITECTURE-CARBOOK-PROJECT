@@ -1,37 +1,30 @@
 ﻿using CarBook.Dto.BlogDtos;
 using CarBook.WebUI.Models;
+using CarBook.WebUI.Services.BlogServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CarBook.WebUI.ViewComponents.BlogViewComponents
 {
     public class _GetLast3BlogComponentPartial : ViewComponent
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
+        private readonly IBlogService _blogService;
 
-        public _GetLast3BlogComponentPartial(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public _GetLast3BlogComponentPartial(IBlogService blogService)
         {
-            _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
+            _blogService = blogService;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/blogs/getlast3blogs");
+            List<ResultBlogDto> values = await _blogService.GetLast3BlogsAsync();
 
             BlogUIViewModel model = new BlogUIViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultBlogDto>>(jsonData);
-
-                model.BlogDatas = value;
-            }
+            model.BlogDatas = values;
 
             return View(model);
         }

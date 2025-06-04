@@ -62,7 +62,7 @@ namespace CarBook.WebUI.Services.IdentityServices.LoginServices
                     new AuthenticationToken
                     {
                         Name = OpenIdConnectParameterNames.ExpiresIn,
-                        Value=tokenResponseDto.ExpiresIn
+                        Value=tokenResponseDto.ExpiresIn.ToString()
                     }
                 });
 

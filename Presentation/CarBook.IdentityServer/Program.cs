@@ -1,5 +1,6 @@
 using CarBook.Domain.Entities;
 using CarBook.IdentityServer;
+using CarBook.IdentityServer.Utilities;
 using CarBook.Persistance.Context;
 using Duende.IdentityServer.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -35,7 +36,8 @@ builder.Services.AddIdentityServer()
     .AddInMemoryIdentityResources(Config.IdentityResources)
     .AddInMemoryClients(Config.Clients)
     .AddDeveloperSigningCredential() // Dev ortam için eklenir. Canlý ortamda kullanýlmamalý.
-    .AddAspNetIdentity<ApplicationUser>();
+    .AddAspNetIdentity<ApplicationUser>()
+    .AddProfileService<UserCustomProfileService>();
 
 var app = builder.Build();
 

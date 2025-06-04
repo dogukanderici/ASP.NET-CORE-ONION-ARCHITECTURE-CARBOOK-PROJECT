@@ -30,13 +30,11 @@ ApiSettings apiBaseUrl = builder.Configuration.GetSection("ApiSettings").Get<Api
 string identityServerBaseUrl = builder.Configuration.GetSection("IdentityServerUrl").Get<string>();
 builder.Services.AddHttpClientConfiguration(apiBaseUrl.ApiBaseUrl, identityServerBaseUrl);
 
+builder.Services.AddDIServices();
+
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
 
 // Extention sýnýf yazýlacak.
-builder.Services.AddScoped<ILoginService, LoginService>();
-builder.Services.AddScoped<IRegisterService, RegisterService>();
-builder.Services.AddScoped<IClientCredentialTokenService, ClientCredentialTokenService>();
-builder.Services.AddScoped<ClientCredentialTokenHandler>();
 
 var app = builder.Build();
 

@@ -16,32 +16,48 @@ namespace CarBook.WebUI.Utilities.Extentions
             // IHttpClientFactory kullanıldığından konfigürasyonlar HttpClient'ten farklı olarak yapılır.
 
             // Identity Services
-            #region
-            service.AddScoped<ILoginService, LoginService>();
+            #region            
             service.AddHttpClient("LoginClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); });
+            service.AddHttpClient("RegisterClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); });
+            service.AddHttpClient("CredentialClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); });
             #endregion
 
             // Other Services
             #region
-            service.AddScoped<IAboutService, AboutService>();
+            service.AddHttpClient("AboutReadOnlyClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
+                .AddHttpMessageHandler<ClientCredentialsTokenHandler>();
             service.AddHttpClient("AboutClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
-                .AddHttpMessageHandler<ClientCredentialTokenHandler>();
+                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 
-            service.AddScoped<IBlogService, BlogService>();
             service.AddHttpClient("BlogClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
-                .AddHttpMessageHandler<ClientCredentialTokenHandler>();
+                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 
-            service.AddScoped<IBlogCommentService, BlogCommentService>();
             service.AddHttpClient("BlogCommentClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
-                .AddHttpMessageHandler<ClientCredentialTokenHandler>();
+                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 
-            service.AddScoped<IBannerService, BannerService>();
             service.AddHttpClient("BannerClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
-                .AddHttpMessageHandler<ClientCredentialTokenHandler>();
+                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 
-            service.AddScoped<ILocationService, LocationService>();
             service.AddHttpClient("LocationClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
-                .AddHttpMessageHandler<ClientCredentialTokenHandler>();
+                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+
+            service.AddHttpClient("CarClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
+                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+
+            service.AddHttpClient("ServiceClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
+                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+
+            service.AddHttpClient("TestimonialClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
+                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+
+            service.AddHttpClient("StatisticsService", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
+                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+
+            service.AddHttpClient("FooterAddressClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
+                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
+
+            service.AddHttpClient("SocialMediaClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
+                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 
             #endregion
             return service;

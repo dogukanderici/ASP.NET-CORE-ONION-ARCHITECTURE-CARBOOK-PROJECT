@@ -1,4 +1,5 @@
 ﻿using CarBook.Dto.IdentityDtos;
+using CarBook.WebUI.Models;
 using CarBook.WebUI.Services.IdentityServices.RegisterServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,13 +16,14 @@ namespace CarBook.WebUI.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.PageTitle = "Yeni Kullanıcı Kaydı";
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(RegisterDto registerDto)
+        public async Task<IActionResult> Index(AuthUIViewModel authUIViewModel)
         {
-            await _registerService.Register(registerDto);
+            await _registerService.Register(authUIViewModel.UserRegister);
 
             return RedirectToAction("Index", "Login");
         }

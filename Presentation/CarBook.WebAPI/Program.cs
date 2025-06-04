@@ -12,6 +12,7 @@ using CarBook.Persistance.Repositories.CarRepositories;
 using CarBook.Persistance.Repositories.RentACarRepositories;
 using CarBook.Persistance.Repositories.StatisticsRepositories;
 using CarBook.Persistance.Services.TokenServices;
+using CarBook.WebAPI.Authorization.Requirements;
 using CarBook.WebAPI.Utilities.Extentions;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -39,7 +40,7 @@ builder.Services.AddAuthentication(options =>
 })
     .AddJwtBearer(options =>
     {
-        options.Authority = builder.Configuration["IdentityServerUrl"]; // IdentityServer Url
+        options.Authority = builder.Configuration.GetSection("ApiUrlOptions").Get<ApiUrlOptions>().IdentityServerUrl; // IdentityServer Url
         options.Audience = "CarBookFullPermission"; // Config dosyasýndaki API Resource
         options.RequireHttpsMetadata = false;
 
@@ -53,6 +54,9 @@ builder.Services.AddAuthentication(options =>
             ClockSkew = TimeSpan.Zero
         };
     });
+
+// API Authorization Configurations
+builder.Services.AddAuthorizationServices();
 
 builder.Services.AddAutoMapper(typeof(ApplicationAssemblyMarker).Assembly);
 

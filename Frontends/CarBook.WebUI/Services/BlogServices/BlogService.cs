@@ -1,6 +1,7 @@
 ﻿using CarBook.Dto.BlogDtos;
 using CarBook.WebUI.Models;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Reflection;
 using System.Web;
@@ -51,6 +52,22 @@ namespace CarBook.WebUI.Services.BlogServices
         public async Task<bool> CreateNewBlogAsync(CreateBlogDto createBlogDto)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<List<ResultBlogDto>> GetLast3BlogsAsync()
+        {
+            HttpClient client = _httpClientFactory.CreateClient("BlogClient");
+            HttpResponseMessage response = await client.GetAsync("blogs/getlast3blogs");
+
+            List<ResultBlogDto> values = new List<ResultBlogDto>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonData = await response.Content.ReadAsStringAsync();
+                values = JsonConvert.DeserializeObject<List<ResultBlogDto>>(jsonData);
+            }
+
+            return values;
         }
     }
 }
