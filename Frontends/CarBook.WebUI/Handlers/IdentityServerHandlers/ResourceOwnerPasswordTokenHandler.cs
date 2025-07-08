@@ -18,7 +18,7 @@ namespace CarBook.WebUI.Handlers.IdentityServerHandlers
         {
             string accessToken = await _resourcePasswordTokenTokenService.GetTokenAsync();
 
-            request.Headers.Authorization = new AuthenticationHeaderValue("Header", accessToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
 

@@ -14,7 +14,7 @@ namespace CarBook.WebUI.Services.SocialMediaServices
 
         public async Task<List<ResultSocialMediaDto>> GetSocialMediaAsync()
         {
-            HttpClient client = _httpClientFactory.CreateClient("SocialMediaClient");
+            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync("socialmedias");
 
             List<ResultSocialMediaDto> values = new List<ResultSocialMediaDto>();

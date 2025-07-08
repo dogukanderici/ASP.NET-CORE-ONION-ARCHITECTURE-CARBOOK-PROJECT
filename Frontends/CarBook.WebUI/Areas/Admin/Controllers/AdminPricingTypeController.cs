@@ -9,21 +9,19 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/PricingType")]
-    public class AdminPricingTypeController : Controller
+    public class AdminPricingTypeController : AdminBaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
 
-        public AdminPricingTypeController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public AdminPricingTypeController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
         }
 
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/pricingtypes");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync("pricingtypes");
 
             AdminUIPricingTypeViewModel model = new AdminUIPricingTypeViewModel();
 
@@ -47,8 +45,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreatePricingType(AdminUIPricingTypeViewModel adminUIPricingTypeViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PostAsJsonAsync<CreatePricingTypeDto>($"{_apiSettings.ApiBaseUrl}/pricingtypes", adminUIPricingTypeViewModel.CreateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PostAsJsonAsync<CreatePricingTypeDto>("pricingtypes", adminUIPricingTypeViewModel.CreateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -63,8 +61,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdatePricingType(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/pricingtypes/{id}");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync($"pricingtypes/{id}");
 
             AdminUIPricingTypeViewModel model = new AdminUIPricingTypeViewModel();
 
@@ -82,8 +80,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdatePricingType(AdminUIPricingTypeViewModel adminUIPricingTypeViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PutAsJsonAsync<UpdatePricingTypeDto>($"{_apiSettings.ApiBaseUrl}/pricingtypes", adminUIPricingTypeViewModel.UpdateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PutAsJsonAsync<UpdatePricingTypeDto>("pricingtypes", adminUIPricingTypeViewModel.UpdateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -98,8 +96,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeletePricingType(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.DeleteAsync($"{_apiSettings.ApiBaseUrl}/pricingtypes?id={id}");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.DeleteAsync($"pricingtypes?id={id}");
 
             if (responseMessage.IsSuccessStatusCode)
             {

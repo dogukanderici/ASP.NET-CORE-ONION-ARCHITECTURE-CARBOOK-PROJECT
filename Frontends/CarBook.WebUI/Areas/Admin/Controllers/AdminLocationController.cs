@@ -9,21 +9,19 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/Location")]
-    public class AdminLocationController : Controller
+    public class AdminLocationController : AdminBaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
 
-        public AdminLocationController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public AdminLocationController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
         }
 
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/locations");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync("locations");
 
             AdminUILocationViewModel model = new AdminUILocationViewModel();
 
@@ -47,8 +45,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateLocation(AdminUILocationViewModel adminUILocationViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PostAsJsonAsync<CreateLocationDto>($"{_apiSettings.ApiBaseUrl}/locations", adminUILocationViewModel.CreateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PostAsJsonAsync<CreateLocationDto>("locations", adminUILocationViewModel.CreateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -63,8 +61,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateLocation(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/locations/{id}");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync($"locations/{id}");
 
             AdminUILocationViewModel model = new AdminUILocationViewModel();
 
@@ -82,8 +80,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateLocation(AdminUILocationViewModel adminUILocationViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PutAsJsonAsync<UpdateLocationDto>($"{_apiSettings.ApiBaseUrl}/locations", adminUILocationViewModel.UpdateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PutAsJsonAsync<UpdateLocationDto>("locations", adminUILocationViewModel.UpdateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -98,8 +96,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteLocation(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.DeleteAsync($"{_apiSettings.ApiBaseUrl}/locations?id={id}");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.DeleteAsync($"locations?id={id}");
 
             if (responseMessage.IsSuccessStatusCode)
             {

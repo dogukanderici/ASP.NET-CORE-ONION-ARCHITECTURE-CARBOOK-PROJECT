@@ -20,7 +20,7 @@ namespace CarBook.IdentityServer.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
-            var values = new ApplicationUser()
+            ApplicationUser user = new ApplicationUser()
             {
                 UserName = registerDto.Username,
                 Email = registerDto.Email,
@@ -28,14 +28,34 @@ namespace CarBook.IdentityServer.Controllers
                 Surname = registerDto.Surname
             };
 
-            var result = await _userManager.CreateAsync(values, registerDto.Password);
+            ApplicationUser userCheck = await _userManager.FindByEmailAsync(registerDto.Email);
+
+            if (userCheck != null)
+            {
+                return StatusCode(400, "Bu Kullanıcı Zaten Kayıtlı!");
+            }
+
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (result.Succeeded)
             {
+
+                var userRoleAssignResult = await _userManager.AddToRoleAsync(user, "ReadPermission");
+
+                if (!userRoleAssignResult.Succeeded)
+                {
+                    foreach (var error in userRoleAssignResult.Errors)
+                    {
+                        Console.WriteLine($"Role Error: {error.Code} - {error.Description}");
+                    }
+                    return BadRequest(userRoleAssignResult.Errors);
+                }
+
+
                 return Ok("Kullanıcı Başarıyla Oluşturuldu.");
             }
 
-            return BadRequest(new { success = false, message = result.Errors.Select(e => e.Description).ToList() });
+            return BadRequest(result.Errors.Select(e => e.Description).ToArray());
         }
     }
 }

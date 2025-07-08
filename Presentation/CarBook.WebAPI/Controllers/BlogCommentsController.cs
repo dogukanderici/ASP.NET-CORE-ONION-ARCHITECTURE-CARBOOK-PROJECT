@@ -1,6 +1,11 @@
 ﻿using CarBook.Application.Features.Mediator.Commands.BlogCommentCommands;
 using CarBook.Application.Features.Mediator.Queries.BlogCommentQueries;
+using CarBook.Application.Validators.BlogCommentValidators;
+using CarBook.WebAPI.Utilities.Helper;
+using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,59 +16,133 @@ namespace CarBook.WebAPI.Controllers
     public class BlogCommentsController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IValidator<CreateBlogCommentCommand> _createValidator;
+        private readonly IValidator<UpdateBlogCommentCommand> _updateValidator;
+        private readonly IValidationResultMessageHelper _validationResultMessageHelper;
 
-        public BlogCommentsController(IMediator mediator)
+        public BlogCommentsController(IMediator mediator, IValidator<CreateBlogCommentCommand> createValidator, IValidator<UpdateBlogCommentCommand> updateValidator, IValidationResultMessageHelper validationResultMessageHelper)
         {
             _mediator = mediator;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
+            _validationResultMessageHelper = validationResultMessageHelper;
         }
 
 
         [HttpGet]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> BlogCommentList()
         {
-            var values = await _mediator.Send(new GetBlogCommentQuery());
+            try
+            {
+                var values = await _mediator.Send(new GetBlogCommentQuery());
 
-            return Ok(values);
+                return Ok(values);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while Blog Comment datas reading!");
+            }
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> GetBlogComment(Guid id)
         {
-            var value = await _mediator.Send(new GetBlogCommentByIdQuery(id));
+            try
+            {
+                var value = await _mediator.Send(new GetBlogCommentByIdQuery(id));
 
-            return Ok(value);
+                return Ok(value);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while Blog Comment data reading!");
+            }
         }
 
         [HttpGet("GetBlogCommentByBlogId")]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> GetBlogCommentByBlogId(Guid id)
         {
-            var value = await _mediator.Send(new GetBlogCommentByBlogIdQuery(id));
+            try
+            {
+                var value = await _mediator.Send(new GetBlogCommentByBlogIdQuery(id));
 
-            return Ok(value);
+                return Ok(value);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while Blog Comment for selected Blog data reading!");
+            }
         }
 
         [HttpPost]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> CreateBlogComment(CreateBlogCommentCommand createBlogCommentCommand)
         {
-            await _mediator.Send(createBlogCommentCommand);
+            try
+            {
+                ValidationResult validator = _createValidator.Validate(createBlogCommentCommand);
 
-            return Ok("Blog Yorum Bilgisi Başarıyla Eklendi.");
+                if (validator.IsValid)
+                {
+                    await _mediator.Send(createBlogCommentCommand);
+
+                    return Ok("Blog Yorum Bilgisi Başarıyla Eklendi.");
+                }
+
+                return StatusCode(400, _validationResultMessageHelper.ValidationMessages(validator));
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while creating a new Blog Comment data!");
+            }
         }
 
         [HttpPut]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> UpdateBlogComment(UpdateBlogCommentCommand updateBlogCommentCommand)
         {
-            await _mediator.Send(updateBlogCommentCommand);
+            try
+            {
+                ValidationResult validator = _updateValidator.Validate(updateBlogCommentCommand);
 
-            return Ok("Blog Yorum Bilgisi Başarıyla Güncellendi.");
+                if (validator.IsValid)
+                {
+                    await _mediator.Send(updateBlogCommentCommand);
+
+                    return Ok("Blog Yorum Bilgisi Başarıyla Güncellendi.");
+                }
+
+                return StatusCode(400, _validationResultMessageHelper.ValidationMessages(validator));
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while updating Blog Comment data!");
+            }
         }
 
         [HttpDelete]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> RemoveBlogComment(Guid id)
         {
-            await _mediator.Send(new RemoveBlogCommentCommand(id));
+            try
+            {
+                await _mediator.Send(new RemoveBlogCommentCommand(id));
 
-            return Ok("Blog Yorum Bilgisi Başarıyla Silindi.");
+                return Ok("Blog Yorum Bilgisi Başarıyla Silindi.");
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while deleting Blog Comment data!");
+            }
         }
     }
 }

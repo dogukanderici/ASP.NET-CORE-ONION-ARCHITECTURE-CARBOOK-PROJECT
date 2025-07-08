@@ -1,7 +1,10 @@
 ﻿using CarBook.Application.Features.CQRS.Commands.BlogCategoryCommands;
 using CarBook.Application.Features.CQRS.Handlers.BlogCategoryHandlers;
 using CarBook.Application.Features.CQRS.Queries.BlogCategoryQueries;
-using Microsoft.AspNetCore.Http;
+using CarBook.WebAPI.Utilities.Helper;
+using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarBook.WebAPI.Controllers
@@ -15,58 +18,121 @@ namespace CarBook.WebAPI.Controllers
         private readonly CreateBlogCategoryCommandHandler _createBlogCategoryCommandHandler;
         private readonly UpdateBlogCategoryCommandHandler _updateBlogCategoryCommandHandler;
         private readonly RemoveBlogCategoryCommandHandler _removeBlogCategoryCommandHandler;
+        private readonly IValidator<CreateBlogCategoryCommand> _createValidator;
+        private readonly IValidator<UpdateBlogCategoryCommand> _updateValidator;
+        private readonly IValidationResultMessageHelper _validationResultMessageHelper;
 
         public BlogCategoriesController(GetBlogCategoryQueryHandler getBlogcategoryQueryHandler,
             GetBlogCategoryByIdQueryHandler getBlogcategoryByIdQueryHandler,
             CreateBlogCategoryCommandHandler createBlogCategoryCommandHandler,
             UpdateBlogCategoryCommandHandler updateBlogCategoryCommandHandler,
-            RemoveBlogCategoryCommandHandler removeBlogCategoryCommandHandler)
+            RemoveBlogCategoryCommandHandler removeBlogCategoryCommandHandler,
+            IValidator<CreateBlogCategoryCommand> createValidator,
+            IValidator<UpdateBlogCategoryCommand> updateValidator,
+            IValidationResultMessageHelper validationResultMessageHelper)
         {
             _getBlogCategoryQueryHandler = getBlogcategoryQueryHandler;
             _getBlogCategoryByIdQueryHandler = getBlogcategoryByIdQueryHandler;
             _createBlogCategoryCommandHandler = createBlogCategoryCommandHandler;
             _updateBlogCategoryCommandHandler = updateBlogCategoryCommandHandler;
             _removeBlogCategoryCommandHandler = removeBlogCategoryCommandHandler;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
+            _validationResultMessageHelper = validationResultMessageHelper;
         }
 
         [HttpGet]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> CategoryList()
         {
-            var values = await _getBlogCategoryQueryHandler.Handle();
+            try
+            {
+                var values = await _getBlogCategoryQueryHandler.Handle();
 
-            return Ok(values);
+                return Ok(values);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while Blog Category datas reading.");
+            }
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> GetCategory(int id)
         {
-            var value = await _getBlogCategoryByIdQueryHandler.Handle(new GetBlogCategoryByIdQuery(id));
+            try
+            {
+                var value = await _getBlogCategoryByIdQueryHandler.Handle(new GetBlogCategoryByIdQuery(id));
 
-            return Ok(value);
+                return Ok(value);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while Blog Category data reading.");
+            }
         }
 
         [HttpPost]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> CreateCategory(CreateBlogCategoryCommand createBlogCategoryCommand)
         {
-            await _createBlogCategoryCommandHandler.Handle(createBlogCategoryCommand);
+            try
+            {
+                ValidationResult validator = _createValidator.Validate(createBlogCategoryCommand);
 
-            return Ok("Blog Kategori Bilgisi Başarıyla Eklendi.");
+                if (validator.IsValid)
+                {
+                    await _createBlogCategoryCommandHandler.Handle(createBlogCategoryCommand);
+
+                    return Ok("Blog Kategori Bilgisi Başarıyla Eklendi.");
+                }
+
+                return StatusCode(400, _validationResultMessageHelper.ValidationMessages(validator));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while a new Blog Category data adding.");
+            }
         }
 
         [HttpPut]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> UpdateCategory(UpdateBlogCategoryCommand updateBlogCategoryCommand)
         {
-            await _updateBlogCategoryCommandHandler.Handle(updateBlogCategoryCommand);
+            try
+            {
+                ValidationResult validator = _updateValidator.Validate(updateBlogCategoryCommand);
 
-            return Ok("Blog Kategori Bilgisi Başarıyla Eklendi.");
+                if (validator.IsValid)
+                {
+                    await _updateBlogCategoryCommandHandler.Handle(updateBlogCategoryCommand);
+
+                    return Ok("Blog Kategori Bilgisi Başarıyla Eklendi.");
+                }
+
+                return StatusCode(400, _validationResultMessageHelper.ValidationMessages(validator));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while Blog Category data updating.");
+            }
         }
 
         [HttpDelete]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> RemoveCategory(int id)
         {
-            await _removeBlogCategoryCommandHandler.Handle(new RemoveBlogCategoryCommand(id));
+            try
+            {
+                await _removeBlogCategoryCommandHandler.Handle(new RemoveBlogCategoryCommand(id));
 
-            return Ok("Blog Kategori Bilgisi Başarıyla Silindi.");
+                return Ok("Blog Kategori Bilgisi Başarıyla Silindi.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while Blog Category data deleting.");
+            }
         }
     }
 }

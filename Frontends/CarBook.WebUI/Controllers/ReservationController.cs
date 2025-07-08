@@ -1,6 +1,8 @@
 ﻿using CarBook.Dto.LocationDtos;
 using CarBook.Dto.ReservationDtos;
 using CarBook.WebUI.Models;
+using CarBook.WebUI.Services.LocationServices;
+using CarBook.WebUI.Services.ReservationServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -15,13 +17,13 @@ namespace CarBook.WebUI.Controllers
 {
     public class ReservationController : Controller
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
+        private readonly ILocationService _locationService;
+        private readonly IReservationService _reservationService;
 
-        public ReservationController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public ReservationController(ILocationService locationService, IReservationService reservationService)
         {
-            _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
+            _locationService = locationService;
+            _reservationService = reservationService;
         }
 
         [HttpGet]
@@ -59,16 +61,15 @@ namespace CarBook.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(ReservationUIViewModel reservationUIViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
 
-            var responseMessage = await client.PostAsJsonAsync<CreateReservationDto>($"{_apiSettings.ApiBaseUrl}/reservations", reservationUIViewModel.CreateData);
+            HttpResponseMessage responseMessage = await _reservationService.CreateReservationForUI(reservationUIViewModel.CreateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index", "Default");
             }
 
-            var stringData = await responseMessage.Content.ReadAsStringAsync();
+            string stringData = await responseMessage.Content.ReadAsStringAsync();
 
             ViewBag.HttpStatusCode = responseMessage.StatusCode;
             ViewBag.ResponseMessage = stringData;
@@ -78,17 +79,14 @@ namespace CarBook.WebUI.Controllers
 
         private async Task<List<SelectListItem>> GetLocationListAsync()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/locations");
+            List<ResultLocationDto> values = await _locationService.GetLocationsAsync();
 
             List<SelectListItem> locationList = new List<SelectListItem>();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (values.Count() > 0)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultLocationDto>>(jsonData);
 
-                locationList = (from item in value
+                locationList = (from item in values
                                 select new SelectListItem
                                 {
                                     Text = item.LocationName,

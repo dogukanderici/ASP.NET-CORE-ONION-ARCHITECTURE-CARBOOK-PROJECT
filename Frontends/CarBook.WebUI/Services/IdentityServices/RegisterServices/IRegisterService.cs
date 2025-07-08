@@ -1,9 +1,10 @@
 ﻿using CarBook.Dto.IdentityDtos;
+using CarBook.WebUI.Utilities.Settings;
 
 namespace CarBook.WebUI.Services.IdentityServices.RegisterServices
 {
     public interface IRegisterService
     {
-        Task<bool> Register(RegisterDto registerDto);
+        Task<ApiResponseSettings> Register(RegisterDto registerDto);
     }
 }

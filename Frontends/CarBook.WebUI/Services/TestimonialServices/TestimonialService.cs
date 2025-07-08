@@ -15,7 +15,7 @@ namespace CarBook.WebUI.Services.TestimonialServices
 
         public async Task<List<ResultTestimonialDto>> GetTestimonialsAsync()
         {
-            HttpClient client = _httpClientFactory.CreateClient("TestimonialClient");
+            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync("testimonials");
 
             List<ResultTestimonialDto> values = new List<ResultTestimonialDto>();

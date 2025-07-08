@@ -24,39 +24,10 @@ namespace CarBook.WebUI.Utilities.Extentions
 
             // Other Services
             #region
-            service.AddHttpClient("AboutReadOnlyClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
+            service.AddHttpClient("ReadOnlyClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
                 .AddHttpMessageHandler<ClientCredentialsTokenHandler>();
-            service.AddHttpClient("AboutClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
-                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 
-            service.AddHttpClient("BlogClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
-                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
-
-            service.AddHttpClient("BlogCommentClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
-                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
-
-            service.AddHttpClient("BannerClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
-                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
-
-            service.AddHttpClient("LocationClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
-                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
-
-            service.AddHttpClient("CarClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
-                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
-
-            service.AddHttpClient("ServiceClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
-                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
-
-            service.AddHttpClient("TestimonialClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
-                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
-
-            service.AddHttpClient("StatisticsService", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
-                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
-
-            service.AddHttpClient("FooterAddressClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
-                .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
-
-            service.AddHttpClient("SocialMediaClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
+            service.AddHttpClient("FullAuthClient", opt => { opt.BaseAddress = new Uri(apiBaseUrl); })
                 .AddHttpMessageHandler<ResourceOwnerPasswordTokenHandler>();
 
             #endregion

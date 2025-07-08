@@ -14,7 +14,7 @@ namespace CarBook.WebUI.Services.OurServiceServices
 
         public async Task<List<ResultServiceDto>> GetServicesAsync()
         {
-            HttpClient client = _httpClientFactory.CreateClient("ServiceClient");
+            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync("services");
 
             List<ResultServiceDto> values = new List<ResultServiceDto>();

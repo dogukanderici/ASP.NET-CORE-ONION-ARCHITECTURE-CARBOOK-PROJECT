@@ -9,6 +9,7 @@ namespace CarBook.Configurations
     public class IdentityServerOptions
     {
         public Client CarBookMember { get; set; }
+        public Client CarBookAdmin { get; set; }
     }
 
     public class Client

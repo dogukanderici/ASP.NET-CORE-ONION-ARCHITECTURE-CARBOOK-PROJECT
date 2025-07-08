@@ -1,6 +1,7 @@
 ﻿using CarBook.Application.Features.Mediator.Commands.AuthorCommands;
 using CarBook.Application.Features.Mediator.Queries.AuthorQueries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> AuthorList()
         {
             var values = await _mediator.Send(new GetAuthorQuery());
@@ -26,6 +28,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> GetAuthor(Guid id)
         {
             var value = await _mediator.Send(new GetAuthorByIdQuery(id));
@@ -34,6 +37,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> CreateAuthor(CreateAuthorCommand createAuthorCommand)
         {
             await _mediator.Send(createAuthorCommand);
@@ -42,6 +46,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> UpdateAuthor(UpdateAuthorCommand updateAuthorCommand)
         {
             await _mediator.Send(updateAuthorCommand);
@@ -50,6 +55,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> RemoveAuthor(Guid id)
         {
             await _mediator.Send(new RemoveAuthorCommand(id));

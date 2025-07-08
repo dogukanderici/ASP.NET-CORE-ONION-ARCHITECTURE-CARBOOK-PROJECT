@@ -12,6 +12,7 @@ namespace CarBook.Application.Interfaces.TokenInterfaces
         Task<TokenResponseDto> SignInWithResourceOwnerPassword(LoginDto loginDto);
         Task<TokenResponseDto> SignInWithClientCredentials();
         Task<TokenResponseDto> RefreshToken();
-        Task<bool> SignUp(RegisterDto registerDto);
+        Task<HttpResponseMessage> SignUp(RegisterDto registerDto);
+        Task<bool> ChangePasswordForMember(ChangePasswordDto changePasswordDto);
     }
 }

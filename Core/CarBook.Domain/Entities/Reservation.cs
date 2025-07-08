@@ -25,6 +25,6 @@ namespace CarBook.Domain.Entities
         public DateTimeOffset DropOffDate { get; set; }
         public Location PickUpLocation { get; set; }
         public Location DropOffLocation { get; set; }
-        public RentACar RentACar { get; set; }
+        public Car Car { get; set; }
     }
 }

@@ -1,6 +1,10 @@
 ﻿using CarBook.Application.Features.Mediator.Commands.TestimonialCommands;
 using CarBook.Application.Features.Mediator.Queries.TestimonialQueries;
+using CarBook.WebAPI.Utilities.Helper;
+using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,50 +15,111 @@ namespace CarBook.WebAPI.Controllers
     public class TestimonialsController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IValidator<CreateTestimonialCommand> _createValidator;
+        private readonly IValidator<UpdateTestimonialCommand> _updateValidator;
+        private readonly IValidationResultMessageHelper _validationResultMessageHelper;
 
-        public TestimonialsController(IMediator mediator)
+        public TestimonialsController(IMediator mediator, IValidator<CreateTestimonialCommand> createValidator, IValidator<UpdateTestimonialCommand> updateValidator, IValidationResultMessageHelper validationResultMessageHelper)
         {
             _mediator = mediator;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
+            _validationResultMessageHelper = validationResultMessageHelper;
         }
 
         [HttpGet]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> TestimonialList()
         {
-            var values = await _mediator.Send(new GetTestimonialQuery());
+            try
+            {
+                var values = await _mediator.Send(new GetTestimonialQuery());
 
-            return Ok(values);
+                return Ok(values);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while reading all testimonial datas!");
+            }
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> GetTestimonial(int id)
         {
-            var value = await _mediator.Send(new GetTestimonialByIdQuery(id));
+            try
+            {
+                var value = await _mediator.Send(new GetTestimonialByIdQuery(id));
 
-            return Ok(value);
+                return Ok(value);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while reading testimonial data");
+            }
         }
 
         [HttpPost]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> CreateTestimonial(CreateTestimonialCommand createTestimonialCommand)
         {
-            await _mediator.Send(createTestimonialCommand);
+            try
+            {
+                ValidationResult validator = _createValidator.Validate(createTestimonialCommand);
 
-            return Ok("Yorum Bilgisi Başarıyla Eklendi.");
+                if (validator.IsValid)
+                {
+                    await _mediator.Send(createTestimonialCommand);
+
+                    return Ok("Yorum Bilgisi Başarıyla Eklendi.");
+                }
+
+                return StatusCode(400, _validationResultMessageHelper.ValidationMessages(validator));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while creating a new testimonial data!");
+            }
         }
 
         [HttpPut]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> UpdateTestimonial(UpdateTestimonialCommand updateTestimonialCommand)
         {
-            await _mediator.Send(updateTestimonialCommand);
 
-            return Ok("Yorum Bilgisi Başarıyla Güncellendi.");
+            try
+            {
+                ValidationResult validator = _updateValidator.Validate(updateTestimonialCommand);
+
+                if (validator.IsValid)
+                {
+                    await _mediator.Send(updateTestimonialCommand);
+
+                    return Ok("Yorum Bilgisi Başarıyla Güncellendi.");
+                }
+
+                return StatusCode(400, _validationResultMessageHelper.ValidationMessages(validator));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while updating testimonial data!");
+            }
         }
 
         [HttpDelete]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> RemoveTestimonial(int id)
         {
-            await _mediator.Send(new RemoveTestimonialCommand(id));
+            try
+            {
+                await _mediator.Send(new RemoveTestimonialCommand(id));
 
-            return Ok("Yorum Bilgisi Başarıyla Silindi.");
+                return Ok("Yorum Bilgisi Başarıyla Silindi.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while deleting testimonial data!");
+            }
         }
     }
 }

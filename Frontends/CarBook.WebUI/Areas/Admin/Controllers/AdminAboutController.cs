@@ -9,21 +9,20 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/About")]
-    public class AdminAboutController : Controller
+    public class AdminAboutController : AdminBaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
 
-        public AdminAboutController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public AdminAboutController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/abouts");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync("abouts");
 
             AdminUIAboutViewModel model = new AdminUIAboutViewModel();
 
@@ -47,8 +46,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateAbout(AdminUIAboutViewModel adminUIAboutViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PostAsJsonAsync<CreateAboutDto>($"{_apiSettings.ApiBaseUrl}/abouts", adminUIAboutViewModel.CreateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PostAsJsonAsync<CreateAboutDto>("abouts", adminUIAboutViewModel.CreateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -63,8 +62,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateAbout(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/abouts/{id}");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync($"abouts/{id}");
 
             AdminUIAboutViewModel model = new AdminUIAboutViewModel();
 
@@ -82,8 +81,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateAbout(AdminUIAboutViewModel adminUIAboutViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PutAsJsonAsync<UpdateAboutDto>($"{_apiSettings.ApiBaseUrl}/abouts", adminUIAboutViewModel.UpdateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PutAsJsonAsync<UpdateAboutDto>("abouts", adminUIAboutViewModel.UpdateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -98,8 +97,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteAbout(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.DeleteAsync($"{_apiSettings.ApiBaseUrl}/abouts?id={id}");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.DeleteAsync($"abouts?id={id}");
 
             if (responseMessage.IsSuccessStatusCode)
             {

@@ -11,21 +11,19 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/Banner")]
-    public class AdminBannerController : Controller
+    public class AdminBannerController : AdminBaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
 
-        public AdminBannerController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public AdminBannerController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
         }
 
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/banners");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync("banners");
 
             AdminUIBannerViewModel model = new AdminUIBannerViewModel();
 
@@ -49,8 +47,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateBanner(AdminUIBannerViewModel adminUIBannerViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PostAsJsonAsync<CreateBannerDto>($"{_apiSettings.ApiBaseUrl}/banners", adminUIBannerViewModel.CreateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PostAsJsonAsync<CreateBannerDto>("banners", adminUIBannerViewModel.CreateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -65,8 +63,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateBanner(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/banners/{id}");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync($"banners/{id}");
 
             AdminUIBannerViewModel model = new AdminUIBannerViewModel();
 
@@ -84,8 +82,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateBanner(AdminUIBannerViewModel adminUIBannerViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PutAsJsonAsync<UpdateBannerDto>($"{_apiSettings.ApiBaseUrl}/banners", adminUIBannerViewModel.UpdateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PutAsJsonAsync<UpdateBannerDto>("banners", adminUIBannerViewModel.UpdateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -100,8 +98,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteBanner(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.DeleteAsync($"{_apiSettings.ApiBaseUrl}/banners?id={id}");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.DeleteAsync("banners?id={id}");
 
             if (responseMessage.IsSuccessStatusCode)
             {

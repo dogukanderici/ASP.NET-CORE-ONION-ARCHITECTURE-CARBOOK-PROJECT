@@ -11,21 +11,19 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/Feature")]
-    public class AdmincarFeatureDescriptionController : Controller
+    public class AdmincarFeatureDescriptionController : AdminBaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
 
-        public AdmincarFeatureDescriptionController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public AdmincarFeatureDescriptionController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
         }
 
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/features");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync("features");
 
             AdminUIFeatureViewModel model = new AdminUIFeatureViewModel();
 
@@ -53,8 +51,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateFeature(AdminUIFeatureViewModel adminUIFeatureViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PostAsJsonAsync<CreateFeatureDto>($"{_apiSettings.ApiBaseUrl}/features", adminUIFeatureViewModel.CreateDatas);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PostAsJsonAsync<CreateFeatureDto>("features", adminUIFeatureViewModel.CreateDatas);
 
             var apiMessage2 = await responseMessage.Content.ReadAsStringAsync();
 
@@ -71,8 +69,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateFeature(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/features/{id}");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync($"features/{id}");
 
             AdminUIFeatureViewModel model = new AdminUIFeatureViewModel();
 
@@ -90,8 +88,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateFeature(AdminUIFeatureViewModel adminUIFeatureViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PutAsJsonAsync<UpdateFeatureDto>($"{_apiSettings.ApiBaseUrl}/features", adminUIFeatureViewModel.UpdateDatas);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PutAsJsonAsync<UpdateFeatureDto>("features", adminUIFeatureViewModel.UpdateDatas);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -106,8 +104,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteFeature(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.DeleteAsync($"{_apiSettings.ApiBaseUrl}/features?id={id}");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.DeleteAsync($"features?id={id}");
 
             if (responseMessage.IsSuccessStatusCode)
             {

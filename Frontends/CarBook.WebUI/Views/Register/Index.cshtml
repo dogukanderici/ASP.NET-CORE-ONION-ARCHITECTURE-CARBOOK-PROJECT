@@ -2,6 +2,7 @@
 
 @{
     Layout = null;
+    bool isModelStateValid = ViewContext.ModelState.IsValid;
 }
 
 <!DOCTYPE html>
@@ -27,31 +28,61 @@
                                                 </b>
                                             </a>
                                         </div>
+                                        @if (!Model.ResponseState)
+                                        {
+                                            <div class="row d-flex justify-content-center align-items-center">
+                                                <div class="alert alert-danger">@Model.ResponseMessage</div>
+                                            </div>
+                                        }
                                         <h1 class="h5 mb-1">Yeni Bir Oluşturun!</h1>
                                         <p class="text-muted mb-4">Bir hesabınız yok mu? Bir dakikadan az bir sürede hemen hesabınızı oluşturun!</p>
                                         <form asp-controller="Register" asp-action="Index" class="user" method="post">
                                             <div class="form-group row">
                                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                                     <input asp-for="@Model.UserRegister.Name" type="text" class="form-control form-control-user" placeholder="Adınız">
+                                                    @if (!isModelStateValid && ViewContext.ModelState["UserRegister.Name"].Errors.Any())
+                                                    {
+                                                        <span asp-validation-for="@Model.UserRegister.Name" class="alert alert-danger d-flex justify-content-center align-items-center"></span>
+                                                    }
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <input asp-for="@Model.UserRegister.Surname" type="text" class="form-control form-control-user" placeholder="Soyadınız">
+                                                    @if (!isModelStateValid && ViewContext.ModelState["UserRegister.Surname"].Errors.Any())
+                                                    {
+                                                        <span asp-validation-for="@Model.UserRegister.Surname" class="alert alert-danger d-flex justify-content-center align-items-center"></span>
+                                                    }
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                                     <input asp-for="@Model.UserRegister.Email" type="email" class="form-control form-control-user" placeholder="E-Posta Adresiniz">
+                                                    @if (!isModelStateValid && ViewContext.ModelState["UserRegister.Email"].Errors.Any())
+                                                    {
+                                                        <span asp-validation-for="@Model.UserRegister.Email" class="alert alert-danger d-flex justify-content-center align-items-center"></span>
+                                                    }
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <input asp-for="@Model.UserRegister.Username" type="text" class="form-control form-control-user" placeholder="Kullanıcı Adınız">
+                                                    @if (!isModelStateValid && ViewContext.ModelState["UserRegister.Username"].Errors.Any())
+                                                    {
+                                                        <span asp-validation-for="@Model.UserRegister.Username" class="alert alert-danger d-flex justify-content-center align-items-center"></span>
+                                                    }
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                                     <input asp-for="@Model.UserRegister.Password" type="password" class="form-control form-control-user" placeholder="Şifreniz">
+                                                    @if (!isModelStateValid && ViewContext.ModelState["UserRegister.Password"].Errors.Any())
+                                                    {
+                                                        <span asp-validation-for="@Model.UserRegister.Password" class="alert alert-danger d-flex justify-content-center align-items-center"></span>
+                                                    }
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <input asp-for="@Model.UserRegister.ConfirmPassword" type="password" class="form-control form-control-user" placeholder="Şifre Tekrarı">
+                                                    @if (!isModelStateValid && ViewContext.ModelState["UserRegister.ConfirmPassword"].Errors.Any())
+                                                    {
+                                                        <span asp-validation-for="@Model.UserRegister.ConfirmPassword" class="alert alert-danger d-flex justify-content-center align-items-center"></span>
+                                                    }
                                                 </div>
                                             </div>
                                             <button type="submit" class="btn btn-success btn-block waves-effect waves-light"> Hesap Oluştur </button>

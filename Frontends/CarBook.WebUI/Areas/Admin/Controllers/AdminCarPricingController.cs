@@ -14,21 +14,19 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/CarPricing")]
-    public class AdminCarPricingController : Controller
+    public class AdminCarPricingController : AdminBaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
 
-        public AdminCarPricingController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public AdminCarPricingController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
         }
 
         public async Task<IActionResult> Index(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/carpricings/getcarpricingbycarid?id={id}");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync($"carpricings/getcarpricingbycarid?id={id}");
 
             AdminUICarPricingViewModel model = new AdminUICarPricingViewModel();
 
@@ -60,8 +58,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateCarPricing(AdminUICarPricingViewModel adminUICarPricingViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PostAsJsonAsync<CreateCarPricingDto>($"{_apiSettings.ApiBaseUrl}/carpricings", adminUICarPricingViewModel.CreateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PostAsJsonAsync<CreateCarPricingDto>("carpricings", adminUICarPricingViewModel.CreateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -76,8 +74,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateCarPricing(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/carpricings/{id}");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync($"carpricings/{id}");
 
             AdminUICarPricingViewModel model = new AdminUICarPricingViewModel();
 
@@ -97,8 +95,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateCarPricing(AdminUICarPricingViewModel adminUICarPricingViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PutAsJsonAsync<UpdateCarPricingDto>($"{_apiSettings.ApiBaseUrl}/carpricings", adminUICarPricingViewModel.UpdateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PutAsJsonAsync<UpdateCarPricingDto>("carpricings", adminUICarPricingViewModel.UpdateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -113,8 +111,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteCarPricing(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.DeleteAsync($"{_apiSettings.ApiBaseUrl}/carpricings?id={id}");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.DeleteAsync($"carpricings?id={id}");
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -126,8 +124,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 
         private async Task<List<SelectListItem>> GetPricingTypeAsync()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/pricingtypes");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync("pricingtypes");
 
             List<SelectListItem> dataList = new List<SelectListItem>();
 

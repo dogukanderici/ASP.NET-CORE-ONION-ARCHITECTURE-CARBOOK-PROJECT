@@ -17,7 +17,7 @@ namespace CarBook.WebUI.Services.FooterAddressServices
 
         public async Task<List<ResultFooterAddressDto>> GetFooterAddressAsync()
         {
-            HttpClient client = _httpClientFactory.CreateClient("FooterAddressClient");
+            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync("footeraddresses");
 
             List<ResultFooterAddressDto> values = new List<ResultFooterAddressDto>();

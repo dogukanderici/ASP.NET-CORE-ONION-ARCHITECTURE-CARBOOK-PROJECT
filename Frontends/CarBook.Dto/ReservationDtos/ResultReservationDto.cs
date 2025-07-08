@@ -1,4 +1,5 @@
-﻿using CarBook.Dto.LocationDtos;
+﻿using CarBook.Dto.CarDtos;
+using CarBook.Dto.LocationDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,5 +25,6 @@ namespace CarBook.Dto.ReservationDtos
         public DateTimeOffset DropOffDate { get; set; }
         public ResultLocationDto PickUpLocation { get; set; }
         public ResultLocationDto DropOffLocation { get; set; }
+        public ResultCarForReservationDto Car { get; set; }
     }
 }

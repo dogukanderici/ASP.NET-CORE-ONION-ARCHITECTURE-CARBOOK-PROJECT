@@ -58,6 +58,9 @@ builder.Services.AddAuthentication(options =>
 // API Authorization Configurations
 builder.Services.AddAuthorizationServices();
 
+// Custom Dependency Injection Configurations
+builder.Services.AddCustomDependencyInjections();
+
 builder.Services.AddAutoMapper(typeof(ApplicationAssemblyMarker).Assembly);
 
 // Serilog yapýlandýrmasý
@@ -94,6 +97,13 @@ builder.Services.Configure<ApiUrlOptions>(builder.Configuration.GetSection("ApiU
 builder.Services.Configure<IdentityServerOptions>(builder.Configuration.GetSection("IdentityServerOptions"));
 builder.Services.AddScoped<ITokenService, TokenService>();
 
+// Validasyon Baþarýsýz Olursa Otomatik 400 Dönmesini Engeller. Yazýlan Mesajlar Gösterilir.
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.SuppressModelStateInvalidFilter = true;
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -105,6 +115,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

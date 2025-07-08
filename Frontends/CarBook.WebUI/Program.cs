@@ -34,6 +34,8 @@ builder.Services.AddDIServices();
 
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
 
+builder.Services.AddValidationExtention();
+
 // Extention sýnýf yazýlacak.
 
 var app = builder.Build();
@@ -56,13 +58,13 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Default}/{action=Index}/{id?}");
-
-    endpoints.MapControllerRoute(
       name: "areas",
       pattern: "{area:exists}/{controller}/{action=Index}/{id?}"
     );
+
+    endpoints.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Default}/{action=Index}/{id?}");
 });
 
 app.Run();

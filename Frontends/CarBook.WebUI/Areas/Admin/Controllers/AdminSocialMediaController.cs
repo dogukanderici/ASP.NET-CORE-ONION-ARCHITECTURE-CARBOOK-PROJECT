@@ -9,21 +9,19 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/SocialMedia")]
-    public class AdminSocialMediaController : Controller
+    public class AdminSocialMediaController : AdminBaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
 
-        public AdminSocialMediaController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public AdminSocialMediaController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
         }
 
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/socialmedias");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync("socialmedias");
 
             AdminUISocialMediaViewModel model = new AdminUISocialMediaViewModel();
 
@@ -47,8 +45,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateSocialMedia(AdminUISocialMediaViewModel adminUISocialMediaViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PostAsJsonAsync<CreateSocialMediaDto>($"{_apiSettings.ApiBaseUrl}/socialmedias", adminUISocialMediaViewModel.CreateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PostAsJsonAsync<CreateSocialMediaDto>("socialmedias", adminUISocialMediaViewModel.CreateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -63,8 +61,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateSocialMedia(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/socialmedias/{id}");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync($"socialmedias/{id}");
 
             AdminUISocialMediaViewModel model = new AdminUISocialMediaViewModel();
 
@@ -82,8 +80,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateSocialMedia(AdminUISocialMediaViewModel adminUISocialMediaViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PutAsJsonAsync<UpdateSocialMediaDto>($"{_apiSettings.ApiBaseUrl}/socialmedias", adminUISocialMediaViewModel.UpdateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PutAsJsonAsync<UpdateSocialMediaDto>("socialmedias", adminUISocialMediaViewModel.UpdateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -98,8 +96,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteSocialMedia(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.DeleteAsync($"{_apiSettings.ApiBaseUrl}/socialmedias?id={id}");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.DeleteAsync($"socialmedias?id={id}");
 
             if (responseMessage.IsSuccessStatusCode)
             {

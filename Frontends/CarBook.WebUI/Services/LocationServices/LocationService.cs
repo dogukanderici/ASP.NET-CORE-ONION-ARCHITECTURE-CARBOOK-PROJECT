@@ -15,7 +15,7 @@ namespace CarBook.WebUI.Services.LocationServices
 
         public async Task<List<ResultLocationDto>> GetLocationsAsync()
         {
-            HttpClient client = _httpClientFactory.CreateClient("LocationClient");
+            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync("locations");
 
             List<ResultLocationDto> values = new List<ResultLocationDto>();

@@ -1,5 +1,6 @@
 ﻿using CarBook.Application.Features.Mediator.Queries.StatisticsQueries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetAuthorCount")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetAuthorCount()
         {
             var value = await _mediator.Send(new GetAuthorCountQuery());
@@ -25,6 +27,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetAvgRentPriceForDailyCount")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetAvgRentPriceForDailyCount()
         {
             var value = await _mediator.Send(new GetAvgRentPriceForDailyCountQuery());
@@ -33,6 +36,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetAvgRentPriceForHourlyCount")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetAvgRentPriceForHourlyCount()
         {
             var value = await _mediator.Send(new GetAvgRentPriceForHourlyCountQuery());
@@ -41,6 +45,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetAvgRentPriceForMountlyCount")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetAvgRentPriceForMountlyCount()
         {
             var value = await _mediator.Send(new GetAvgRentPriceForMountlyCountQuery());
@@ -49,6 +54,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetAvgRentPriceForWeeklyCount")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetAvgRentPriceForWeeklyCount()
         {
             var value = await _mediator.Send(new GetAvgRentPriceForWeeklyCountQuery());
@@ -57,6 +63,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetBlogCount")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetBlogCount()
         {
             var value = await _mediator.Send(new GetBlogCountQuery());
@@ -65,6 +72,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetBlogTitleByMaxBlogComment")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetBlogTitleByMaxBlogComment()
         {
             var value = await _mediator.Send(new GetBlogTitleByMaxBlogCommentQuery());
@@ -73,6 +81,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetBrandCount")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetBrandCount()
         {
             var value = await _mediator.Send(new GetBrandCountQuery());
@@ -81,6 +90,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetBrandNameByMaxCar")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetBrandNameByMaxCar()
         {
             var value = await _mediator.Send(new GetBrandNameByMaxCarQuery());
@@ -89,6 +99,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetCarBrandAndModelByPriceDailyMax")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetCarBrandAndModelByPriceDailyMax()
         {
             var value = await _mediator.Send(new GetCarBrandAndModelByPriceDailyMaxQuery());
@@ -97,6 +108,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetCarBrandAndModelByPriceDailyMin")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetCarBrandAndModelByPriceDailyMin()
         {
             var value = await _mediator.Send(new GetCarBrandAndModelByPriceDailyMinQuery());
@@ -105,6 +117,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetCarCountByFuelElectric")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetCarCountByFuelElectric()
         {
             var value = await _mediator.Send(new GetCarCountByFuelElectricQuery());
@@ -113,6 +126,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetCarCountByFuelGasOrDiesel")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetCarCountByFuelGasOrDiesel()
         {
             var value = await _mediator.Send(new GetCarCountByFuelGasOrDieselQuery());
@@ -121,6 +135,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetCarCountByKmSmallerThan1000")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetCarCountByKmSmallerThan1000()
         {
             var value = await _mediator.Send(new GetCarCountByKmSmallerThan1000Query());
@@ -129,6 +144,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetCarCountByTransmissionIsAuto")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetCarCountByTransmissionIsAuto()
         {
             var value = await _mediator.Send(new GetCarCountByTransmissionIsAutoQuery());
@@ -137,6 +153,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetCarCount")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetCarCount()
         {
             var value = await _mediator.Send(new GetCarCountQuery());
@@ -145,6 +162,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("GetLocationCount")]
+        [Authorize(Policy = "FullPermissionPolicy")]
         public async Task<IActionResult> GetLocationCount()
         {
             var value = await _mediator.Send(new GetLocationCountQuery());

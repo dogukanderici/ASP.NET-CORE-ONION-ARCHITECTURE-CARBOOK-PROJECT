@@ -9,21 +9,19 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/Brand")]
-    public class AdminBrandController : Controller
+    public class AdminBrandController : AdminBaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
 
-        public AdminBrandController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public AdminBrandController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
         }
 
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/brands");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync("brands");
 
             AdminUIBrandViewModel model = new AdminUIBrandViewModel();
 
@@ -51,8 +49,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateBrand(AdminUIBrandViewModel adminUIBrandViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PostAsJsonAsync<CreateBrandDto>($"{_apiSettings.ApiBaseUrl}/brands", adminUIBrandViewModel.CreateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PostAsJsonAsync<CreateBrandDto>("brands", adminUIBrandViewModel.CreateData);
 
             var apiMessage2 = await responseMessage.Content.ReadAsStringAsync();
 
@@ -69,8 +67,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateBrand(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/brands/{id}");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync($"brands/{id}");
 
             AdminUIBrandViewModel model = new AdminUIBrandViewModel();
 
@@ -88,8 +86,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateBrand(AdminUIBrandViewModel adminUIBrandViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PutAsJsonAsync<UpdateBrandDto>($"{_apiSettings.ApiBaseUrl}/brands", adminUIBrandViewModel.UpdateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PutAsJsonAsync<UpdateBrandDto>("brands", adminUIBrandViewModel.UpdateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -104,8 +102,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteBrand(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.DeleteAsync($"{_apiSettings.ApiBaseUrl}/brands?id={id}");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.DeleteAsync($"brands?id={id}");
 
             if (responseMessage.IsSuccessStatusCode)
             {

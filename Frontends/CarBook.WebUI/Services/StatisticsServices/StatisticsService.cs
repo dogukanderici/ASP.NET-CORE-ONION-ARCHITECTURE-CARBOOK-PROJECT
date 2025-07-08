@@ -15,7 +15,7 @@ namespace CarBook.WebUI.Services.StatisticsServices
 
         public async Task<int> GetCarCountAsync()
         {
-            HttpClient client = _httpClientFactory.CreateClient("StatisticsService");
+            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync("Statistics/GetCarCount");
 
             int carCount = 0;
@@ -32,7 +32,7 @@ namespace CarBook.WebUI.Services.StatisticsServices
 
         public async Task<int> GetLocationCountAsync()
         {
-            HttpClient client = _httpClientFactory.CreateClient("StatisticsService");
+            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync("Statistics/GetLocationCount");
 
             int locationCount = 0;
@@ -49,7 +49,7 @@ namespace CarBook.WebUI.Services.StatisticsServices
 
         public async Task<int> GetBrandCountAsync()
         {
-            HttpClient client = _httpClientFactory.CreateClient("StatisticsService");
+            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync("Statistics/GetBrandCount");
 
             int brandCount = 0;
@@ -66,7 +66,7 @@ namespace CarBook.WebUI.Services.StatisticsServices
 
         public async Task<int> GetCarCountByFuelElectricAsync()
         {
-            HttpClient client = _httpClientFactory.CreateClient("StatisticsService");
+            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync("Statistics/GetCarCountByFuelElectric");
 
             int carCountByFuelElectric = 0;

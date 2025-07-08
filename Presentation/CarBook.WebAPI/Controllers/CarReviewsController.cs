@@ -2,6 +2,7 @@
 using CarBook.Application.Features.CQRS.Handlers.CarReviewHandlers;
 using CarBook.Application.Features.CQRS.Queries.CarReviewQueries;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,6 +41,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> GetCarReviewList()
         {
             try
@@ -55,6 +57,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> GetCarReviewById(Guid id)
         {
             try
@@ -70,6 +73,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("CarReviewWithCar/{id}")]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> GetCarReviewWithCarID(int id)
         {
             try
@@ -85,6 +89,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> CreateCarReview(CreateCarReviewCommand createCarReviewCommand)
         {
             try
@@ -109,6 +114,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> UpdateCarReview(UpdateCarReviewCommand updateCarReviewCommand)
         {
             try
@@ -124,6 +130,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> RemoveCarReview(Guid id)
         {
             try

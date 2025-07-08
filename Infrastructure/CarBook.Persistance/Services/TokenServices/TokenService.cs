@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,8 +54,8 @@ namespace CarBook.Persistance.Services.TokenServices
 
             ClientCredentialsTokenRequest tokenRequest = new ClientCredentialsTokenRequest
             {
-                ClientId = "CarBookMember",
-                ClientSecret = "carbookmemberkeycarbookmemberkey",
+                ClientId = _identityServerOptions.CarBookMember.ClientId,
+                ClientSecret = _identityServerOptions.CarBookMember.ClientSecret,
                 Address = discoveryEndPoint.TokenEndpoint
             };
 
@@ -63,7 +64,7 @@ namespace CarBook.Persistance.Services.TokenServices
             return new TokenResponseDto
             {
                 Status = true,
-                Message = "client Credentials Token has created successfully!",
+                Message = "Client Credentials Token has created successfully!",
                 AccessToken = token.AccessToken,
                 RefreshToken = token.RefreshToken,
                 ExpiresIn = DateTime.Now.AddMinutes(token.ExpiresIn).ToString(),
@@ -86,8 +87,8 @@ namespace CarBook.Persistance.Services.TokenServices
 
             PasswordTokenRequest passwordTokenRequest = new PasswordTokenRequest
             {
-                ClientId = _identityServerOptions.CarBookMember.ClientId,
-                ClientSecret = _identityServerOptions.CarBookMember.ClientSecret,
+                ClientId = _identityServerOptions.CarBookAdmin.ClientId,
+                ClientSecret = _identityServerOptions.CarBookAdmin.ClientSecret,
                 UserName = loginDto.Username,
                 Password = loginDto.Password,
                 Address = discoveryEndPoint.TokenEndpoint
@@ -132,15 +133,26 @@ namespace CarBook.Persistance.Services.TokenServices
             };
         }
 
-        public async Task<bool> SignUp(RegisterDto registerDto)
+        public async Task<HttpResponseMessage> SignUp(RegisterDto registerDto)
         {
             HttpClient client = _httpClientFactory.CreateClient();
             string jsonData = JsonConvert.SerializeObject(registerDto);
             StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
             HttpResponseMessage result = await client.PostAsync($"{_apiUrlOptions.IdentityServerUrl}/api/registers", content);
 
-            if (result.IsSuccessStatusCode)
+            return result;
+        }
+
+        public async Task<bool> ChangePasswordForMember(ChangePasswordDto changePasswordDto)
+        {
+            HttpClient client = _httpClientFactory.CreateClient();
+
+            HttpResponseMessage response = await client.PostAsJsonAsync<ChangePasswordDto>($"{_apiUrlOptions.IdentityServerUrl}/api/profilesettings/changepasswordformember", changePasswordDto);
+
+            if (response.IsSuccessStatusCode)
             {
+                string responseMessage = await response.Content.ReadAsStringAsync();
+
                 return true;
             }
 

@@ -1,0 +1,34 @@
+﻿@{
+    Layout = null;
+}
+
+<!doctype html>
+<html class="no-js" lang="en">
+
+@await Component.InvokeAsync("_UserLayoutHeadComponentPartial")
+
+<body>
+
+    @await Component.InvokeAsync("_UserLayoutSideBarComponentPartial")
+
+    <div id="right-panel" class="right-panel">
+
+        @await Component.InvokeAsync("_UserLayoutNavbarComponentPartial")
+
+        @await Component.InvokeAsync("_UserLayoutHeaderBarComponentPartial")
+
+        <div class="content mt-3">
+            <div class="animated fadeIn">
+                <div class="row">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    @await Component.InvokeAsync("_UserLayoutScriptComponentPartial")
+
+</body>
+</html>

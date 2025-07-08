@@ -15,7 +15,7 @@ namespace CarBook.WebUI.Services.BlogCommentServices
 
         public async Task<bool> CreateNewBlogCommentAsync(CreateBlogCommentDto createBlogCommentDto)
         {
-            HttpClient client = _httpClientFactory.CreateClient("BlogCommentClient");
+            HttpClient client = _httpClientFactory.CreateClient("FullAuthClient");
             HttpResponseMessage response = await client.PostAsJsonAsync<CreateBlogCommentDto>("blogcomments", createBlogCommentDto);
 
             if (response.IsSuccessStatusCode)

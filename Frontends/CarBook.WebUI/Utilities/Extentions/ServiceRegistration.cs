@@ -4,13 +4,17 @@ using CarBook.WebUI.Services.BannerServices;
 using CarBook.WebUI.Services.BlogCommentServices;
 using CarBook.WebUI.Services.BlogServices;
 using CarBook.WebUI.Services.CarServices;
+using CarBook.WebUI.Services.ContactService;
 using CarBook.WebUI.Services.FooterAddressServices;
 using CarBook.WebUI.Services.IdentityServices.IdentityServerServices.ClientCredentialsTokenServices;
 using CarBook.WebUI.Services.IdentityServices.IdentityServerServices.ClientCredentialTokenServices;
 using CarBook.WebUI.Services.IdentityServices.LoginServices;
+using CarBook.WebUI.Services.IdentityServices.ProfileSettingServices;
 using CarBook.WebUI.Services.IdentityServices.RegisterServices;
 using CarBook.WebUI.Services.LocationServices;
 using CarBook.WebUI.Services.OurServiceServices;
+using CarBook.WebUI.Services.RentACarServices;
+using CarBook.WebUI.Services.ReservationServices;
 using CarBook.WebUI.Services.SocialMediaServices;
 using CarBook.WebUI.Services.StatisticsServices;
 using CarBook.WebUI.Services.TestimonialServices;
@@ -44,6 +48,10 @@ namespace CarBook.WebUI.Utilities.Extentions
             service.AddScoped<IStatisticsService, StatisticsService>();
             service.AddScoped<IFooterAddressService, FooterAddressService>();
             service.AddScoped<ISocialMediaService, SocialMediaService>();
+            service.AddScoped<IContactService, ContactService>();
+            service.AddScoped<IReservationService, ReservationService>();
+            service.AddScoped<IRentACarService, RentACarService>();
+            service.AddScoped<IProfileSettingService, ProfileSettingService>();
 
             #endregion
 

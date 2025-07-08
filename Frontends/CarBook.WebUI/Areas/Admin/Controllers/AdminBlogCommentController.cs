@@ -10,21 +10,19 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/BlogComment")]
-    public class AdminBlogCommentController : Controller
+    public class AdminBlogCommentController : AdminBaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
 
-        public AdminBlogCommentController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public AdminBlogCommentController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
         }
 
         public async Task<IActionResult> Index(Guid id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/blogcomments/getblogcommentbyblogid?id={id}");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync("/blogcomments/getblogcommentbyblogid?id={id}");
 
             AdminUIBlogCommentViewModel model = new AdminUIBlogCommentViewModel();
 

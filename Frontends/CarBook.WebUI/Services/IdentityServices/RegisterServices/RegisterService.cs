@@ -14,17 +14,14 @@ namespace CarBook.WebUI.Services.IdentityServices.RegisterServices
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<bool> Register(RegisterDto registerDto)
+        public async Task<ApiResponseSettings> Register(RegisterDto registerDto)
         {
             HttpClient client = _httpClientFactory.CreateClient("RegisterClient");
             HttpResponseMessage response = await client.PostAsJsonAsync<RegisterDto>("registers", registerDto);
 
-            if (response.IsSuccessStatusCode)
-            {
-                return true;
-            }
+            ApiResponseSettings responseContent = await response.Content.ReadFromJsonAsync<ApiResponseSettings>();
 
-            return false;
+            return responseContent;
         }
     }
 }

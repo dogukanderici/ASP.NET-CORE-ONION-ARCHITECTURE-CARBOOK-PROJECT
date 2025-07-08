@@ -1,39 +1,32 @@
 ﻿using CarBook.Dto.CarDtos;
 using CarBook.WebUI.Models;
+using CarBook.WebUI.Services.CarServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CarBook.WebUI.Controllers
 {
     public class CarController : Controller
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
+        private readonly ICarService _carService;
 
-        public CarController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public CarController(ICarService carService)
         {
-            _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
+            _carService = carService;
         }
-
 
         public async Task<IActionResult> Index()
         {
             ViewBag.PageRouteTitle = "Araçlarımız";
 
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/cars");
+            List<ResultCarDto> values = await _carService.GetCarsAsync();
 
             CarUIViewModel model = new CarUIViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultCarDto>>(jsonData);
-                model.CarDatas = value;
-            }
+            model.CarDatas = values;
 
             return View(model);
         }
@@ -43,17 +36,11 @@ namespace CarBook.WebUI.Controllers
         {
             ViewBag.PageRouteTitle = "Araç Detayı";
 
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/cars/{id}");
+            ResultCarDto value = await _carService.GetCarByIdAsync(id);
 
             CarUIViewModel model = new CarUIViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<ResultCarDto>(jsonData);
-                model.CarData = value;
-            }
+            model.CarData = value;
 
             return View(model);
         }

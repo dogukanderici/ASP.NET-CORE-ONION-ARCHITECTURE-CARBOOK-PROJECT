@@ -13,21 +13,19 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/CarFeature")]
-    public class AdminCarFeatureController : Controller
+    public class AdminCarFeatureController : AdminBaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
 
-        public AdminCarFeatureController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public AdminCarFeatureController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
         }
 
         public async Task<IActionResult> Index(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/carfeatures/{id}");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync($"carfeatures/{id}");
 
             AdminUICarFeatureViewModel model = new AdminUICarFeatureViewModel();
 
@@ -45,8 +43,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("CarFeatureDetail")]
         public async Task<IActionResult> CarFeatureDetail(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/cars/{id}");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync($"cars/{id}");
 
             List<SelectListItem> featureList = await GetFeatures();
 
@@ -70,8 +68,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("CarFeatureDetail")]
         public async Task<IActionResult> CarFeatureDetail(AdminUICarFeatureViewModel adminUICarFeatureViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PostAsJsonAsync<List<CreateCarFeatureDto>>($"{_apiSettings.ApiBaseUrl}/carfeatures/createcarfeaturewithlist", adminUICarFeatureViewModel.CreateCarFeatureDatas);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PostAsJsonAsync<List<CreateCarFeatureDto>>("carfeatures/createcarfeaturewithlist", adminUICarFeatureViewModel.CreateCarFeatureDatas);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -83,8 +81,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 
         private async Task<List<SelectListItem>> GetFeatures()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/features");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync("features");
 
             List<SelectListItem> featureList = new List<SelectListItem>();
 
@@ -107,8 +105,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Remove")]
         public async Task<IActionResult> RemoveCarFeature(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.DeleteAsync($"{_apiSettings.ApiBaseUrl}/carfeatures?id={id}");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.DeleteAsync($"carfeatures?id={id}");
 
             if (responseMessage.IsSuccessStatusCode)
             {

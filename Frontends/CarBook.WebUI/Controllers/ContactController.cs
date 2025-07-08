@@ -1,4 +1,5 @@
 ﻿using CarBook.WebUI.Models;
+using CarBook.WebUI.Services.ContactService;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -9,13 +10,11 @@ namespace CarBook.WebUI.Controllers
 {
     public class ContactController : Controller
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
+        private readonly IContactService _contactService;
 
-        public ContactController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public ContactController(IContactService contactService)
         {
-            _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
+            _contactService = contactService;
         }
 
         [HttpGet]
@@ -34,11 +33,8 @@ namespace CarBook.WebUI.Controllers
             contactUIViewModel.CreateData.ReplyID = contactUIViewModel.CreateData.ContactID;
             contactUIViewModel.CreateData.SendDate = DateTime.Now;
 
-            var jsonData = JsonConvert.SerializeObject(contactUIViewModel.CreateData);
-            StringContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
 
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PostAsync($"{_apiSettings.ApiBaseUrl}/contacts", stringContent);
+            HttpResponseMessage responseMessage = await _contactService.AddNewContactMessageForUI(contactUIViewModel.CreateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {

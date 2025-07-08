@@ -1,5 +1,6 @@
 ﻿using CarBook.Application.Dtos.IdentityServerDtos;
 using CarBook.Application.Interfaces.TokenInterfaces;
+using CarBook.WebAPI.Utilities.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,14 +20,23 @@ namespace CarBook.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
-            bool response = await _tokenService.SignUp(registerDto);
+            HttpResponseMessage response = await _tokenService.SignUp(registerDto);
 
-            if (response)
+            WebApiResponseSetting apiResponse = new WebApiResponseSetting()
             {
-                return Ok("Registration Success!");
+                ResponseState = response.IsSuccessStatusCode
+            };
+
+            apiResponse.ResponseMessage = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                apiResponse.ResponseState = true;
+
+                return Ok(apiResponse);
             }
 
-            return BadRequest("Registration Failed!");
+            return BadRequest(apiResponse);
 
         }
     }

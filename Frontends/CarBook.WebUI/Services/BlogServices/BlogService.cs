@@ -19,7 +19,7 @@ namespace CarBook.WebUI.Services.BlogServices
 
         public async Task<int> GetBlogCountWithPublishStateAsync(bool publishState)
         {
-            HttpClient client = _httpClientFactory.CreateClient("BlogClient");
+            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync($"blogs/getblogtotalcount?publishstate={publishState}");
 
             int value = 0;
@@ -35,7 +35,7 @@ namespace CarBook.WebUI.Services.BlogServices
 
         public async Task<List<ResultBlogDto>> GetBlogWithPublishStateAsync(NameValueCollection nameValueCollection)
         {
-            HttpClient client = _httpClientFactory.CreateClient("BlogClient");
+            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync($"blogs/getblogwithpublishstate?{nameValueCollection}");
 
             List<ResultBlogDto> values = new List<ResultBlogDto>();
@@ -56,7 +56,7 @@ namespace CarBook.WebUI.Services.BlogServices
 
         public async Task<List<ResultBlogDto>> GetLast3BlogsAsync()
         {
-            HttpClient client = _httpClientFactory.CreateClient("BlogClient");
+            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync("blogs/getlast3blogs");
 
             List<ResultBlogDto> values = new List<ResultBlogDto>();

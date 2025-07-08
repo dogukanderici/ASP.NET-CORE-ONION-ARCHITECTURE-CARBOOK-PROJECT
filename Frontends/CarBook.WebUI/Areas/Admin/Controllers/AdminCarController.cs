@@ -15,21 +15,19 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/Car")]
-    public class AdminCarController : Controller
+    public class AdminCarController : AdminBaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
 
-        public AdminCarController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public AdminCarController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
         }
 
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/cars");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync("cars");
 
             AdminUICarViewModel model = new AdminUICarViewModel();
 
@@ -61,12 +59,12 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateCar(AdminUICarViewModel adminUICarViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
 
             var jsonData = JsonConvert.SerializeObject(adminUICarViewModel.CreateCarData);
             StringContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
 
-            var responseMessage = await client.PostAsJsonAsync<CreateCarDto>($"{_apiSettings.ApiBaseUrl}/cars", adminUICarViewModel.CreateCarData);
+            var responseMessage = await client.PostAsJsonAsync<CreateCarDto>("cars", adminUICarViewModel.CreateCarData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -89,8 +87,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
             ViewBag.TransmissionList = transmissionList;
             ViewBag.FuelTypeList = fuelTypeList;
 
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/cars/{id}");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync($"cars/{id}");
 
             AdminUICarViewModel model = new AdminUICarViewModel();
 
@@ -108,8 +106,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateCar(AdminUICarViewModel adminUICarViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PutAsJsonAsync<UpdateCarDto>($"{_apiSettings.ApiBaseUrl}/cars", adminUICarViewModel.UpdateCarData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PutAsJsonAsync<UpdateCarDto>("cars", adminUICarViewModel.UpdateCarData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -124,16 +122,16 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteCar(int id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.DeleteAsync($"{_apiSettings.ApiBaseUrl}/cars?id={id}");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.DeleteAsync($"cars?id={id}");
 
             return RedirectToAction("Index", "AdminCar", new { area = "Admin" });
         }
 
         private async Task<List<SelectListItem>> CarBrands()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/brands");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync("brands");
 
             List<SelectListItem> brandList = new List<SelectListItem>();
 

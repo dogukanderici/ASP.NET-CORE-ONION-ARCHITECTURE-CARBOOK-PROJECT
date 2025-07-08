@@ -16,7 +16,7 @@ namespace CarBook.WebUI.Services.BannerServices
 
         public async Task<List<ResultBannerDto>> GetBannerAsync()
         {
-            HttpClient client = _httpClientFactory.CreateClient("BannerClient");
+            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync("banners");
 
             List<ResultBannerDto> values = new List<ResultBannerDto>();

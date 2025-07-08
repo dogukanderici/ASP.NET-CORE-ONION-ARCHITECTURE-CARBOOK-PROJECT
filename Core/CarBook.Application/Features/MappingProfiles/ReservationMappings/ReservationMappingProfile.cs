@@ -16,6 +16,7 @@ namespace CarBook.Application.Features.MappingProfiles.ReservationMappings
         {
             CreateMap<Reservation, GetReservationQueryResult>().ReverseMap();
             CreateMap<Reservation, GetReservationByIdQueryResult>().ReverseMap();
+            CreateMap<Reservation, GetReservationByEmailQueryResult>().ReverseMap();
             CreateMap<Reservation, GetReservationForRentACarQueryResult>().ReverseMap();
             CreateMap<Reservation, CreateReservationCommand>().ReverseMap();
             CreateMap<Reservation, UpdateReservationCommand>().ReverseMap();

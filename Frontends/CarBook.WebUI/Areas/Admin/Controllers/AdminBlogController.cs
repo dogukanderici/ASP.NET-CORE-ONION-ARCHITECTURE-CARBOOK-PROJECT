@@ -12,21 +12,19 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/Blog")]
-    public class AdminBlogController : Controller
+    public class AdminBlogController : AdminBaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
 
-        public AdminBlogController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public AdminBlogController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
         }
 
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/blogs");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync("blogs");
 
             AdminUIBlogViewModel model = new AdminUIBlogViewModel();
 
@@ -57,8 +55,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
             adminUIBlogViewModel.CreateData.CoverImageUrl = "deneme";
             adminUIBlogViewModel.CreateData.AuthorID = Guid.Parse("D471ED04-AAFC-48D9-FA7F-08DD572FE794");
 
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PostAsJsonAsync<CreateBlogDto>($"{_apiSettings.ApiBaseUrl}/blogs", adminUIBlogViewModel.CreateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PostAsJsonAsync<CreateBlogDto>("blogs", adminUIBlogViewModel.CreateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -73,8 +71,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateBlog(Guid id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/blogs/{id}");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync($"blogs/{id}");
 
             AdminUIBlogViewModel model = new AdminUIBlogViewModel();
 
@@ -95,8 +93,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateBlog(AdminUIBlogViewModel adminUIBlogViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PutAsJsonAsync<UpdateBlogDto>($"{_apiSettings.ApiBaseUrl}/blogs", adminUIBlogViewModel.UpdateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PutAsJsonAsync<UpdateBlogDto>("blogs", adminUIBlogViewModel.UpdateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -114,8 +112,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         {
             state = !!state;
 
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/blogs/{id}");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.GetAsync($"blogs/{id}");
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -124,7 +122,7 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 
                 value.PublishState = state;
 
-                var responseMessageForUpdate = await client.PutAsJsonAsync<UpdateBlogDto>($"{_apiSettings.ApiBaseUrl}/blogs", value);
+                var responseMessageForUpdate = await client.PutAsJsonAsync<UpdateBlogDto>("blogs", value);
 
                 if (responseMessageForUpdate.IsSuccessStatusCode)
                 {
@@ -138,8 +136,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteBlog(Guid id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.DeleteAsync($"{_apiSettings.ApiBaseUrl}/blogs?id={id}");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.DeleteAsync($"blogs?id={id}");
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -151,8 +149,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 
         private async Task<List<SelectListItem>> GetBlogCategoryAsync()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/blogcategories");
+            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            var responseMessage = await client.GetAsync("blogcategories");
 
             List<SelectListItem> blogCategoryList = new List<SelectListItem>();
 

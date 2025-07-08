@@ -10,21 +10,19 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/Contact")]
-    public class AdminContactController : Controller
+    public class AdminContactController : AdminBaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
 
-        public AdminContactController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public AdminContactController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
         }
 
         public async Task<IActionResult> Inbox()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/contacts/inbox");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.GetAsync("contacts/inbox");
 
             AdminUIContactViewModel model = new AdminUIContactViewModel();
 
@@ -42,8 +40,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Outbox")]
         public async Task<IActionResult> Outbox()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/contacts/outbox");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.GetAsync("contacts/outbox");
 
             AdminUIContactViewModel model = new AdminUIContactViewModel();
 
@@ -61,8 +59,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("OutboxDetail")]
         public async Task<IActionResult> OutboxDetail(Guid id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/contacts/{id}");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.GetAsync($"contacts/{id}");
 
             AdminUIContactViewModel model = new AdminUIContactViewModel();
 
@@ -80,8 +78,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Reply")]
         public async Task<IActionResult> ReplyContact(Guid id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/contacts/{id}");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.GetAsync($"contacts/{id}");
 
             AdminUIContactViewModel model = new AdminUIContactViewModel();
 
@@ -106,8 +104,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
             adminUIContactViewModel.CreateData.Name = "CarBook Admin";
             adminUIContactViewModel.CreateData.Email = "support@carbook.com";
 
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PostAsJsonAsync<CreateContactDto>($"{_apiSettings.ApiBaseUrl}/contacts", adminUIContactViewModel.CreateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PostAsJsonAsync<CreateContactDto>("contacts", adminUIContactViewModel.CreateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -128,8 +126,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateContact(AdminUIContactViewModel adminUIContactViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.PostAsJsonAsync<CreateContactDto>($"{_apiSettings.ApiBaseUrl}/contacts", adminUIContactViewModel.CreateData);
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.PostAsJsonAsync<CreateContactDto>("contacts", adminUIContactViewModel.CreateData);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -144,8 +142,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteContact(Guid id)
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.DeleteAsync($"{_apiSettings.ApiBaseUrl}/contacts?id={id}");
+            var client = _httpClientFactory.CreateClient("FullAuthClient");
+            var responseMessage = await client.DeleteAsync($"contacts?id={id}");
 
             if (responseMessage.IsSuccessStatusCode)
             {

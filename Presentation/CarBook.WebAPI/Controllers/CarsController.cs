@@ -1,6 +1,10 @@
 ﻿using CarBook.Application.Features.CQRS.Commands.CarCommands;
 using CarBook.Application.Features.CQRS.Handlers.CarHandlers;
 using CarBook.Application.Features.CQRS.Queries.CarQueries;
+using CarBook.WebAPI.Utilities.Helper;
+using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +21,9 @@ namespace CarBook.WebAPI.Controllers
         private readonly CreateCarCommandHandler _createCarCommandHandler;
         private readonly UpdateCarCommandHandler _updateCarCommandHandler;
         private readonly RemoveCarCommandHandler _removeCarCommandHandler;
+        private readonly IValidator<CreateCarCommand> _createValidator;
+        private readonly IValidator<UpdateCarCommand> _updateValidator;
+        private readonly IValidationResultMessageHelper _validationResultMessageHelper;
 
         public CarsController(
             GetCarQueryHandler getCarQueryHandler,
@@ -25,7 +32,10 @@ namespace CarBook.WebAPI.Controllers
             GetLast5CarsQueryHandler getLast5CarsQueryHandler,
             CreateCarCommandHandler createCarCommandHandler,
             UpdateCarCommandHandler updateCarCommandHandler,
-            RemoveCarCommandHandler removeCarCommandHandler)
+            RemoveCarCommandHandler removeCarCommandHandler,
+            IValidator<CreateCarCommand> createValidator,
+            IValidator<UpdateCarCommand> updateValidator,
+            IValidationResultMessageHelper validationResultMessageHelper)
         {
             _getCarQueryHandler = getCarQueryHandler;
             _getCarForOnlyCarPricingQueryHandler = getCarForOnlyCarPricingQueryHandler;
@@ -34,62 +44,135 @@ namespace CarBook.WebAPI.Controllers
             _createCarCommandHandler = createCarCommandHandler;
             _updateCarCommandHandler = updateCarCommandHandler;
             _removeCarCommandHandler = removeCarCommandHandler;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
+            _validationResultMessageHelper = validationResultMessageHelper;
         }
 
         [HttpGet]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> CarList()
         {
-            var values = await _getCarQueryHandler.Handle();
+            try
+            {
+                var values = await _getCarQueryHandler.Handle();
 
-            return Ok(values);
+                return Ok(values);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while Car datas reading!");
+            }
         }
 
         [HttpGet("GetCarForOnlyWithPricing")]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> GetCarForOnlyWithPricing()
         {
-            var values = await _getCarForOnlyCarPricingQueryHandler.Handle();
+            try
+            {
+                var values = await _getCarForOnlyCarPricingQueryHandler.Handle();
 
-            return Ok(values);
+                return Ok(values);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while Car data with pricing reading!");
+            }
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> GetCar(int id)
         {
-            var value = await _getCarByIdQueryHandler.Handle(new GetCarByIdQuery(id));
+            try
+            {
+                var value = await _getCarByIdQueryHandler.Handle(new GetCarByIdQuery(id));
 
-            return Ok(value);
+                return Ok(value);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while Car data reading!");
+            }
         }
 
         [HttpGet("GetLast5Cars")]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> GetLast5Cars()
         {
-            var value = await _getLast5CarsQueryHandler.Handle();
+            try
+            {
+                var value = await _getLast5CarsQueryHandler.Handle();
 
-            return Ok(value);
+                return Ok(value);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while Last 5 Car data reading!");
+            }
         }
 
         [HttpPost]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> CreateCar(CreateCarCommand createCarCommand)
         {
-            await _createCarCommandHandler.Handle(createCarCommand);
+            try
+            {
+                ValidationResult validator = _createValidator.Validate(createCarCommand);
 
-            return Ok("Otomail Bilgisi Başarıyla Eklendi.");
+                if (validator.IsValid)
+                {
+                    await _createCarCommandHandler.Handle(createCarCommand);
+
+                    return Ok("Otomail Bilgisi Başarıyla Eklendi.");
+                }
+
+                return StatusCode(400, _validationResultMessageHelper.ValidationMessages(validator));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while creating a new Car data!");
+            }
         }
 
         [HttpPut]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> UpdateCar(UpdateCarCommand updateCarCommand)
         {
-            await _updateCarCommandHandler.Handle(updateCarCommand);
+            try
+            {
+                ValidationResult validator = _updateValidator.Validate(updateCarCommand);
 
-            return Ok("Otomail Bilgisi Başarıyla Güncellendi.");
+                if (validator.IsValid)
+                {
+                    await _updateCarCommandHandler.Handle(updateCarCommand);
+
+                    return Ok("Otomail Bilgisi Başarıyla Güncellendi.");
+                }
+
+                return StatusCode(400, _validationResultMessageHelper.ValidationMessages(validator));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while updating Car data!");
+            }
         }
 
         [HttpDelete]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> RemoveCar(int id)
         {
-            await _removeCarCommandHandler.Handle(new RemoveCarCommand(id));
+            try
+            {
+                await _removeCarCommandHandler.Handle(new RemoveCarCommand(id));
 
-            return Ok("Otomail Bilgisi Başarıyla Silindi.");
+                return Ok("Otomail Bilgisi Başarıyla Silindi.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("An error occured while deleting Car data!");
+            }
         }
     }
 }
