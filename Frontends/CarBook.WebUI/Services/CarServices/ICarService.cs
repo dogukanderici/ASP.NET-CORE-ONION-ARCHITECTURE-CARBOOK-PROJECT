@@ -8,5 +8,6 @@ namespace CarBook.WebUI.Services.CarServices
         Task<List<ResultCarDto>> GetCarsAsync();
         Task<ResultCarDto> GetCarByIdAsync(int id);
         Task<List<ResultCarDto>> GetCarForOnlyWithPricing();
+        Task UpdateCarService(UpdateCarDto dto);
     }
 }

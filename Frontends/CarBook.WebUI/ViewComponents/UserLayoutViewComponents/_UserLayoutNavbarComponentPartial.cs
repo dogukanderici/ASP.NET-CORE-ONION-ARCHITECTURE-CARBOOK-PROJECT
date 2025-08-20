@@ -6,6 +6,9 @@ namespace CarBook.WebUI.ViewComponents.UserLayoutViewComponents
     {
         public IViewComponentResult Invoke()
         {
+            string username = HttpContext.User?.FindFirst("username")?.Value;
+            ViewBag.Username = username;
+
             return View();
         }
     }

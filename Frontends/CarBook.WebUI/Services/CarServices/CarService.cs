@@ -75,5 +75,15 @@ namespace CarBook.WebUI.Services.CarServices
 
             return values;
         }
+
+        public async Task UpdateCarService(UpdateCarDto updateCarDto)
+        {
+            HttpClient client = _httpClientFactory.CreateClient("FullAuthClient");
+            HttpResponseMessage response = await client.PutAsJsonAsync<UpdateCarDto>("cars", updateCarDto);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            var testDeneme = responseString;
+        }
     }
 }

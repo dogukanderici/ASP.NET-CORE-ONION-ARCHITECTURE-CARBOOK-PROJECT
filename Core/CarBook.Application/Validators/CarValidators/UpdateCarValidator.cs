@@ -17,10 +17,10 @@ namespace CarBook.Application.Validators.CarValidators
             RuleFor(x => x.Model).MinimumLength(5).WithMessage("Model Bilgisi En Az 5 Karakter Olmalıdır!");
             RuleFor(x => x.CoverImageURL).NotEmpty().WithMessage("Cover Image URL Bilgisi Boş Bırakılamaz!");
             RuleFor(x => x.KM).NotEmpty().WithMessage("Araç KM Bilgisi Boş Bırakılamaz!");
-            RuleFor(x => x.KM).LessThan(0).WithMessage("Araç KM Bilgisi 0'dan ( sıfır ) Küçük Olamaz!");
+            RuleFor(x => x.KM).GreaterThan(0).WithMessage("Araç KM Bilgisi 0'dan ( sıfır ) Küçük Olamaz!");
             RuleFor(x => x.Transmission).NotEmpty().WithMessage("Şanzıman Bilgisi Boş Bırakılamaz!");
             RuleFor(x => x.Seat).NotEmpty().WithMessage("Koltuk Sayısı Bilgisi Boş Bırakılamaz!");
-            RuleFor(x => x.Seat).LessThan(2).WithMessage("Koltuk Sayısı Bilgisi 2'den Küçük Olamaz!");
+            RuleFor(x => x.Seat).GreaterThanOrEqualTo(2).WithMessage("Koltuk Sayısı Bilgisi 2'den Küçük Olamaz!");
             RuleFor(x => x.Luggage).NotEmpty().WithMessage("Bagaj Bilgisi Boş Olamaz!");
             RuleFor(x => x.Fuel).NotEmpty().WithMessage("Yakıt Türü Bilgisi Boş Olamaz!");
             RuleFor(x => x.BigImageURL).NotEmpty().WithMessage("Big Image URL Bilgisi Boş Olamaz!");

@@ -18,6 +18,7 @@ using CarBook.WebUI.Services.ReservationServices;
 using CarBook.WebUI.Services.SocialMediaServices;
 using CarBook.WebUI.Services.StatisticsServices;
 using CarBook.WebUI.Services.TestimonialServices;
+using CarBook.WebUI.Utilities.FileOperations;
 
 namespace CarBook.WebUI.Utilities.Extentions
 {
@@ -52,6 +53,7 @@ namespace CarBook.WebUI.Utilities.Extentions
             service.AddScoped<IReservationService, ReservationService>();
             service.AddScoped<IRentACarService, RentACarService>();
             service.AddScoped<IProfileSettingService, ProfileSettingService>();
+            service.AddScoped<IFileOperationHelper, FileOperationHelper>();
 
             #endregion
 

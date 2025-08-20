@@ -1,9 +1,13 @@
 ﻿using CarBook.Dto.AboutDtos;
 using CarBook.WebUI.Areas.Admin.Models;
+using CarBook.WebUI.Services.AboutServices;
 using CarBook.WebUI.Utilities.Settings;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CarBook.WebUI.Areas.Admin.Controllers
 {
@@ -11,28 +15,25 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
     [Route("Admin/About")]
     public class AdminAboutController : AdminBaseController
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IAboutService _aboutService;
+        private readonly IValidator<CreateAboutDto> _createAboutValidator;
+        private readonly IValidator<UpdateAboutDto> _updateAboutValidator;
 
-        public AdminAboutController(IHttpClientFactory httpClientFactory)
+        public AdminAboutController(IAboutService aboutService, IValidator<CreateAboutDto> createAboutValidator, IValidator<UpdateAboutDto> updateAboutValidator)
         {
-            _httpClientFactory = httpClientFactory;
+            _aboutService = aboutService;
+            _createAboutValidator = createAboutValidator;
+            _updateAboutValidator = updateAboutValidator;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync("abouts");
+            (List<ResultAboutDto> values, HttpResponseMessage status) = await _aboutService.GetAboutAsync();
 
             AdminUIAboutViewModel model = new AdminUIAboutViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultAboutDto>>(jsonData);
-
-                model.ResultDatas = value;
-            }
+            model.ResultDatas = values;
 
             return View(model);
         }
@@ -46,49 +47,73 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateAbout(AdminUIAboutViewModel adminUIAboutViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PostAsJsonAsync<CreateAboutDto>("abouts", adminUIAboutViewModel.CreateData);
+            ValidationResult validator = _createAboutValidator.Validate(adminUIAboutViewModel.CreateData);
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (validator.IsValid)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+                HttpResponseMessage createDataResponse = await _aboutService.CreateAboutAsync(adminUIAboutViewModel.CreateData);
+                string apiMessage = await createDataResponse.Content.ReadAsStringAsync();
 
-                return RedirectToAction("Index", "AdminAbout", new { area = "Admin" });
+                return createDataResponse.IsSuccessStatusCode ? RedirectToAction("Index", "AdminAbout", new { area = "Admin" }) : View(adminUIAboutViewModel);
+            }
+            else
+            {
+                foreach (var item in validator.Errors)
+                {
+                    ModelState.AddModelError($"CreateData.{item.PropertyName}", item.ErrorMessage);
+                }
             }
 
             return View(adminUIAboutViewModel);
+
         }
 
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateAbout(int id)
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync($"abouts/{id}");
+            (ResultAboutDto values, HttpResponseMessage status) = await _aboutService.GetAboutByIdAsync(id);
 
             AdminUIAboutViewModel model = new AdminUIAboutViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (status.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<UpdateAboutDto>(jsonData);
+                string jsonData = await status.Content.ReadAsStringAsync();
+                UpdateAboutDto value = JsonConvert.DeserializeObject<UpdateAboutDto>(jsonData);
 
                 model.UpdateData = value;
+
+                return View(model);
+            }
+            else
+            {
+                ViewBag.ErrorCode = status.StatusCode;
             }
 
-            return View(model);
+            return RedirectToAction("Index", "AdminAbout", new { area = "Admin" });
         }
 
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateAbout(AdminUIAboutViewModel adminUIAboutViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PutAsJsonAsync<UpdateAboutDto>("abouts", adminUIAboutViewModel.UpdateData);
+            ValidationResult validator = _updateAboutValidator.Validate(adminUIAboutViewModel.UpdateData);
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (validator.IsValid)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+                HttpResponseMessage updateDataResponse = await _aboutService.UpdateAboutAsync(adminUIAboutViewModel.UpdateData);
 
-                return RedirectToAction("Index", "AdminAbout", new { area = "Admin" });
+                if (updateDataResponse.IsSuccessStatusCode)
+                {
+                    string apiMessage = await updateDataResponse.Content.ReadAsStringAsync();
+
+                    return RedirectToAction("Index", "AdminAbout", new { area = "Admin" });
+                }
+            }
+            else
+            {
+                foreach (var item in validator.Errors)
+                {
+                    ModelState.AddModelError($"UpdateData.{item.PropertyName}", item.ErrorMessage);
+                }
             }
 
             return View(adminUIAboutViewModel);
@@ -97,12 +122,15 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteAbout(int id)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.DeleteAsync($"abouts?id={id}");
+            HttpResponseMessage response = await _aboutService.DeleteAboutAsync(id);
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+                var apiMessage = await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                ViewBag.ErrorCode = response.StatusCode;
             }
 
             return RedirectToAction("Index", "AdminAbout", new { area = "Admin" });

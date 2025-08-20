@@ -3,6 +3,8 @@ using CarBook.Dto.CarDtos;
 using CarBook.Dto.CarFeatureDtos;
 using CarBook.Dto.FeatureDtos;
 using CarBook.WebUI.Areas.Admin.Models;
+using CarBook.WebUI.Services.CarServices;
+using CarBook.WebUI.Utilities.FileOperations;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -18,12 +20,17 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
     public class AdminCarController : AdminBaseController
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ICarService _carService;
+        private readonly IFileOperationHelper _fileOperationHelper;
 
-        public AdminCarController(IHttpClientFactory httpClientFactory)
+        public AdminCarController(IHttpClientFactory httpClientFactory, IFileOperationHelper fileOperationHelper, ICarService carService)
         {
             _httpClientFactory = httpClientFactory;
+            _fileOperationHelper = fileOperationHelper;
+            _carService = carService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var client = _httpClientFactory.CreateClient("ReadOnlyClient");
@@ -106,17 +113,36 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateCar(AdminUICarViewModel adminUICarViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PutAsJsonAsync<UpdateCarDto>("cars", adminUICarViewModel.UpdateCarData);
-
-            if (responseMessage.IsSuccessStatusCode)
+            string coverImageUrlString = await _fileOperationHelper.CopyFileToFolder(new FileProperty
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+                FilePath = "/wwwroot/assets/car_photos/",
+                LoadedFile = adminUICarViewModel.UpdateCarData.CoverImage
+            });
 
-                return RedirectToAction("Index", "AdminCar", new { area = "Admin" });
-            }
+            string bigImageUrlString = await _fileOperationHelper.CopyFileToFolder(new FileProperty
+            {
+                FilePath = "/wwwroot/assets/car_photos/",
+                LoadedFile = adminUICarViewModel.UpdateCarData.BigImage
+            });
 
-            return View(adminUICarViewModel);
+            adminUICarViewModel.UpdateCarData.CoverImageURL = coverImageUrlString;
+            adminUICarViewModel.UpdateCarData.BigImageURL = bigImageUrlString;
+
+            //var client = _httpClientFactory.CreateClient("FullAuthClient");
+            //var responseMessage = await client.PutAsJsonAsync<UpdateCarDto>("cars", adminUICarViewModel.UpdateCarData);
+
+            //if (responseMessage.IsSuccessStatusCode)
+            //{
+            //    var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+
+            //    return RedirectToAction("Index", "AdminCar", new { area = "Admin" });
+            //}
+
+            await _carService.UpdateCarService(adminUICarViewModel.UpdateCarData);
+
+            return RedirectToAction("Index", "AdminCar", new { area = "Admin" });
+
+            //return View(adminUICarViewModel);
         }
 
         [HttpGet("Delete")]

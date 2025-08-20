@@ -21,7 +21,7 @@
                             Kayıtlı Aracınıza Ait Bilgileri Bu Ekrandan Güncelleyebilirsiniz!
                         </p>
 
-                        <form id="UpdateCar" asp-area="Admin" asp-controller="AdminCar" asp-action="UpdateCar" method="post">
+                        <form id="UpdateCar" asp-area="Admin" asp-controller="AdminCar" asp-action="UpdateCar" method="post" enctype="multipart/form-data">
                             @Html.HiddenFor(x => x.UpdateCarData.CarID)
                             <div class="row">
                                 <div class="form-group col-xl-4">
@@ -57,12 +57,12 @@
                                     <input asp-for="@Model.UpdateCarData.Luggage" type="text" class="form-control" placeholder="Bagaj">
                                 </div>
                                 <div class="form-group col-xl-4">
-                                    <label asp-for="@Model.UpdateCarData.CoverImageURL">Cover Image URL</label>
-                                    <input asp-for="@Model.UpdateCarData.CoverImageURL" type="text" class="form-control" placeholder="Cover Image">
+                                    <label asp-for="@Model.UpdateCarData.CoverImage">Cover Image URL</label>
+                                    <input asp-for="@Model.UpdateCarData.CoverImage" type="file" class="form-control" placeholder="Cover Image">
                                 </div>
                                 <div class="form-group  col-xl-4">
-                                    <label asp-for="@Model.UpdateCarData.BigImageURL">Big Image URL</label>
-                                    <input asp-for="@Model.UpdateCarData.BigImageURL" type="text" class="form-control" placeholder="Big Image">
+                                    <label asp-for="@Model.UpdateCarData.BigImage">Big Image URL</label>
+                                    <input asp-for="@Model.UpdateCarData.BigImage" type="file" class="form-control" placeholder="Big Image">
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary waves-effect waves-light">Kaydet</button>

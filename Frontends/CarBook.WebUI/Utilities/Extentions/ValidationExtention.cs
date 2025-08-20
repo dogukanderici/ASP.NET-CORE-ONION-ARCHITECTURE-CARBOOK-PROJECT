@@ -1,4 +1,5 @@
-﻿using CarBook.WebUI.Validators.IdentityValidators;
+﻿using CarBook.WebUI.Validators.AboutValidators;
+using CarBook.WebUI.Validators.IdentityValidators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 
@@ -17,6 +18,9 @@ namespace CarBook.WebUI.Utilities.Extentions
             service.AddValidatorsFromAssemblyContaining<LoginValidator>();
             service.AddValidatorsFromAssemblyContaining<RegisterValidator>();
             service.AddValidatorsFromAssemblyContaining<ChangePasswordValidator>();
+
+            service.AddValidatorsFromAssemblyContaining<CreateAboutValidator>();
+            service.AddValidatorsFromAssemblyContaining<UpdateAboutValidator>();
 
 
             return service;

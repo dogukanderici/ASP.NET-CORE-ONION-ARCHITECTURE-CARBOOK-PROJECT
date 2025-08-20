@@ -18,20 +18,33 @@
                             Ana Sayfada Görüntülenecek olan About Alanını İçin Bilgileri Bu Ekrandan Düzenleyebilirsiniz!
                         </p>
 
-                        <form id="UpdateAboutForm" asp-area="Admin" asp-controller="AdminAbout" asp-action="UpdateAbout" method="post">
+                        <form id="UpdateAboutForm" asp-area="Admin" asp-controller="AdminAbout" asp-action="UpdateAbout" method="post" enctype="multipart/form-data">
                             @Html.HiddenFor(x => x.UpdateData.AboutID)
+                            @Html.HiddenFor(x => x.UpdateData.ImageURL)
                             <div class="row">
-                                <div class="form-group col-xl-3">
+                                <div class="form-group col-xl-6">
                                     <label asp-for="@Model.UpdateData.Title">Başlık</label>
-                                    <input asp-for="@Model.UpdateData.Title" class="form-control mb-3" placeholder="Başlık"></input>
+                                    <input asp-for="@Model.UpdateData.Title" type="text" class="form-control mb-3" placeholder="Başlık"></input>
+                                    @if (!ViewContext.ModelState.IsValid && ViewContext.ModelState["UpdateData.Title"].Errors.Any())
+                                    {
+                                        <span asp-validation-for="@Model.UpdateData.Title" class="alert alert-danger d-flex justify-content-center"></span>
+                                    }
                                 </div>
-                                <div class="form-group col-xl-3">
+                                <div class="form-group col-xl-6">
+                                    <label asp-for="@Model.UpdateData.Image">Görsel URL</label>
+                                    <input asp-for="@Model.UpdateData.Image" type="file" class="form-control mb-3" placeholder="Görsel URL"></input>
+                                    @if (!ViewContext.ModelState.IsValid && ViewContext.ModelState["UpdateData.ImageURL"].Errors.Any())
+                                    {
+                                        <span asp-validation-for="@Model.UpdateData.ImageURL" class="alert alert-danger d-flex justify-content-center"></span>
+                                    }
+                                </div>
+                                <div class="form-group col-xl-12">
                                     <label asp-for="@Model.UpdateData.Description">Açıklama</label>
-                                    <input asp-for="@Model.UpdateData.Description" type="text" class="form-control" placeholder="Açıklama">
-                                </div>
-                                <div class="form-group col-xl-3">
-                                    <label asp-for="@Model.UpdateData.ImageURL">Görsel URL</label>
-                                    <input asp-for="@Model.UpdateData.ImageURL" class="form-control mb-3" placeholder="Görsel URL"></input>
+                                    <textarea asp-for="@Model.UpdateData.Description" rows="6" class="form-control mb-3" placeholder="Açıklama"></textarea>
+                                    @if (!ViewContext.ModelState.IsValid && ViewContext.ModelState["UpdateData.Description"].Errors.Any())
+                                    {
+                                        <span asp-validation-for="@Model.UpdateData.Description" class="alert alert-danger d-flex justify-content-center"></span>
+                                    }
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary waves-effect waves-light">Kaydet</button>

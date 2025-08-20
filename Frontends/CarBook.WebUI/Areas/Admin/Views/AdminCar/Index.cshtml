@@ -38,7 +38,7 @@
                                     @foreach (var carItem in Model.CarDatas)
                                     {
                                         <tr>
-                                            <td><img src="@carItem.BigImageURL" alt="car-image" style="width: 75px; height: 50px" /></td>
+                                            <td><img src="~/assets/car_photos/@carItem.BigImageURL" alt="car-image" style="width: 75px; height: 50px" /></td>
                                             <td>@carItem.Brand.BrandName</td>
                                             <td>@carItem.Model</td>
                                             <td>@carItem.KM</td>

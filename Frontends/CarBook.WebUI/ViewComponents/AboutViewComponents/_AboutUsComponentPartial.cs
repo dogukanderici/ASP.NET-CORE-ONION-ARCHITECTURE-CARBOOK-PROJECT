@@ -20,7 +20,7 @@ namespace CarBook.WebUI.ViewComponents.AboutViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            List<ResultAboutDto> values = await _aboutService.GetAboutAsync();
+            (List<ResultAboutDto> values, HttpResponseMessage status) = await _aboutService.GetAboutAsync();
 
             AboutUIViewModel model = new AboutUIViewModel();
 
