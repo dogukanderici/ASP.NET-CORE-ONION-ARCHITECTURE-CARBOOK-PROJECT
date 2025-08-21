@@ -1,6 +1,7 @@
 ﻿using CarBook.Dto.AuthorDtos;
 using CarBook.Dto.BlogCommentDtos;
 using CarBook.WebUI.Areas.Admin.Models;
+using CarBook.WebUI.Services.BlogCommentServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -12,26 +13,27 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
     [Route("Admin/BlogComment")]
     public class AdminBlogCommentController : AdminBaseController
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IBlogCommentService _blogCommentService;
 
-        public AdminBlogCommentController(IHttpClientFactory httpClientFactory)
+        public AdminBlogCommentController(IBlogCommentService blogCommentService)
         {
-            _httpClientFactory = httpClientFactory;
+            _blogCommentService = blogCommentService;
         }
 
         public async Task<IActionResult> Index(Guid id)
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync("/blogcomments/getblogcommentbyblogid?id={id}");
+            UIServiceApiResponseSetting<ResultBlogCommentDto> serviceResponse = await _blogCommentService.GetBlogCommentByIdAsync(id);
 
             AdminUIBlogCommentViewModel model = new AdminUIBlogCommentViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultBlogCommentDto>>(jsonData);
-
-                model.ResultDatas = value;
+                model.ResultDatas = serviceResponse.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = serviceResponse.HttpResponseMessage.Content;
             }
 
             return View(model);

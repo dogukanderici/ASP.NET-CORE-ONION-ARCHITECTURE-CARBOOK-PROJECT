@@ -49,11 +49,19 @@ namespace CarBook.WebUI.Controllers
             queryString["pageDataSize"] = pageDataSize.ToString();
             queryString["pageNumber"] = pageNumber.ToString();
 
-            List<ResultBlogDto> values = await _blogService.GetBlogWithPublishStateAsync(queryString);
+            UIServiceApiResponseSetting<ResultBlogDto> serviceResponse = await _blogService.GetBlogWithPublishStateAsync(queryString);
 
             BlogUIViewModel model = new BlogUIViewModel();
 
-            model.BlogDatas = values;
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
+            {
+                model.BlogDatas = serviceResponse.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = serviceResponse.HttpResponseMessage.Content;
+            }
 
             return PartialView(model);
         }
@@ -71,9 +79,10 @@ namespace CarBook.WebUI.Controllers
         public async Task<IActionResult> PostBlogComment(BlogUIViewModel blogUIViewModel)
         {
             blogUIViewModel.CreateBlogCommentData.CreatedDate = new DateTimeOffset(DateTime.Now, TimeSpan.FromHours(3));
-            bool response = await _blogCommentService.CreateNewBlogCommentAsync(blogUIViewModel.CreateBlogCommentData);
 
-            if (response)
+            HttpResponseMessage serviceResponse = await _blogCommentService.CreateNewBlogCommentAsync(blogUIViewModel.CreateBlogCommentData);
+
+            if (serviceResponse.IsSuccessStatusCode)
             {
                 return RedirectToAction("BlogDetail", "Blog", new { id = blogUIViewModel.CreateBlogCommentData.BlogID });
             }

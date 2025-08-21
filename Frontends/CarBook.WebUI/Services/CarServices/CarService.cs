@@ -1,5 +1,9 @@
 ﻿using CarBook.Dto.CarDtos;
+using CarBook.WebUI.Utilities.Settings;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Net;
+using System.Net.Http.Json;
 
 namespace CarBook.WebUI.Services.CarServices
 {
@@ -12,7 +16,7 @@ namespace CarBook.WebUI.Services.CarServices
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<List<ResultCarDto>> GetCarsAsync()
+        public async Task<UIServiceApiResponseSetting<ResultCarDto>> GetCarsAsync()
         {
             HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync("cars");
@@ -25,10 +29,14 @@ namespace CarBook.WebUI.Services.CarServices
                 values = JsonConvert.DeserializeObject<List<ResultCarDto>>(jsonData);
             }
 
-            return values;
+            return new UIServiceApiResponseSetting<ResultCarDto>
+            {
+                HttpResponseMessage = response,
+                ResponseDatas = values
+            };
         }
 
-        public async Task<ResultCarDto> GetCarByIdAsync(int id)
+        public async Task<UIServiceApiResponseSetting<ResultCarDto>> GetCarByIdAsync(int id)
         {
             HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync($"cars/{id}");
@@ -41,10 +49,14 @@ namespace CarBook.WebUI.Services.CarServices
                 value = JsonConvert.DeserializeObject<ResultCarDto>(jsonData);
             }
 
-            return value;
+            return new UIServiceApiResponseSetting<ResultCarDto>
+            {
+                HttpResponseMessage = response,
+                ResponseData = value
+            };
         }
 
-        public async Task<List<ResultCarDto>> GetLast5CarsAsync()
+        public async Task<UIServiceApiResponseSetting<ResultCarDto>> GetLast5CarsAsync()
         {
             HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync("cars/getlast5cars");
@@ -57,10 +69,14 @@ namespace CarBook.WebUI.Services.CarServices
                 values = JsonConvert.DeserializeObject<List<ResultCarDto>>(jsonData);
             }
 
-            return values;
+            return new UIServiceApiResponseSetting<ResultCarDto>
+            {
+                HttpResponseMessage = response,
+                ResponseDatas = values
+            };
         }
 
-        public async Task<List<ResultCarDto>> GetCarForOnlyWithPricing()
+        public async Task<UIServiceApiResponseSetting<ResultCarDto>> GetCarForOnlyWithPricing()
         {
             HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync("cars/getcarforonlywithpricing");
@@ -73,17 +89,42 @@ namespace CarBook.WebUI.Services.CarServices
                 values = JsonConvert.DeserializeObject<List<ResultCarDto>>(jsonData);
             }
 
-            return values;
+            return new UIServiceApiResponseSetting<ResultCarDto>
+            {
+                HttpResponseMessage = response,
+                ResponseDatas = values
+            };
         }
 
-        public async Task UpdateCarService(UpdateCarDto updateCarDto)
+        public async Task<HttpResponseMessage> CreateCarService(CreateCarDto updateCarDto)
+        {
+            HttpClient client = _httpClientFactory.CreateClient("FullAuthClient");
+            HttpResponseMessage response = await client.PostAsJsonAsync<CreateCarDto>("cars", updateCarDto);
+
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateCarService(UpdateCarDto updateCarDto)
         {
             HttpClient client = _httpClientFactory.CreateClient("FullAuthClient");
             HttpResponseMessage response = await client.PutAsJsonAsync<UpdateCarDto>("cars", updateCarDto);
 
-            var responseString = await response.Content.ReadAsStringAsync();
+            return response;
+        }
 
-            var testDeneme = responseString;
+        public async Task<HttpResponseMessage> DeleteCarService(int id)
+        {
+            HttpClient client = _httpClientFactory.CreateClient("FullAuthClient");
+            HttpResponseMessage response = await client.GetAsync($"cars/{id}");
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                HttpResponseMessage deletedDataResponse = await client.DeleteAsync($"cars?id={id}");
+
+                return deletedDataResponse;
+            }
+
+            return response;
         }
     }
 }

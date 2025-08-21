@@ -15,7 +15,7 @@ namespace CarBook.WebUI.Validators.AboutValidators
             RuleFor(x => x.Description).MinimumLength(20).WithMessage("Açıklama Alanı En Az 20 Karakterden Oluşmalıdır!");
             RuleFor(x => x.Description).MaximumLength(1000).WithMessage("Açıklama Alanı En Fazla 100 Karakterden Oluşmalıdır!");
 
-            RuleFor(x => x.ImageURL).NotEmpty().WithMessage("Görsel URL Alanı Boş Bırakılamaz!");
+            RuleFor(x => x.Image).NotEmpty().WithMessage("Görsel URL Alanı Boş Bırakılamaz!");
         }
     }
 }

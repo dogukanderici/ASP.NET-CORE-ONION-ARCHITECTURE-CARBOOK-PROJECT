@@ -20,6 +20,14 @@
                             <a class="btn btn-primary mb-4" href="/admin/brand/create">
                                 <i class="fa fa-plus" aria-hidden="true"></i> Yeni Araç Markası Ekle
                             </a>
+                            @if (ViewBag.ErrorCode != null)
+                            {
+                                <div class="row d-flex justify-content-center">
+                                    <div class="col-12 text-center alert alert-danger">
+                                        @ViewBag.ErrorCode
+                                    </div>
+                                </div>
+                            }
                             <div class="row">
                                 <div class="col-xl-6">
                                     <table class="table mb-0">
@@ -35,9 +43,6 @@
                                                 <tr>
                                                     <td>@brandItem.BrandName</td>
                                                     <td style="text-align: end">
-                                                        <a class="btn btn-info" href="/admin/brand/detail?id=@brandItem.BrandID" title="Markaya Ait Araçlar">
-                                                            <i class="fa fa-car fa-lg" aria-hidden="true"></i>
-                                                        </a>
                                                         <a class="btn btn-danger" href="/admin/brand/delete?id=@brandItem.BrandID" title="Sil">
                                                             <i class="fa fa-trash fa-lg" aria-hidden="true"></i>
                                                         </a>

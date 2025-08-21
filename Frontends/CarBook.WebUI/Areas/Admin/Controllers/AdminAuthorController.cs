@@ -1,5 +1,7 @@
 ﻿using CarBook.Dto.AuthorDtos;
 using CarBook.WebUI.Areas.Admin.Models;
+using CarBook.WebUI.Services.AuthorServices;
+using CarBook.WebUI.Utilities.FileOperations;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -11,26 +13,30 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
     [Route("Admin/Author")]
     public class AdminAuthorController : AdminBaseController
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IAuthorService _authorService;
+        private readonly IFileOperationHelper _fileOperationHelper;
 
-        public AdminAuthorController(IHttpClientFactory httpClientFactory)
+        public AdminAuthorController(IAuthorService authorService, IFileOperationHelper fileOperationHelper)
         {
-            _httpClientFactory = httpClientFactory;
+            _authorService = authorService;
+            _fileOperationHelper = fileOperationHelper;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync("authors");
+            UIServiceApiResponseSetting<ResultAuthorDto> serviceResult = await _authorService.GetAuthorAsync();
 
             AdminUIAuthorViewModel model = new AdminUIAuthorViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResult.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultAuthorDto>>(jsonData);
-
-                model.ResultDatas = value;
+                model.ResultDatas = serviceResult.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.UIErrorCode = serviceResult.HttpResponseMessage.StatusCode;
+                ViewBag.UIErrorMessage = serviceResult.HttpResponseMessage.Content;
             }
 
             return View(model);
@@ -45,14 +51,25 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateAuthor(AdminUIAuthorViewModel adminUIAuthorViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PostAsJsonAsync<CreateAuthorDto>("authors", adminUIAuthorViewModel.CreateData);
-
-            if (responseMessage.IsSuccessStatusCode)
+            string imageUrl = await _fileOperationHelper.CopyFileToFolder(new FileProperty
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+                FilePath = "/wwwroot/assets/authors/",
+                LoadedFile = adminUIAuthorViewModel.CreateData.Image
+            });
 
+            adminUIAuthorViewModel.CreateData.ImageUrl = imageUrl;
+
+            HttpResponseMessage serviceResponse = await _authorService.CreateAuthorAsync(adminUIAuthorViewModel.CreateData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
+
+            if (serviceResponse.IsSuccessStatusCode)
+            {
                 return RedirectToAction("Index", "AdminAuthor", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.UIErrorCode = serviceResponse.StatusCode;
+                ViewBag.UIErrorMessage = serviceResponse.Content;
             }
 
             return View(adminUIAuthorViewModel);
@@ -61,17 +78,21 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateAuthor(Guid id)
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync($"authors/{id}");
+            UIServiceApiResponseSetting<ResultAuthorDto> serviceResponse = await _authorService.GetAuthorByIdAsync(id);
 
             AdminUIAuthorViewModel model = new AdminUIAuthorViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<UpdateAuthorDto>(jsonData);
+                var jsonData = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
+                UpdateAuthorDto value = JsonConvert.DeserializeObject<UpdateAuthorDto>(jsonData);
 
                 model.UpdateData = value;
+            }
+            else
+            {
+                ViewBag.UIErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.UIErrorMessage = serviceResponse.HttpResponseMessage.Content;
             }
 
             return View(model);
@@ -80,14 +101,28 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateAuthor(AdminUIAuthorViewModel adminUIAuthorViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PutAsJsonAsync<UpdateAuthorDto>("authors", adminUIAuthorViewModel.UpdateData);
-
-            if (responseMessage.IsSuccessStatusCode)
+            if (adminUIAuthorViewModel.UpdateData.Image != null)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+                string imageUrl = await _fileOperationHelper.CopyFileToFolder(new FileProperty
+                {
+                    FilePath = "/wwwroot/assets/authors/",
+                    LoadedFile = adminUIAuthorViewModel.UpdateData.Image
+                });
 
+                adminUIAuthorViewModel.UpdateData.ImageUrl = imageUrl;
+            }
+
+            HttpResponseMessage serviceResponse = await _authorService.UpdateAuthorAsync(adminUIAuthorViewModel.UpdateData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
+
+            if (serviceResponse.IsSuccessStatusCode)
+            {
                 return RedirectToAction("Index", "AdminAuthor", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.UIErrorCode = serviceResponse.StatusCode;
+                ViewBag.UIErrorMessage = serviceResponse.Content;
             }
 
             return View(adminUIAuthorViewModel);
@@ -96,12 +131,13 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteAuthor(Guid id)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.DeleteAsync($"authors?id={id}");
+            HttpResponseMessage serviceResponse = await _authorService.DeleteAuthorAsync(id);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (!serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+                ViewBag.UIErrorCode = serviceResponse.StatusCode;
+                ViewBag.UIErrorMessage = serviceResponse.Content;
             }
 
             return RedirectToAction("Index", "AdminAuthor", new { area = "Admin" });

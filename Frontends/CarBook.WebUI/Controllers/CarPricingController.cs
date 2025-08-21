@@ -23,11 +23,14 @@ namespace CarBook.WebUI.Controllers
 
         public async Task<IActionResult> Index()
         {
-            List<ResultCarDto> values = await _carService.GetCarForOnlyWithPricing();
+            UIServiceApiResponseSetting<ResultCarDto> serviceResponse = await _carService.GetCarForOnlyWithPricing();
 
             CarUIViewModel model = new CarUIViewModel();
 
-            model.CarDatas = values;
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
+            {
+                model.CarDatas = serviceResponse.ResponseDatas;
+            }
 
             return View(model);
         }

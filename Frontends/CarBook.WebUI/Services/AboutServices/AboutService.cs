@@ -2,6 +2,7 @@
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Net;
 
 namespace CarBook.WebUI.Services.AboutServices
@@ -16,7 +17,7 @@ namespace CarBook.WebUI.Services.AboutServices
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<(List<ResultAboutDto>, HttpResponseMessage)> GetAboutAsync()
+        public async Task<UIServiceApiResponseSetting<ResultAboutDto>> GetAboutAsync()
         {
 
             HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
@@ -31,10 +32,14 @@ namespace CarBook.WebUI.Services.AboutServices
                 values = JsonConvert.DeserializeObject<List<ResultAboutDto>>(jsonData);
             }
 
-            return (values, response);
+            return new UIServiceApiResponseSetting<ResultAboutDto>
+            {
+                ResponseDatas = values,
+                HttpResponseMessage = response
+            };
         }
 
-        public async Task<(ResultAboutDto, HttpResponseMessage)> GetAboutByIdAsync(int id)
+        public async Task<UIServiceApiResponseSetting<ResultAboutDto>> GetAboutByIdAsync(int id)
         {
             HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
             HttpResponseMessage response = await client.GetAsync($"abouts/{id}");
@@ -48,7 +53,11 @@ namespace CarBook.WebUI.Services.AboutServices
                 value = JsonConvert.DeserializeObject<ResultAboutDto>(responseData);
             }
 
-            return (value, response);
+            return new UIServiceApiResponseSetting<ResultAboutDto>
+            {
+                ResponseData = value,
+                HttpResponseMessage = response
+            };
         }
 
         public async Task<HttpResponseMessage> CreateAboutAsync(CreateAboutDto createAboutDto)
@@ -79,7 +88,7 @@ namespace CarBook.WebUI.Services.AboutServices
 
                 if (result != null)
                 {
-                    HttpResponseMessage deleteDataResponse = await client.DeleteAsync($"abouts?id{id}");
+                    HttpResponseMessage deleteDataResponse = await client.DeleteAsync($"abouts?id={id}");
 
                     return deleteDataResponse;
                 }

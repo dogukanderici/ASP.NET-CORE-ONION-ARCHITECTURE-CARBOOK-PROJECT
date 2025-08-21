@@ -18,7 +18,7 @@
                             Yazar Alanı İçin Bilgileri Bu Ekrandan Kaydedebilirsiniz!
                         </p>
 
-                        <form id="AddNewAuthorForm" asp-area="Admin" asp-controller="AdminAuthor" asp-action="CreateAuthor" method="post">
+                        <form id="AddNewAuthorForm" asp-area="Admin" asp-controller="AdminAuthor" asp-action="CreateAuthor" method="post" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="form-group col-xl-3">
                                     <label asp-for="@Model.CreateData.AuthorName">Yazar Adı</label>
@@ -29,8 +29,8 @@
                                     <input asp-for="@Model.CreateData.Description" type="text" class="form-control" placeholder="Açıklama">
                                 </div>
                                 <div class="form-group col-xl-3">
-                                    <label asp-for="@Model.CreateData.ImageUrl">Görsel URL</label>
-                                    <input asp-for="@Model.CreateData.ImageUrl" class="form-control mb-3" placeholder="Görsel URL"></input>
+                                    <label asp-for="@Model.CreateData.Image">Yazar Görseli</label>
+                                    <input asp-for="@Model.CreateData.Image" type="file" class="form-control mb-3" placeholder="Yazar Görseli"></input>
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary waves-effect waves-light">Kaydet</button>

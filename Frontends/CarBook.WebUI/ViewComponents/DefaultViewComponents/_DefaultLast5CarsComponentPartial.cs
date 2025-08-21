@@ -20,11 +20,14 @@ namespace CarBook.WebUI.ViewComponents.DefaultViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            List<ResultCarDto> values = await _carService.GetLast5CarsAsync();
+            UIServiceApiResponseSetting<ResultCarDto> serviceResponse = await _carService.GetLast5CarsAsync();
 
             CarUIViewModel model = new CarUIViewModel();
 
-            model.CarDatas = values;
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
+            {
+                model.CarDatas = serviceResponse.ResponseDatas;
+            }
 
             return View(model);
         }

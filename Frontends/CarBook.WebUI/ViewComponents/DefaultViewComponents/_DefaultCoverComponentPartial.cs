@@ -20,11 +20,14 @@ namespace CarBook.WebUI.ViewComponents.DefaultViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            List<ResultBannerDto> values = await _bannerService.GetBannerAsync();
+            UIServiceApiResponseSetting<ResultBannerDto> serviceResponse = await _bannerService.GetBannerAsync();
 
             BannerUIViewModel model = new BannerUIViewModel();
 
-            model.BannerDatas = values;
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
+            {
+                model.BannerDatas = serviceResponse.ResponseDatas;
+            }
 
             return View(model);
         }

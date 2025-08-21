@@ -1,6 +1,7 @@
 ﻿using CarBook.Dto.AboutDtos;
 using CarBook.WebUI.Areas.Admin.Models;
 using CarBook.WebUI.Services.AboutServices;
+using CarBook.WebUI.Utilities.FileOperations;
 using CarBook.WebUI.Utilities.Settings;
 using FluentValidation;
 using FluentValidation.Results;
@@ -18,22 +19,24 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         private readonly IAboutService _aboutService;
         private readonly IValidator<CreateAboutDto> _createAboutValidator;
         private readonly IValidator<UpdateAboutDto> _updateAboutValidator;
+        private readonly IFileOperationHelper _fileOperationHelper;
 
-        public AdminAboutController(IAboutService aboutService, IValidator<CreateAboutDto> createAboutValidator, IValidator<UpdateAboutDto> updateAboutValidator)
+        public AdminAboutController(IAboutService aboutService, IValidator<CreateAboutDto> createAboutValidator, IValidator<UpdateAboutDto> updateAboutValidator, IFileOperationHelper fileOperationHelper)
         {
             _aboutService = aboutService;
             _createAboutValidator = createAboutValidator;
             _updateAboutValidator = updateAboutValidator;
+            _fileOperationHelper = fileOperationHelper;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            (List<ResultAboutDto> values, HttpResponseMessage status) = await _aboutService.GetAboutAsync();
+            UIServiceApiResponseSetting<ResultAboutDto> serviceResult = await _aboutService.GetAboutAsync();
 
             AdminUIAboutViewModel model = new AdminUIAboutViewModel();
 
-            model.ResultDatas = values;
+            model.ResultDatas = serviceResult.ResponseDatas;
 
             return View(model);
         }
@@ -51,6 +54,14 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 
             if (validator.IsValid)
             {
+                string imageUrl = await _fileOperationHelper.CopyFileToFolder(new FileProperty
+                {
+                    FilePath = "/wwwroot/assets/images/",
+                    LoadedFile = adminUIAboutViewModel.CreateData.Image
+                });
+
+                adminUIAboutViewModel.CreateData.ImageURL = imageUrl;
+
                 HttpResponseMessage createDataResponse = await _aboutService.CreateAboutAsync(adminUIAboutViewModel.CreateData);
                 string apiMessage = await createDataResponse.Content.ReadAsStringAsync();
 
@@ -71,13 +82,13 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateAbout(int id)
         {
-            (ResultAboutDto values, HttpResponseMessage status) = await _aboutService.GetAboutByIdAsync(id);
+            UIServiceApiResponseSetting<ResultAboutDto> serviceResult = await _aboutService.GetAboutByIdAsync(id);
 
             AdminUIAboutViewModel model = new AdminUIAboutViewModel();
 
-            if (status.IsSuccessStatusCode)
+            if (serviceResult.HttpResponseMessage.IsSuccessStatusCode)
             {
-                string jsonData = await status.Content.ReadAsStringAsync();
+                string jsonData = await serviceResult.HttpResponseMessage.Content.ReadAsStringAsync();
                 UpdateAboutDto value = JsonConvert.DeserializeObject<UpdateAboutDto>(jsonData);
 
                 model.UpdateData = value;
@@ -86,7 +97,7 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
             }
             else
             {
-                ViewBag.ErrorCode = status.StatusCode;
+                ViewBag.ErrorCode = serviceResult.HttpResponseMessage.StatusCode;
             }
 
             return RedirectToAction("Index", "AdminAbout", new { area = "Admin" });
@@ -99,6 +110,17 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 
             if (validator.IsValid)
             {
+                if (adminUIAboutViewModel.UpdateData.Image != null)
+                {
+                    string imageUrl = await _fileOperationHelper.CopyFileToFolder(new FileProperty
+                    {
+                        FilePath = "/wwwroot/assets/images/",
+                        LoadedFile = adminUIAboutViewModel.UpdateData.Image
+                    });
+
+                    adminUIAboutViewModel.UpdateData.ImageURL = imageUrl;
+                }
+
                 HttpResponseMessage updateDataResponse = await _aboutService.UpdateAboutAsync(adminUIAboutViewModel.UpdateData);
 
                 if (updateDataResponse.IsSuccessStatusCode)

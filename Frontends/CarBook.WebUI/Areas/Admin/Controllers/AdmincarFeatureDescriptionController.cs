@@ -1,5 +1,6 @@
 ﻿using CarBook.Dto.FeatureDtos;
 using CarBook.WebUI.Areas.Admin.Models;
+using CarBook.WebUI.Services.FeatureServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -13,26 +14,23 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
     [Route("Admin/Feature")]
     public class AdmincarFeatureDescriptionController : AdminBaseController
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IFeatureService _featureService;
 
-        public AdmincarFeatureDescriptionController(IHttpClientFactory httpClientFactory)
+        public AdmincarFeatureDescriptionController(IFeatureService featureService)
         {
-            _httpClientFactory = httpClientFactory;
+            _featureService = featureService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync("features");
+            UIServiceApiResponseSetting<ResultFeatureDto> serviceResponse = await _featureService.GetFeatureAsync();
 
             AdminUIFeatureViewModel model = new AdminUIFeatureViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var values = JsonConvert.DeserializeObject<List<ResultFeatureDto>>(jsonData);
-
-                model.FeatureDatas = values;
+                model.FeatureDatas = serviceResponse.ResponseDatas;
             }
 
             return View(model);
@@ -51,15 +49,12 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateFeature(AdminUIFeatureViewModel adminUIFeatureViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PostAsJsonAsync<CreateFeatureDto>("features", adminUIFeatureViewModel.CreateDatas);
+            HttpResponseMessage serviceResponse = await _featureService.CreateFeatureAsync(adminUIFeatureViewModel.CreateDatas);
 
-            var apiMessage2 = await responseMessage.Content.ReadAsStringAsync();
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
-
                 return RedirectToAction("Index", "AdmincarFeatureDescription", new { area = "Admin" });
             }
 
@@ -69,15 +64,14 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateFeature(int id)
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync($"features/{id}");
+            UIServiceApiResponseSetting<ResultFeatureDto> serviceResponse = await _featureService.GetFeatureByIdAsync(id);
 
             AdminUIFeatureViewModel model = new AdminUIFeatureViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<UpdateFeatureDto>(jsonData);
+                string jsonData = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
+                UpdateFeatureDto value = JsonConvert.DeserializeObject<UpdateFeatureDto>(jsonData);
 
                 model.UpdateDatas = value;
             }
@@ -88,13 +82,11 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateFeature(AdminUIFeatureViewModel adminUIFeatureViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PutAsJsonAsync<UpdateFeatureDto>("features", adminUIFeatureViewModel.UpdateDatas);
+            HttpResponseMessage serviceResponse = await _featureService.UpdateFeatureAsync(adminUIFeatureViewModel.UpdateDatas);
+            string apiResponse = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiResponse = await responseMessage.Content.ReadAsStringAsync();
-
                 return RedirectToAction("Index", "AdmincarFeatureDescription", new { area = "Admin" });
             }
 
@@ -104,12 +96,13 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteFeature(int id)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.DeleteAsync($"features?id={id}");
+            HttpResponseMessage serviceResponse = await _featureService.DeleteFeatureAsync(id);
+            string apiResponse = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (!serviceResponse.IsSuccessStatusCode)
             {
-                var apiResponse = await responseMessage.Content.ReadAsStringAsync();
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiResponse;
             }
 
             return RedirectToAction("Index", "AdmincarFeatureDescription", new { area = "Admin" });

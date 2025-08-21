@@ -22,11 +22,14 @@ namespace CarBook.WebUI.Controllers
         {
             ViewBag.PageRouteTitle = "Araçlarımız";
 
-            List<ResultCarDto> values = await _carService.GetCarsAsync();
+            UIServiceApiResponseSetting<ResultCarDto> serviceResponse = await _carService.GetCarsAsync();
 
             CarUIViewModel model = new CarUIViewModel();
 
-            model.CarDatas = values;
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
+            {
+                model.CarDatas = serviceResponse.ResponseDatas;
+            }
 
             return View(model);
         }
@@ -36,11 +39,14 @@ namespace CarBook.WebUI.Controllers
         {
             ViewBag.PageRouteTitle = "Araç Detayı";
 
-            ResultCarDto value = await _carService.GetCarByIdAsync(id);
+            UIServiceApiResponseSetting<ResultCarDto> serviceResponse = await _carService.GetCarByIdAsync(id);
 
             CarUIViewModel model = new CarUIViewModel();
 
-            model.CarData = value;
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
+            {
+                model.CarData = serviceResponse.ResponseData;
+            }
 
             return View(model);
         }

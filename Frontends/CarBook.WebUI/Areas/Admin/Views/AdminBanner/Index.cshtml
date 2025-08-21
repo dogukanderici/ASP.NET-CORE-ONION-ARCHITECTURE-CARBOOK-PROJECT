@@ -42,7 +42,6 @@
                                         <tr>
                                             <th>Başlık</th>
                                             <th>Açıklama</th>
-                                            <th>Video Açıklama</th>
                                             <th>Video URL</th>
                                             <th></th>
                                         </tr>
@@ -51,8 +50,8 @@
                                         @foreach (var bannerItem in Model.ResultDatas)
                                         {
                                             <tr>
-                                                <td>@bannerItem.Description</td>
                                                 <td>@bannerItem.VideoDescription</td>
+                                                <td>@bannerItem.Description</td>
                                                 <td><a class="btn btn-danger" href="@bannerItem.VideoURL"><i class="fab fa-youtube fa-lg"></i></a></td>
                                                 <td>
                                                     <a class="btn btn-danger" href="/admin/banner/delete?id=@bannerItem.BannerID" title="Sil">

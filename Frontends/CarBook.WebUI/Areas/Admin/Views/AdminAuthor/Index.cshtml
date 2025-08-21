@@ -49,7 +49,7 @@
                                             <tr>
                                                 <td style="max-width: 100px;">@authorItem.AuthorName</td>
                                                 <td style="max-width: 250px;">@authorItem.Description</td>
-                                                <td>@authorItem.ImageUrl</td>
+                                                <td><img src="~/assets/authors/@authorItem.ImageUrl" style="width: 25px; height: 25px;" /></td>
                                                 <td>
                                                     <a class="btn btn-danger" href="/admin/author/delete?id=@authorItem.AuthorID" title="Sil">
                                                         <i class="fa fa-trash fa-lg" aria-hidden="true"></i>

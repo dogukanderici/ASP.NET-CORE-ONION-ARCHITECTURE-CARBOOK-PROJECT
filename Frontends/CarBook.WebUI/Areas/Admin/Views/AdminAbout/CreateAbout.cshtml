@@ -37,11 +37,11 @@
                                     }
                                 </div>
                                 <div class="form-group col-xl-3">
-                                    <label asp-for="@Model.CreateData.ImageURL">Görsel URL</label>
-                                    <input asp-for="@Model.CreateData.ImageURL" class="form-control mb-3" placeholder="Görsel URL"></input>
-                                    @if (!ViewContext.ModelState.IsValid && ViewContext.ModelState["CreateData.ImageURL"].Errors.Any())
+                                    <label asp-for="@Model.CreateData.Image">Hakkımızda Görseli</label>
+                                    <input asp-for="@Model.CreateData.Image" class="form-control mb-3" placeholder="Hakkımızda Görseli"></input>
+                                    @if (!ViewContext.ModelState.IsValid && ViewContext.ModelState["CreateData.Image"].Errors.Any())
                                     {
-                                        <span asp-validation-for="@Model.CreateData.ImageURL" class="alert alert-danger d-flex justify-content-center"></span>
+                                        <span asp-validation-for="@Model.CreateData.Image" class="alert alert-danger d-flex justify-content-center"></span>
                                     }
                                 </div>
                             </div>

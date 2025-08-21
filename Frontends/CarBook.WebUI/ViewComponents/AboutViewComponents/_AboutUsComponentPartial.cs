@@ -20,13 +20,13 @@ namespace CarBook.WebUI.ViewComponents.AboutViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            (List<ResultAboutDto> values, HttpResponseMessage status) = await _aboutService.GetAboutAsync();
+            UIServiceApiResponseSetting<ResultAboutDto> serviceResult = await _aboutService.GetAboutAsync();
 
             AboutUIViewModel model = new AboutUIViewModel();
 
-            if (values.Count() > 0)
+            if (serviceResult.ResponseDatas.Count() > 0)
             {
-                model.AboutDatas = values;
+                model.AboutDatas = serviceResult.ResponseDatas;
             }
 
             return View(model);

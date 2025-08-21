@@ -1,5 +1,6 @@
 ﻿using CarBook.Dto.BrandDtos;
 using CarBook.WebUI.Areas.Admin.Models;
+using CarBook.WebUI.Services.BrandServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -11,26 +12,28 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
     [Route("Admin/Brand")]
     public class AdminBrandController : AdminBaseController
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IBrandService _brandService;
 
-        public AdminBrandController(IHttpClientFactory httpClientFactory)
+        public AdminBrandController(IBrandService brandService)
         {
-            _httpClientFactory = httpClientFactory;
+            _brandService = brandService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync("brands");
+            UIServiceApiResponseSetting<ResultBrandDto> serviceResponse = await _brandService.GetBrandAsync();
 
             AdminUIBrandViewModel model = new AdminUIBrandViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var values = JsonConvert.DeserializeObject<List<ResultBrandDto>>(jsonData);
-
-                model.ResultDatas = values;
+                model.ResultDatas = serviceResponse.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = serviceResponse.HttpResponseMessage.Content;
             }
 
             return View(model);
@@ -49,16 +52,18 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateBrand(AdminUIBrandViewModel adminUIBrandViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PostAsJsonAsync<CreateBrandDto>("brands", adminUIBrandViewModel.CreateData);
+            HttpResponseMessage serviceResponse = await _brandService.CreateBrandAsync(adminUIBrandViewModel.CreateData);
 
-            var apiMessage2 = await responseMessage.Content.ReadAsStringAsync();
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
-
                 return RedirectToAction("Index", "AdminBrand", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = serviceResponse.Content;
             }
 
             return View(adminUIBrandViewModel);
@@ -67,17 +72,21 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateBrand(int id)
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync($"brands/{id}");
+            UIServiceApiResponseSetting<ResultBrandDto> serviceResponse = await _brandService.GetBrandByIdAsync(id);
 
             AdminUIBrandViewModel model = new AdminUIBrandViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<UpdateBrandDto>(jsonData);
+                string jsonData = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
+                UpdateBrandDto value = JsonConvert.DeserializeObject<UpdateBrandDto>(jsonData);
 
                 model.UpdateData = value;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = serviceResponse.HttpResponseMessage.Content;
             }
 
             return View(model);
@@ -86,14 +95,18 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateBrand(AdminUIBrandViewModel adminUIBrandViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PutAsJsonAsync<UpdateBrandDto>("brands", adminUIBrandViewModel.UpdateData);
+            HttpResponseMessage serviceResponse = await _brandService.UpdateBrandAsync(adminUIBrandViewModel.UpdateData);
+            string apiResponse = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiResponse = await responseMessage.Content.ReadAsStringAsync();
 
                 return RedirectToAction("Index", "AdminBrand", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = serviceResponse.Content;
             }
 
             return View(adminUIBrandViewModel);
@@ -102,12 +115,12 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteBrand(int id)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.DeleteAsync($"brands?id={id}");
+            HttpResponseMessage serviceResponse = await _brandService.DeleteBrandAsync(id);
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (!serviceResponse.IsSuccessStatusCode)
             {
-                var apiResponse = await responseMessage.Content.ReadAsStringAsync();
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = serviceResponse.Content;
             }
 
             return RedirectToAction("Index", "AdminBrand", new { area = "Admin" });

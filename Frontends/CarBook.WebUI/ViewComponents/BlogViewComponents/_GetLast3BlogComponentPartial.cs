@@ -20,11 +20,19 @@ namespace CarBook.WebUI.ViewComponents.BlogViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            List<ResultBlogDto> values = await _blogService.GetLast3BlogsAsync();
+            UIServiceApiResponseSetting<ResultBlogDto> serviceResponse = await _blogService.GetLast3BlogsAsync();
 
             BlogUIViewModel model = new BlogUIViewModel();
 
-            model.BlogDatas = values;
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
+            {
+                model.BlogDatas = serviceResponse.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = serviceResponse.HttpResponseMessage.Content;
+            }
 
             return View(model);
         }

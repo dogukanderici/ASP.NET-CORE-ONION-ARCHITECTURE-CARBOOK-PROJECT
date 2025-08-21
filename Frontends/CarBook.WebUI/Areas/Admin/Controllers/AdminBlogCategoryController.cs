@@ -1,5 +1,6 @@
 ﻿using CarBook.Dto.BlogCategoryDtos;
 using CarBook.WebUI.Areas.Admin.Models;
+using CarBook.WebUI.Services.BlogCategoryServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -11,26 +12,28 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
     [Route("Admin/BlogCategory")]
     public class AdminBlogCategoryController : AdminBaseController
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IBlogCategoryService _blogCategoryService;
 
-        public AdminBlogCategoryController(IHttpClientFactory httpClientFactory)
+        public AdminBlogCategoryController(IBlogCategoryService blogCategoryService)
         {
-            _httpClientFactory = httpClientFactory;
+            _blogCategoryService = blogCategoryService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync("blogcategories");
+            UIServiceApiResponseSetting<ResultBlogCategoryDto> serviceResponse = await _blogCategoryService.GetBlogCategoryAsync();
 
             AdminUIBlogCategoryViewModel model = new AdminUIBlogCategoryViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultBlogCategoryDto>>(jsonData);
-
-                model.ResultDatas = value;
+                model.ResultDatas = serviceResponse.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = serviceResponse.HttpResponseMessage.Content;
             }
 
             return View(model);
@@ -45,14 +48,17 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateBlogCategory(AdminUIBlogCategoryViewModel adminUIBlogCategoryViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PostAsJsonAsync<CreateBlogCategoryDto>("blogcategories", adminUIBlogCategoryViewModel.CreateData);
+            HttpResponseMessage serviceResponse = await _blogCategoryService.CreateBlogCategoryAsync(adminUIBlogCategoryViewModel.CreateData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
-
                 return RedirectToAction("Index", "AdminBlogCategory", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = serviceResponse.Content;
             }
 
             return View(adminUIBlogCategoryViewModel);
@@ -61,17 +67,21 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateBlogCategory(int id)
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync($"blogcategories/{id}");
+            UIServiceApiResponseSetting<ResultBlogCategoryDto> serviceResponse = await _blogCategoryService.GetBlogCategoryByIdAsync(id);
 
             AdminUIBlogCategoryViewModel model = new AdminUIBlogCategoryViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<UpdateBlogCategoryDto>(jsonData);
+                string jsonData = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
+                UpdateBlogCategoryDto value = JsonConvert.DeserializeObject<UpdateBlogCategoryDto>(jsonData);
 
                 model.UpdateData = value;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = serviceResponse.HttpResponseMessage.Content;
             }
 
             return View(model);
@@ -80,14 +90,17 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateBlogCategory(AdminUIBlogCategoryViewModel adminUIBlogCategoryViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PutAsJsonAsync<UpdateBlogCategoryDto>("blogcategories", adminUIBlogCategoryViewModel.UpdateData);
+            HttpResponseMessage serviceResponse = await _blogCategoryService.UpdateBlogCategoryAsync(adminUIBlogCategoryViewModel.UpdateData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
-
                 return RedirectToAction("Index", "AdminBlogCategory", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = serviceResponse.Content;
             }
 
             return View(adminUIBlogCategoryViewModel);
@@ -96,12 +109,12 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteBlogCategory(int id)
         {
-            var client = _httpClientFactory.CreateClient(" FullAuthClient");
-            var responseMessage = await client.DeleteAsync($"blogcategories?id={id}");
+            HttpResponseMessage serviceResponse = await _blogCategoryService.DeleteBlogCategoryAsync(id);
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (!serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = serviceResponse.Content;
             }
 
             return RedirectToAction("Index", "AdminBlogCategory", new { area = "Admin" });
