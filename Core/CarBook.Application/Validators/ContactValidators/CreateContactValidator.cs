@@ -16,7 +16,7 @@ namespace CarBook.Application.Validators.ContactValidators
             RuleFor(x => x.Email).NotEmpty().WithMessage("E-Posta Alanı Boş Olamaz!");
             RuleFor(x => x.Subject).NotEmpty().WithMessage("Konu Alanı Boş Olamaz!");
             RuleFor(x => x.Message).NotEmpty().WithMessage("Mesaj Alanı Boş Olamaz!");
-            RuleFor(x => x.MessageType).NotEmpty().WithMessage("Mesaj Tipi Alanı Boş Olamaz!");
+            //RuleFor(x => x.MessageType).NotEmpty().WithMessage("Mesaj Tipi Alanı Boş Olamaz!");
         }
     }
 }

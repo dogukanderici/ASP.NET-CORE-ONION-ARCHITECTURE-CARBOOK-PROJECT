@@ -1,16 +1,11 @@
 ﻿using CarBook.Dto.BrandDtos;
 using CarBook.Dto.CarDtos;
-using CarBook.Dto.CarFeatureDtos;
-using CarBook.Dto.FeatureDtos;
 using CarBook.WebUI.Areas.Admin.Models;
 using CarBook.WebUI.Services.CarServices;
 using CarBook.WebUI.Utilities.FileOperations;
-using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Net.Http.Json;
 using System.Text;
 
 namespace CarBook.WebUI.Areas.Admin.Controllers

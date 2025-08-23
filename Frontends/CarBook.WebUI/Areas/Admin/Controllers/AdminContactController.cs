@@ -1,8 +1,10 @@
 ﻿using CarBook.Dto.ContactDtos;
 using CarBook.WebUI.Areas.Admin.Models;
 using CarBook.WebUI.Models;
+using CarBook.WebUI.Services.ContactService;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -12,26 +14,29 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
     [Route("Admin/Contact")]
     public class AdminContactController : AdminBaseController
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IContactService _contactService;
 
-        public AdminContactController(IHttpClientFactory httpClientFactory)
+        public AdminContactController(IContactService contactService)
         {
-            _httpClientFactory = httpClientFactory;
+            _contactService = contactService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Inbox()
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.GetAsync("contacts/inbox");
+
+            UIServiceApiResponseSetting<ResultContactDto> serviceResponse = await _contactService.GetContactInboxAsync();
 
             AdminUIContactViewModel model = new AdminUIContactViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultContactDto>>(jsonData);
-
-                model.ResultDatas = value;
+                model.ResultDatas = serviceResponse.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);
@@ -40,17 +45,18 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Outbox")]
         public async Task<IActionResult> Outbox()
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.GetAsync("contacts/outbox");
+            UIServiceApiResponseSetting<ResultContactDto> serviceResponse = await _contactService.GetContactOutboxAsync();
 
             AdminUIContactViewModel model = new AdminUIContactViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultContactDto>>(jsonData);
-
-                model.ResultDatas = value;
+                model.ResultDatas = serviceResponse.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);
@@ -59,17 +65,18 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("OutboxDetail")]
         public async Task<IActionResult> OutboxDetail(Guid id)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.GetAsync($"contacts/{id}");
+            UIServiceApiResponseSetting<ResultContactDto> serviceResponse = await _contactService.GetContactByIdAsync(id);
 
             AdminUIContactViewModel model = new AdminUIContactViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<ResultContactDto>(jsonData);
-
-                model.ResultData = value;
+                model.ResultData = serviceResponse.ResponseData;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);
@@ -78,17 +85,18 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Reply")]
         public async Task<IActionResult> ReplyContact(Guid id)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.GetAsync($"contacts/{id}");
+            UIServiceApiResponseSetting<ResultContactDto> serviceResponse = await _contactService.GetContactByIdAsync(id);
 
             AdminUIContactViewModel model = new AdminUIContactViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<ResultContactDto>(jsonData);
-
-                model.ResultData = value;
+                model.ResultData = serviceResponse.ResponseData;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);
@@ -104,14 +112,18 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
             adminUIContactViewModel.CreateData.Name = "CarBook Admin";
             adminUIContactViewModel.CreateData.Email = "support@carbook.com";
 
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PostAsJsonAsync<CreateContactDto>("contacts", adminUIContactViewModel.CreateData);
+            HttpResponseMessage serviceResponse = await _contactService.AddNewContactMessageForUI(adminUIContactViewModel.CreateData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
 
                 return RedirectToAction("Index", "AdminContact", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return View(adminUIContactViewModel);
@@ -126,14 +138,17 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateContact(AdminUIContactViewModel adminUIContactViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PostAsJsonAsync<CreateContactDto>("contacts", adminUIContactViewModel.CreateData);
+            HttpResponseMessage serviceResponse = await _contactService.AddNewContactMessageForUI(adminUIContactViewModel.CreateData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
-
                 return RedirectToAction("Index", "AdminContact", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return View(adminUIContactViewModel);
@@ -142,12 +157,13 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteContact(Guid id)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.DeleteAsync($"contacts?id={id}");
+            HttpResponseMessage serviceResponse = await _contactService.DeleteContactAsync(id);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (!serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return RedirectToAction("Index", "AdminContact", new { area = "Admin" });

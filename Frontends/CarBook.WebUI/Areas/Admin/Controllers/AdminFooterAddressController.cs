@@ -1,5 +1,6 @@
 ﻿using CarBook.Dto.FooterAddressDtos;
 using CarBook.WebUI.Areas.Admin.Models;
+using CarBook.WebUI.Services.FooterAddressServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -11,26 +12,28 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
     [Route("Admin/FooterAddress")]
     public class AdminFooterAddressController : AdminBaseController
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IFooterAddressService _footerAddressService;
 
-        public AdminFooterAddressController(IHttpClientFactory httpClientFactory)
+        public AdminFooterAddressController(IFooterAddressService footerAddressService)
         {
-            _httpClientFactory = httpClientFactory;
+            _footerAddressService = footerAddressService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync("footeraddresses");
+            UIServiceApiResponseSetting<ResultFooterAddressDto> serviceResponse = await _footerAddressService.GetFooterAddressAsync();
 
             AdminUIFooterAddressViewModel model = new AdminUIFooterAddressViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultFooterAddressDto>>(jsonData);
-
-                model.ResultDatas = value;
+                model.ResultDatas = serviceResponse.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);
@@ -45,14 +48,17 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateFooterAddress(AdminUIFooterAddressViewModel adminUIFooterAddressViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PostAsJsonAsync<CreateFooterAddressDto>("footeraddresses", adminUIFooterAddressViewModel.CreateData);
+            HttpResponseMessage serviceResponse = await _footerAddressService.CreateFooterAddressAsync(adminUIFooterAddressViewModel.CreateData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
-
                 return RedirectToAction("Index", "AdminFooterAddress", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return View(adminUIFooterAddressViewModel);
@@ -61,17 +67,21 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateFooterAddress(int id)
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync($"footeraddresses/{id}");
+            UIServiceApiResponseSetting<ResultFooterAddressDto> serviceResponse = await _footerAddressService.GetFooterAddressByIdAsync(id);
 
             AdminUIFooterAddressViewModel model = new AdminUIFooterAddressViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<UpdateFooterAddressDto>(jsonData);
+                string jsonData = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
+                UpdateFooterAddressDto value = JsonConvert.DeserializeObject<UpdateFooterAddressDto>(jsonData);
 
                 model.UpdateData = value;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);
@@ -80,14 +90,17 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateFooterAddress(AdminUIFooterAddressViewModel adminUIFooterAddressViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PutAsJsonAsync<UpdateFooterAddressDto>("footeraddresses", adminUIFooterAddressViewModel.UpdateData);
+            HttpResponseMessage serviceResponse = await _footerAddressService.UpdateFooterAddressAsync(adminUIFooterAddressViewModel.UpdateData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
-
                 return RedirectToAction("Index", "AdminFooterAddress", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return View(adminUIFooterAddressViewModel);
@@ -96,12 +109,13 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteFooterAddress(int id)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.DeleteAsync($"footeraddresses?id={id}");
+            HttpResponseMessage serviceResponse = await _footerAddressService.DeleteFooterAddressAsync(id);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (!serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return RedirectToAction("Index", "AdminFooterAddress", new { area = "Admin" });

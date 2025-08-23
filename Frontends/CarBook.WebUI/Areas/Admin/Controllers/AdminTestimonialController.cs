@@ -1,8 +1,8 @@
 ﻿using CarBook.Dto.TestimonialDtos;
 using CarBook.WebUI.Areas.Admin.Models;
+using CarBook.WebUI.Services.TestimonialServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace CarBook.WebUI.Areas.Admin.Controllers
@@ -11,26 +11,28 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
     [Route("Admin/Testimonial")]
     public class AdminTestimonialController : AdminBaseController
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ITestimonialService _testimonialService;
 
-        public AdminTestimonialController(IHttpClientFactory httpClientFactory)
+        public AdminTestimonialController(ITestimonialService testimonialService)
         {
-            _httpClientFactory = httpClientFactory;
+            _testimonialService = testimonialService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync("testimonials");
+            UIServiceApiResponseSetting<ResultTestimonialDto> serviceResponse = await _testimonialService.GetTestimonialAsync();
 
             AdminUITestimonialViewModel model = new AdminUITestimonialViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultTestimonialDto>>(jsonData);
-
-                model.ResultDatas = value;
+                model.ResultDatas = serviceResponse.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);
@@ -45,14 +47,17 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateTestimonial(AdminUITestimonialViewModel adminUITestimonialViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PostAsJsonAsync<CreateTestimonialDto>("testimonials", adminUITestimonialViewModel.CreateData);
+            HttpResponseMessage serviceResponse = await _testimonialService.CreateTestimonialAsync(adminUITestimonialViewModel.CreateData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
-
                 return RedirectToAction("Index", "AdminTestimonial", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return View(adminUITestimonialViewModel);
@@ -61,17 +66,21 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateTestimonial(int id)
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync($"testimonials/{id}");
+            UIServiceApiResponseSetting<ResultTestimonialDto> serviceResponse = await _testimonialService.GetTestimonialByIdAsync(id);
 
             AdminUITestimonialViewModel model = new AdminUITestimonialViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<UpdateTestimonialDto>(jsonData);
+                string jsonData = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
+                UpdateTestimonialDto value = JsonConvert.DeserializeObject<UpdateTestimonialDto>(jsonData);
 
                 model.UpdateData = value;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);
@@ -80,14 +89,17 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateTestimonial(AdminUITestimonialViewModel adminUITestimonialViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PutAsJsonAsync<UpdateTestimonialDto>("testimonials", adminUITestimonialViewModel.UpdateData);
+            HttpResponseMessage serviceResponse = await _testimonialService.UpdateTestimonialAsync(adminUITestimonialViewModel.UpdateData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
-
                 return RedirectToAction("Index", "AdminTestimonial", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return View(adminUITestimonialViewModel);
@@ -96,12 +108,13 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteTestimonial(int id)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.DeleteAsync($"testimonials?id={id}");
+            HttpResponseMessage serviceResponse = await _testimonialService.DeleteTestimonialAsync(id);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (!serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return RedirectToAction("Index", "AdminTestimonial", new { area = "Admin" });

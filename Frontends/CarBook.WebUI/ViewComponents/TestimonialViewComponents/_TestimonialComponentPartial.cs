@@ -21,11 +21,11 @@ namespace CarBook.WebUI.ViewComponents.TestimonialViewComponents
         public async Task<IViewComponentResult> InvokeAsync()
         {
 
-            List<ResultTestimonialDto> values = await _testimonialService.GetTestimonialsAsync();
+            UIServiceApiResponseSetting<ResultTestimonialDto> serviceResponse = await _testimonialService.GetTestimonialAsync();
 
             TestimonailUIViewModel model = new TestimonailUIViewModel();
 
-            model.TestimonialDatas = values;
+            model.TestimonialDatas = serviceResponse.ResponseDatas;
 
             return View(model);
         }

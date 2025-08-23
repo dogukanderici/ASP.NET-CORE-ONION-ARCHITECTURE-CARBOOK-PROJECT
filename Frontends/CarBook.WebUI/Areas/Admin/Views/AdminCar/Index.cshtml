@@ -30,6 +30,7 @@
                                         <th>Km</th>
                                         <th>Vites</th>
                                         <th>Özellikler</th>
+                                        <th>Değerlendirmeler</th>
                                         <th>Ödeme Bilgileri</th>
                                         <th></th>
                                     </tr>
@@ -43,17 +44,22 @@
                                             <td>@carItem.Model</td>
                                             <td>@carItem.KM</td>
                                             <td>@carItem.Transmission</td>
-                                            <td>
+                                            <td class="text-center">
                                                 <a href="/admin/carfeature/carfeaturedetail?id=@carItem.CarID" class="btn btn-outline-success mi-4">
                                                     <i class="fa fa-certificate fa-lg" aria-hidden="true"></i>
                                                 </a>
                                             </td>
-                                            <td>
+                                            <td class="text-center">
+                                                <a href="/admin/carreview/@carItem.CarID" class="btn btn-outline-primary mi-4">
+                                                    <i class="fa fa-comment fa-lg" aria-hidden="true"></i>
+                                                </a>
+                                            </td>
+                                            <td class="text-center">
                                                 <a href="/admin/carpricing?id=@carItem.CarID" class="btn btn-outline-success mi-4">
                                                     <i class="fas fa-money-bill-wave fa-lg" aria-hidden="true"></i>
                                                 </a>
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 <a class="btn btn-info" href="/admin/car/detail?id=@carItem.CarID" title="Detaylar">
                                                     <i class="fa fa-info-circle fa-lg" aria-hidden="true"></i>
                                                 </a>

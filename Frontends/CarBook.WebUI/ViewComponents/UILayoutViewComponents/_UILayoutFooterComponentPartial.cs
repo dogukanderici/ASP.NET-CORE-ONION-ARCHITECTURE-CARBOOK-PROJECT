@@ -24,13 +24,13 @@ namespace CarBook.WebUI.ViewComponents.UILayoutViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            List<ResultFooterAddressDto> valuesForFooterAddress = await _footerAddressService.GetFooterAddressAsync();
-            List<ResultSocialMediaDto> responseMessageForSocialMedia = await _socialMediaService.GetSocialMediaAsync();
+            UIServiceApiResponseSetting<ResultFooterAddressDto> serviceResponseFooterAddress = await _footerAddressService.GetFooterAddressAsync();
+            UIServiceApiResponseSetting<ResultSocialMediaDto> serviceResponseSocialMedia = await _socialMediaService.GetSocialMediaAsync();
 
             FooterUIViewModel model = new FooterUIViewModel();
 
-            model.FooterAddressUIViewModel.FooterAddressDatas = valuesForFooterAddress;
-            model.SocialMediaUIViewModel.ResultDatas = responseMessageForSocialMedia;
+            model.FooterAddressUIViewModel.FooterAddressDatas = serviceResponseFooterAddress.ResponseDatas;
+            model.SocialMediaUIViewModel.ResultDatas = serviceResponseSocialMedia.ResponseDatas;
 
             return View(model);
         }

@@ -1,5 +1,6 @@
 ﻿using CarBook.Dto.PricingTypeDtos;
 using CarBook.WebUI.Areas.Admin.Models;
+using CarBook.WebUI.Services.PricingTypeServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -11,26 +12,28 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
     [Route("Admin/PricingType")]
     public class AdminPricingTypeController : AdminBaseController
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IPricingTypeService _pricingTypeService;
 
-        public AdminPricingTypeController(IHttpClientFactory httpClientFactory)
+        public AdminPricingTypeController(IPricingTypeService pricingTypeService)
         {
-            _httpClientFactory = httpClientFactory;
+            _pricingTypeService = pricingTypeService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync("pricingtypes");
+            UIServiceApiResponseSetting<ResultPricingTypeDto> serviceResponse = await _pricingTypeService.GetPricingTypeAsync();
 
             AdminUIPricingTypeViewModel model = new AdminUIPricingTypeViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultPricingTypeDto>>(jsonData);
-
-                model.ResultDatas = value;
+                model.ResultDatas = serviceResponse.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);
@@ -45,14 +48,17 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreatePricingType(AdminUIPricingTypeViewModel adminUIPricingTypeViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PostAsJsonAsync<CreatePricingTypeDto>("pricingtypes", adminUIPricingTypeViewModel.CreateData);
+            HttpResponseMessage serviceResponse = await _pricingTypeService.CreatePricingTypeAsync(adminUIPricingTypeViewModel.CreateData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
-
                 return RedirectToAction("Index", "AdminPricingType", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return View(adminUIPricingTypeViewModel);
@@ -61,17 +67,21 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdatePricingType(int id)
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync($"pricingtypes/{id}");
+            UIServiceApiResponseSetting<ResultPricingTypeDto> serviceResponse = await _pricingTypeService.GetPricingTypeByIdAsync(id);
 
             AdminUIPricingTypeViewModel model = new AdminUIPricingTypeViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
+                var jsonData = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
                 var value = JsonConvert.DeserializeObject<UpdatePricingTypeDto>(jsonData);
 
                 model.UpdateData = value;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);
@@ -80,14 +90,17 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdatePricingType(AdminUIPricingTypeViewModel adminUIPricingTypeViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PutAsJsonAsync<UpdatePricingTypeDto>("pricingtypes", adminUIPricingTypeViewModel.UpdateData);
+            HttpResponseMessage serviceResponse = await _pricingTypeService.UpdatePricingTypeAsync(adminUIPricingTypeViewModel.UpdateData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
-
                 return RedirectToAction("Index", "AdminPricingType", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return View(adminUIPricingTypeViewModel);
@@ -96,12 +109,12 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeletePricingType(int id)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.DeleteAsync($"pricingtypes?id={id}");
+            HttpResponseMessage serviceResponse = await _pricingTypeService.DeletePricingTypeAsync(id);
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (!serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.Content.ReadAsStringAsync(); ;
             }
 
             return RedirectToAction("Index", "AdminPricingType", new { area = "Admin" });

@@ -9,10 +9,12 @@ namespace CarBook.Application.Features.CQRS.Queries.CarReviewQueries
     public class GetCarReviewByCarIdQuery
     {
         public int CarID { get; set; }
+        public bool? Status { get; set; }
 
-        public GetCarReviewByCarIdQuery(int carID)
+        public GetCarReviewByCarIdQuery(int carID, bool? status)
         {
             CarID = carID;
+            Status = status;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CarBook.Dto.BlogCategoryDtos;
 using CarBook.WebUI.Models;
+using CarBook.WebUI.Services.BlogCategoryServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -9,28 +10,27 @@ namespace CarBook.WebUI.ViewComponents.BlogViewComponents
 {
     public class _BlogDetailSideBarCategoryListComponentPartial : ViewComponent
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ApiSettings _apiSettings;
+        private readonly IBlogCategoryService _blogCategoryService;
 
-        public _BlogDetailSideBarCategoryListComponentPartial(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
+        public _BlogDetailSideBarCategoryListComponentPartial(IBlogCategoryService blogCategoryService)
         {
-            _httpClientFactory = httpClientFactory;
-            _apiSettings = apiSettings.Value;
+            _blogCategoryService = blogCategoryService;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_apiSettings.ApiBaseUrl}/blogcategories");
+            UIServiceApiResponseSetting<ResultBlogCategoryDto> serviceResponse = await _blogCategoryService.GetBlogCategoryAsync();
 
             BlogCategoryUIViewModel model = new BlogCategoryUIViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultBlogCategoryDto>>(jsonData);
-
-                model.BlogCategoryDatas = value;
+                model.BlogCategoryDatas = serviceResponse.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);

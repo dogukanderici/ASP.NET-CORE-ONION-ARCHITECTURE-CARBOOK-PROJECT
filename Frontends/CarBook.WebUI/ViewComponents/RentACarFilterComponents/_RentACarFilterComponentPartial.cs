@@ -30,13 +30,13 @@ namespace CarBook.WebUI.ViewComponents.RentACarFilterComponents
 
         private async Task<List<SelectListItem>> GetLocationListAsync()
         {
-            List<ResultLocationDto> values = await _locationService.GetLocationsAsync();
+            UIServiceApiResponseSetting<ResultLocationDto> serviceResponse = await _locationService.GetLocationAsync();
 
             List<SelectListItem> locationList = new List<SelectListItem>();
 
-            if (values.Count() > 0)
+            if (serviceResponse.ResponseDatas.Count() > 0)
             {
-                locationList = (from item in values
+                locationList = (from item in serviceResponse.ResponseDatas
                                 select new SelectListItem
                                 {
                                     Text = item.LocationName,

@@ -1,0 +1,104 @@
+﻿@model AdminUICarReviewViewModel
+
+@{
+    ViewData["Title"] = "Araç Değerlendirmesi Güncelleme";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Araç Değerlendirmesi Güncelleme</h4>
+                        <p class="card-subtitle mb-4">
+                            Araca Ait Değerlendirmeyi Buradan Güncelleyebilirsiniz!
+                        </p>
+
+                        @if (ViewBag.ErrorCode != null)
+                        {
+                            <div class="alert alert-danger">
+                                @ViewBag.ErrorCode - @ViewBag.ErrorMessage
+                            </div>
+                        }
+
+                        <form id="UpdateCarReviewForm" asp-area="Admin" asp-controller="AdminCarReview" asp-action="UpdateCarReview" method="post">
+                            <div class="row">
+                                @Html.HiddenFor(x => x.UpdateData.CarReviewID)
+                                @Html.HiddenFor(x => x.UpdateData.CarID)
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.UpdateData.Name">Müşteri Adı</label>
+                                    <input asp-for="@Model.UpdateData.Name" class="form-control mb-3" placeholder="Müşteri Adı" readonly />
+                                    @if (!ViewContext.ModelState.IsValid && ViewContext.ModelState["UpdateData.Name"].Errors.Any())
+                                    {
+                                        <span asp-validation-for="@Model.UpdateData.Name" class="alert alert-danger d-flex justify-content-center"></span>
+                                    }
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.UpdateData.Surname">Müşteri Soyadı</label>
+                                    <input asp-for="@Model.UpdateData.Surname" class="form-control mb-3" placeholder="Müşteri Soyadı" readonly />
+                                    @if (!ViewContext.ModelState.IsValid && ViewContext.ModelState["UpdateData.Surname"].Errors.Any())
+                                    {
+                                        <span asp-validation-for="@Model.UpdateData.Surname" class="alert alert-danger d-flex justify-content-center"></span>
+                                    }
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.UpdateData.Email">Müşteri E-Posta</label>
+                                    <input asp-for="@Model.UpdateData.Email" class="form-control mb-3" placeholder="Müşteri E-Posta" readonly />
+                                    @if (!ViewContext.ModelState.IsValid && ViewContext.ModelState["UpdateData.Email"].Errors.Any())
+                                    {
+                                        <span asp-validation-for="@Model.UpdateData.Email" class="alert alert-danger d-flex justify-content-center"></span>
+                                    }
+                                </div>
+
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.UpdateData.ReviewDate">Değerlendirme Tarihi</label>
+                                    <input asp-for="@Model.UpdateData.ReviewDate" class="form-control mb-3" placeholder="Değerlendirme Tarihi" readonly />
+                                    @if (!ViewContext.ModelState.IsValid && ViewContext.ModelState["UpdateData.ReviewDate"].Errors.Any())
+                                    {
+                                        <span asp-validation-for="@Model.UpdateData.ReviewDate" class="alert alert-danger d-flex justify-content-center"></span>
+                                    }
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label asp-for="@Model.UpdateData.CommentStar">Değerlendirme Yıldızı</label>
+                                    <input asp-for="@Model.UpdateData.CommentStar" class="form-control mb-3" placeholder="Değerlendirme Yıldızı" readonly />
+                                    @if (!ViewContext.ModelState.IsValid && ViewContext.ModelState["UpdateData.CommentStar"].Errors.Any())
+                                    {
+                                        <span asp-validation-for="@Model.UpdateData.CommentStar" class="alert alert-danger d-flex justify-content-center"></span>
+                                    }
+                                </div>
+                                <div class="form-group col-xl-3">
+                                    <label>Değerlendirme Durumu</label>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <label asp-for="@Model.UpdateData.IsAvailable" style="font-weight: normal;">Gösteriliyor Mu?</label>
+                                        <input asp-for="@Model.UpdateData.IsAvailable" type="checkbox" class="mb-3" placeholder="Değerlendirme Durumu" />
+                                    </div>
+                                    @if (!ViewContext.ModelState.IsValid && ViewContext.ModelState["UpdateData.IsAvailable"].Errors.Any())
+                                    {
+                                        <span asp-validation-for="@Model.UpdateData.IsAvailable" class="alert alert-danger d-flex justify-content-center"></span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xl-12">
+                                    <label asp-for="@Model.UpdateData.Comment">Değerlendirme</label>
+                                    <textarea asp-for="@Model.UpdateData.Comment" class="form-control mb-3" rows="6" placeholder="Değerlendirme"></textarea>
+                                    @if (!ViewContext.ModelState.IsValid && ViewContext.ModelState["UpdateData.Comment"].Errors.Any())
+                                    {
+                                        <span asp-validation-for="@Model.UpdateData.Comment" class="alert alert-danger d-flex justify-content-center"></span>
+                                    }
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Güncelle</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

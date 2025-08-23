@@ -55,7 +55,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Policy = "FullPermissionPolicy")]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> GetContact(Guid id)
         {
             try
@@ -71,7 +71,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("Inbox")]
-        [Authorize(Policy = "FullPermissionPolicy")]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> Inbox()
         {
             try
@@ -88,7 +88,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpGet("Outbox")]
-        [Authorize(Policy = "FullPermissionPolicy")]
+        [Authorize(Policy = "AdminPermissionPolicy")]
         public async Task<IActionResult> Outbox()
         {
             try
@@ -105,7 +105,7 @@ namespace CarBook.WebAPI.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "FullPermissionPolicy")]
+        [Authorize(Policy = "ReadPermissionPolicy")]
         public async Task<IActionResult> CreateContact(CreateContactCommand createContactCommand)
         {
             try

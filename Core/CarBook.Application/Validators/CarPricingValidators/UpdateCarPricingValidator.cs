@@ -16,7 +16,7 @@ namespace CarBook.Application.Validators.CarPricingValidators
             RuleFor(x => x.CarID).NotEmpty().WithMessage("Araç Bilgisi Boş Bırakılamaz!");
             RuleFor(x => x.PricingTypeID).NotEmpty().WithMessage("Ücret Tipi Boş Bırakılamaz!");
             RuleFor(x => x.Amount).NotEmpty().WithMessage("Ücret Boş Bırakılamaz!");
-            RuleFor(x => x.Amount).LessThan(0).WithMessage("Ücret 0'dan ( sıfır ) Küçük Olamaz!");
+            RuleFor(x => x.Amount).GreaterThan(0).WithMessage("Ücret 0'dan ( sıfır ) Küçük Olamaz!");
         }
     }
 }

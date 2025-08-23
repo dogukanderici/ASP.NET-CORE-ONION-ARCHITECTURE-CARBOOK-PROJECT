@@ -28,7 +28,10 @@ namespace CarBook.Application.Features.CQRS.Handlers.CarReviewHandlers
         {
             DbQueryOptions<CarReview> dbQueryOptions = new DbQueryOptions<CarReview>();
 
-            Expression<Func<CarReview, bool>> filter = x => x.CarID == getCarReviewByCarIdQuery.CarID;
+            Expression<Func<CarReview, bool>> filter =
+                x => x.CarID == getCarReviewByCarIdQuery.CarID
+                &&
+                (getCarReviewByCarIdQuery.Status == null || x.IsAvailable == getCarReviewByCarIdQuery.Status);
 
             List<Expression<Func<CarReview, object>>> includes = new List<Expression<Func<CarReview, object>>>
             {

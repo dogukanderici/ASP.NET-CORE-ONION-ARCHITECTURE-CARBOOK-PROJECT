@@ -22,11 +22,19 @@ namespace CarBook.WebUI.Controllers
         {
             ViewBag.PageRouteTitle = "Hizmetlerimiz";
 
-            List<ResultServiceDto> values = await _ourService.GetServicesAsync();
+            UIServiceApiResponseSetting<ResultServiceDto> serviceResponse = await _ourService.GetServiceAsync();
 
             ServiceUIViewModel model = new ServiceUIViewModel();
 
-            model.ServiceDatas = values;
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
+            {
+                model.ServiceDatas = serviceResponse.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
+            }
 
             return View(model);
         }

@@ -1,5 +1,6 @@
 ﻿using CarBook.Dto.SocialMediaDtos;
 using CarBook.WebUI.Areas.Admin.Models;
+using CarBook.WebUI.Services.SocialMediaServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -11,26 +12,28 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
     [Route("Admin/SocialMedia")]
     public class AdminSocialMediaController : AdminBaseController
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ISocialMediaService _socialMediaService;
 
-        public AdminSocialMediaController(IHttpClientFactory httpClientFactory)
+        public AdminSocialMediaController(ISocialMediaService socialMediaService)
         {
-            _httpClientFactory = httpClientFactory;
+            _socialMediaService = socialMediaService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync("socialmedias");
+            UIServiceApiResponseSetting<ResultSocialMediaDto> serviceResponse = await _socialMediaService.GetSocialMediaAsync();
 
             AdminUISocialMediaViewModel model = new AdminUISocialMediaViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultSocialMediaDto>>(jsonData);
-
-                model.ResultDatas = value;
+                model.ResultDatas = serviceResponse.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);
@@ -45,14 +48,17 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateSocialMedia(AdminUISocialMediaViewModel adminUISocialMediaViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PostAsJsonAsync<CreateSocialMediaDto>("socialmedias", adminUISocialMediaViewModel.CreateData);
+            HttpResponseMessage serviceResponse = await _socialMediaService.CreateSocialMediaAsync(adminUISocialMediaViewModel.CreateData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
-
                 return RedirectToAction("Index", "AdminSocialMedia", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return View(adminUISocialMediaViewModel);
@@ -61,17 +67,21 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateSocialMedia(int id)
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync($"socialmedias/{id}");
+            UIServiceApiResponseSetting<ResultSocialMediaDto> serviceResponse = await _socialMediaService.GetSocialMediaByIdAsync(id);
 
             AdminUISocialMediaViewModel model = new AdminUISocialMediaViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<UpdateSocialMediaDto>(jsonData);
+                string jsonData = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
+                UpdateSocialMediaDto value = JsonConvert.DeserializeObject<UpdateSocialMediaDto>(jsonData);
 
                 model.UpdateData = value;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);
@@ -80,14 +90,17 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateSocialMedia(AdminUISocialMediaViewModel adminUISocialMediaViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PutAsJsonAsync<UpdateSocialMediaDto>("socialmedias", adminUISocialMediaViewModel.UpdateData);
+            HttpResponseMessage serviceResponse = await _socialMediaService.UpdateSocialMediaAsync(adminUISocialMediaViewModel.UpdateData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
-
                 return RedirectToAction("Index", "AdminSocialMedia", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return View(adminUISocialMediaViewModel);
@@ -96,12 +109,13 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteSocialMedia(int id)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.DeleteAsync($"socialmedias?id={id}");
+            HttpResponseMessage serviceResponse = await _socialMediaService.DeleteSocialMediaAsync(id);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (!serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return RedirectToAction("Index", "AdminSocialMedia", new { area = "Admin" });

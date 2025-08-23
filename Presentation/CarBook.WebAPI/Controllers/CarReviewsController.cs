@@ -72,13 +72,13 @@ namespace CarBook.WebAPI.Controllers
             }
         }
 
-        [HttpGet("CarReviewWithCar/{id}")]
+        [HttpGet("CarReviewWithCar/{id}/{status?}")]
         [Authorize(Policy = "ReadPermissionPolicy")]
-        public async Task<IActionResult> GetCarReviewWithCarID(int id)
+        public async Task<IActionResult> GetCarReviewWithCarID(int id, bool? status)
         {
             try
             {
-                var value = await _getCarReviewByCarIdQueryHandler.Handle(new GetCarReviewByCarIdQuery(id));
+                var value = await _getCarReviewByCarIdQueryHandler.Handle(new GetCarReviewByCarIdQuery(id, status));
 
                 return Ok(value);
             }

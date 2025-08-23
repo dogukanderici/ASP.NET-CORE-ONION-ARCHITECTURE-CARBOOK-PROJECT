@@ -1,6 +1,8 @@
 ﻿using CarBook.Dto.CarPricingDtos;
 using CarBook.Dto.PricingTypeDtos;
 using CarBook.WebUI.Areas.Admin.Models;
+using CarBook.WebUI.Services.CarPricingServices;
+using CarBook.WebUI.Services.PricingTypeServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -16,27 +18,30 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
     [Route("Admin/CarPricing")]
     public class AdminCarPricingController : AdminBaseController
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ICarPricingService _carPricingService;
+        private readonly IPricingTypeService _pricingTypeService;
 
-        public AdminCarPricingController(IHttpClientFactory httpClientFactory)
+        public AdminCarPricingController(ICarPricingService carPricingService, IPricingTypeService pricingTypeService)
         {
-            _httpClientFactory = httpClientFactory;
+            _carPricingService = carPricingService;
+            _pricingTypeService = pricingTypeService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index(int id)
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync($"carpricings/getcarpricingbycarid?id={id}");
+            UIServiceApiResponseSetting<ResultCarPricingForCarDto> serviceResponse = await _carPricingService.GetCarPricingAsync(id);
 
             AdminUICarPricingViewModel model = new AdminUICarPricingViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultCarPricingForCarDto>>(jsonData);
-
-                model.ResultForCarDatas = value;
+                model.ResultForCarDatas = serviceResponse.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);
@@ -59,14 +64,17 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateCarPricing(AdminUICarPricingViewModel adminUICarPricingViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PostAsJsonAsync<CreateCarPricingDto>("carpricings", adminUICarPricingViewModel.CreateData);
+            HttpResponseMessage serviceResponse = await _carPricingService.CreateCarPricingAsync(adminUICarPricingViewModel.CreateData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
-
                 return RedirectToAction("Index", "AdminCarPricing", new { area = "Admin", id = adminUICarPricingViewModel.CreateData.CarID });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return View(adminUICarPricingViewModel);
@@ -75,19 +83,25 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> UpdateCarPricing(int id)
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync($"carpricings/{id}");
+            UIServiceApiResponseSetting<ResultCarPricingDto> serviceResponse = await _carPricingService.GetCarPricingByIdAsync(id);
 
             AdminUICarPricingViewModel model = new AdminUICarPricingViewModel();
 
+            UpdateCarPricingDto value = new UpdateCarPricingDto();
+
             ViewBag.PricingTypeList = await GetPricingTypeAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<UpdateCarPricingDto>(jsonData);
+                string jsonData = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
+                value = JsonConvert.DeserializeObject<UpdateCarPricingDto>(jsonData);
 
                 model.UpdateData = value;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);
@@ -96,14 +110,17 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateCarPricing(AdminUICarPricingViewModel adminUICarPricingViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.PutAsJsonAsync<UpdateCarPricingDto>("carpricings", adminUICarPricingViewModel.UpdateData);
+            HttpResponseMessage serviceResponse = await _carPricingService.UpdateCarPricingAsync(adminUICarPricingViewModel.UpdateData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
-
                 return RedirectToAction("Index", "AdminCarPricing", new { area = "Admin", id = adminUICarPricingViewModel.UpdateData.CarID });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return View(adminUICarPricingViewModel);
@@ -112,12 +129,13 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteCarPricing(int id)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.DeleteAsync($"carpricings?id={id}");
+            HttpResponseMessage serviceResponse = await _carPricingService.DeleteCarPricingAsync(id);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (!serviceResponse.IsSuccessStatusCode)
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return RedirectToAction("Index", "AdminCar", new { area = "Admin" });
@@ -125,17 +143,15 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
 
         private async Task<List<SelectListItem>> GetPricingTypeAsync()
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync("pricingtypes");
+            UIServiceApiResponseSetting<ResultPricingTypeDto> serviceResponse = await _pricingTypeService.GetPricingTypeAsync();
 
             List<SelectListItem> dataList = new List<SelectListItem>();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultPricingTypeDto>>(jsonData);
+                List<ResultPricingTypeDto> values = serviceResponse.ResponseDatas;
 
-                dataList = (from item in value
+                dataList = (from item in values
                             select new SelectListItem
                             {
                                 Text = item.Name,

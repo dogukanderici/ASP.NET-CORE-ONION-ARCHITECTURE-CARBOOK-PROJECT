@@ -14,7 +14,7 @@ namespace CarBook.Application.Validators.LocationValidators
         {
             RuleFor(x => x.LocationName).NotEmpty().WithMessage("Lokasyon Adı Boş Olamaz!");
             RuleFor(x => x.LocationName).MinimumLength(3).WithMessage("Lokasyon Adı En Az 3 Karakter Olmalıdır!");
-            RuleFor(x => x.LocationName).MaximumLength(15).WithMessage("Lokasyon Adı En Fazla 15 Karakter Olmalıdır!");
+            RuleFor(x => x.LocationName).MaximumLength(100).WithMessage("Lokasyon Adı En Fazla 15 Karakter Olmalıdır!");
         }
     }
 }

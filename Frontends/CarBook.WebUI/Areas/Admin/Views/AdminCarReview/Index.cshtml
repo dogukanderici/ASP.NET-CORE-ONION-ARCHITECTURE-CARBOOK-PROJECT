@@ -1,0 +1,68 @@
+﻿@model AdminUICarReviewViewModel
+
+@{
+    ViewData["Title"] = "Araç Değerlendirmeleri";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Araç Değerlendirmeleri</h4>
+                        <p class="card-subtitle mb-4">
+                            Araca Ait Diğer Müşterilerimizin Değerlendirmeleri
+                        </p>
+                        <div class="table-responsive">
+
+                            <table class="table mb-0">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Müşteri Adı / Soyadı</th>
+                                        <th>Yıldız</th>
+                                        <th>Yorum</th>
+                                        <th>Yorum Tarihi</th>
+                                        <th class="text-center">Yorum Durumu</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var carReviewItem in Model.ResultDatas)
+                                    {
+                                        <tr>
+                                            <td>@($"{carReviewItem.Name} {carReviewItem.Surname}")</td>
+                                            <td style="max-width: 25px;">@carReviewItem.CommentStar</td>
+                                            <td style="max-width: 250px;">@carReviewItem.Comment</td>
+                                            <td style="max-width: 75px;">@(carReviewItem.ReviewDate.ToString("dd.MM.yyyy HH:mm"))</td>
+                                            <td class="text-center">
+                                                @if (carReviewItem.IsAvailable)
+                                                {
+                                                    <span class="btn btn-success">Aktif</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="btn btn-danger">Pasif</span>
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                <a class="btn btn-danger" href="/admin/carreview/delete?id=@carReviewItem.CarReviewID" title="Sil">
+                                                    <i class="fa fa-trash fa-lg" aria-hidden="true"></i>
+                                                </a>
+                                                <a class="btn btn-warning" href="/admin/carreview/update?id=@carReviewItem.CarReviewID" title="Güncelle">
+                                                    <i class="fa fa-pen fa-lg" aria-hidden="true"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
