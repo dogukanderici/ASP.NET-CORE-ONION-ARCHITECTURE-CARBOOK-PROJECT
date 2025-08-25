@@ -10,5 +10,18 @@ namespace CarBook.Application.Features.Mediator.Queries.LocationQueries
 {
     public class GetLocationQuery : IRequest<List<GetLocationQueryResult>>
     {
+        public int SkipNumber { get; set; }
+        public int TakeNumber { get; set; }
+
+        public GetLocationQuery(int skipNumber, int takeNumber)
+        {
+            SkipNumber = skipNumber;
+            TakeNumber = takeNumber;
+        }
+
+        public GetLocationQuery()
+        {
+
+        }
     }
 }

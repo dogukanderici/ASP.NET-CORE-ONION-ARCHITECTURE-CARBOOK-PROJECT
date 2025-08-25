@@ -30,6 +30,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int id)
         {
+            ViewBag.CarId = id;
+
             UIServiceApiResponseSetting<ResultCarPricingForCarDto> serviceResponse = await _carPricingService.GetCarPricingAsync(id);
 
             AdminUICarPricingViewModel model = new AdminUICarPricingViewModel();

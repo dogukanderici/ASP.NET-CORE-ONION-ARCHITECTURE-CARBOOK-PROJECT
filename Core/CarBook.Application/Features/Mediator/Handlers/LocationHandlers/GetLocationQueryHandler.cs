@@ -17,16 +17,30 @@ namespace CarBook.Application.Features.Mediator.Handlers.LocationHandlers
     {
         private readonly IRepository<Location> _repository;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public GetLocationQueryHandler(IRepository<Location> repository, IMapper mapper)
+        public GetLocationQueryHandler(IRepository<Location> repository, IMapper mapper, IMediator mediator)
         {
             _repository = repository;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         public async Task<List<GetLocationQueryResult>> Handle(GetLocationQuery request, CancellationToken cancellationToken)
         {
+
             DbQueryOptions<Location> dbQueryOptions = new DbQueryOptions<Location>();
+
+            if (request.TakeNumber > 0)
+            {
+                int skipNumber = request.SkipNumber;
+                int takeNumber = request.TakeNumber;
+
+                dbQueryOptions.SkipNumber = skipNumber;
+                dbQueryOptions.DataTakeNumber = takeNumber;
+            }
+
+            dbQueryOptions.shorting = x => x.LocationName;
 
             List<Location> values = await _repository.GetAllAsync(dbQueryOptions);
 

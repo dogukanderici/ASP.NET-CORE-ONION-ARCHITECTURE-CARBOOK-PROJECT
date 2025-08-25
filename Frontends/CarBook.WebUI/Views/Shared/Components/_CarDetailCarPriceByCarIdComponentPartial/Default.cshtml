@@ -1,0 +1,38 @@
+﻿@model CarPricingUIViewModel
+<div class="tab-pane fade" id="pills-manufacturer" role="tabpanel" aria-labelledby="pills-manufacturer-tab">
+<section class="ftco-section ftco-cart">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 ftco-animate">
+                <div class="car-list">
+                    <table class="table">
+                        <thead class="thead-primary">
+                            <tr class="text-center">
+                                <th class="bg-primary heading">Günlük</th>
+                                <th class="bg-dark heading">Haftalık</th>
+                                <th class="bg-black heading">Aylık</th>
+                            </tr>
+                        </thead>
+                        <tbody>                            
+                                <tr class="">
+                                    @foreach(var item in Model.CarPricingForCarDatas)
+                                    {
+                                        <td class="price">
+                                            <p class="btn-custom"><a href="#">Kirala</a></p>
+                                            <div class="price-rate">
+                                                <h3>
+                                                    <span class="num">@item.Amount.ToString("C0")</span>
+                                                    <span class="per">/@item.PricingType.Name</span>
+                                                </h3>
+                                            </div>
+                                        </td>
+                                    }
+                                </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</div>

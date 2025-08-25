@@ -1,5 +1,6 @@
 ﻿using CarBook.Dto.BrandDtos;
 using CarBook.Dto.CarPricingDtos;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,13 @@ namespace CarBook.Dto.CarDtos
         public int BrandID { get; set; }
         public string Model { get; set; }
         public string CoverImageURL { get; set; }
+        public IFormFile CoverImage { get; set; }
         public decimal KM { get; set; }
         public string Transmission { get; set; }
         public int Seat { get; set; }
         public int Luggage { get; set; }
         public string Fuel { get; set; }
         public string BigImageURL { get; set; }
+        public IFormFile BigImage { get; set; }
     }
 }

@@ -18,14 +18,14 @@
                     <div class="d-flex align-items-center min-vh-100">
                         <div class="w-100 d-block bg-white shadow-lg rounded my-5">
                             <div class="row">
-                                <div class="col-lg-5 d-none d-lg-block bg-register rounded-left"></div>
-                                <div class="col-lg-7">
+                                <div class="col-lg-6 d-none d-lg-block bg-register rounded-left" style="padding-bottom: 12px; padding-top: 12px;">
+                                    <img src="~/assets/images/register_image.png" class="rounded" alt="Register_Image" style="width:546px; height: 464px;" />
+                                </div>
+                                <div class="col-lg-6">
                                     <div class="p-5">
                                         <div class="text-center mb-5">
                                             <a href="#" class="text-dark font-size-22 font-family-secondary">
-                                                <i class="mdi mdi-alpha-x-circle"></i> <b>
-                                                    @ViewBag.PageTitle
-                                                </b>
+                                                <b>@ViewBag.PageTitle</b>
                                             </a>
                                         </div>
                                         @if (!Model.ResponseState)
@@ -86,26 +86,6 @@
                                                 </div>
                                             </div>
                                             <button type="submit" class="btn btn-success btn-block waves-effect waves-light"> Hesap Oluştur </button>
-
-                                            <div class="text-center mt-4">
-                                                <h5 class="text-muted font-size-16">Şununla hesap oluştur</h5>
-
-                                                <ul class="list-inline mt-3 mb-0">
-                                                    <li class="list-inline-item">
-                                                        <a href="javascript: void(0);" class="social-list-item border-primary text-primary"><i class="mdi mdi-facebook"></i></a>
-                                                    </li>
-                                                    <li class="list-inline-item">
-                                                        <a href="javascript: void(0);" class="social-list-item border-danger text-danger"><i class="mdi mdi-google"></i></a>
-                                                    </li>
-                                                    <li class="list-inline-item">
-                                                        <a href="javascript: void(0);" class="social-list-item border-info text-info"><i class="mdi mdi-twitter"></i></a>
-                                                    </li>
-                                                    <li class="list-inline-item">
-                                                        <a href="javascript: void(0);" class="social-list-item border-secondary text-secondary"><i class="mdi mdi-github-circle"></i></a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-
                                         </form>
 
                                         <div class="row mt-4">

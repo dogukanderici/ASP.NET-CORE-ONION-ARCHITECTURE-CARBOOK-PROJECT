@@ -75,8 +75,8 @@
                             <div class="icon d-flex align-items-center justify-content-center"><span class="flaticon-backpack"></span></div>
                             <div class="text">
                                 <h3 class="heading mb-0 pl-3">
-                                    Bagaj
-                                    <span>@Model.CarData.Luggage Bags</span>
+                                    Bagaj Hacmi
+                                    <span>@Model.CarData.Luggage L</span>
                                 </h3>
                             </div>
                         </div>
@@ -113,7 +113,10 @@
                         @await Component.InvokeAsync("_CarDetailCarFeatureByCarIdComponentPartial", new { carFeatures = carFeatureStringData })
 
                         @* Car Description *@
-                        @await Component.InvokeAsync("_CarDetailCarDescriptionByCarIdComponentPartial")
+                        @* @await Component.InvokeAsync("_CarDetailCarDescriptionByCarIdComponentPartial") *@
+
+                        @* Car Price *@
+                        @await Component.InvokeAsync("_CarDetailCarPriceByCarIdComponentPartial", new { carId = Model.CarData.CarID })
 
                         @* @CarBook Reviews *@
                         @await Component.InvokeAsync("_CarDetailReviewByCarIdComponentPartial", new { carId = Model.CarData.CarID })

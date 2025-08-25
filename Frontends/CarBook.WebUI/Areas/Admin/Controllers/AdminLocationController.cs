@@ -2,6 +2,7 @@
 using CarBook.WebUI.Areas.Admin.Models;
 using CarBook.WebUI.Services.LocationServices;
 using CarBook.WebUI.Utilities.Settings;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -37,6 +38,42 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpPost("PagingIndex")]
+        public async Task<IActionResult> PagingIndex()
+        {
+            // DataTables parametreleri alınıyor
+            string draw = Request.Form["draw"].FirstOrDefault();
+            int start = Convert.ToInt32(Request.Form["start"].FirstOrDefault());
+            int length = Convert.ToInt32(Request.Form["length"].FirstOrDefault());
+            string searchValue = Request.Form["search[value]"].FirstOrDefault();
+
+            UIServiceApiResponseSetting<ResultLocationDto> serviceResponse = await _locationService.GetLocationAsync();
+
+            AdminUILocationViewModel model = new AdminUILocationViewModel();
+
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
+            {
+                model.ResultDatas = serviceResponse.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
+            }
+
+            List<ResultLocationDto> data = serviceResponse.ResponseDatas;
+
+            var response = new
+            {
+                draw = draw,
+                recordsTotal = serviceResponse.ResponseDatas.Count(),
+                recordsFiltered = serviceResponse.ResponseDatas.Count(),
+                data = data
+            };
+
+            return Json(response);
         }
 
         [HttpGet("Create")]

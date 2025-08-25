@@ -1,10 +1,13 @@
 ﻿using CarBook.Dto.BrandDtos;
 using CarBook.Dto.CarDtos;
 using CarBook.WebUI.Areas.Admin.Models;
+using CarBook.WebUI.Services.BrandServices;
 using CarBook.WebUI.Services.CarServices;
 using CarBook.WebUI.Utilities.FileOperations;
+using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR.Protocol;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -14,31 +17,32 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
     [Route("Admin/Car")]
     public class AdminCarController : AdminBaseController
     {
-        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ICarService _carService;
+        private readonly IBrandService _brandService;
         private readonly IFileOperationHelper _fileOperationHelper;
 
-        public AdminCarController(IHttpClientFactory httpClientFactory, IFileOperationHelper fileOperationHelper, ICarService carService)
+        public AdminCarController(ICarService carService, IBrandService brandService, IFileOperationHelper fileOperationHelper)
         {
-            _httpClientFactory = httpClientFactory;
-            _fileOperationHelper = fileOperationHelper;
             _carService = carService;
+            _brandService = brandService;
+            _fileOperationHelper = fileOperationHelper;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync("cars");
+            UIServiceApiResponseSetting<ResultCarDto> serviceResponse = await _carService.GetCarsAsync();
 
             AdminUICarViewModel model = new AdminUICarViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var values = JsonConvert.DeserializeObject<List<ResultCarDto>>(jsonData);
-
-                model.CarDatas = values;
+                model.CarDatas = serviceResponse.ResponseDatas;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);
@@ -61,18 +65,33 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> CreateCar(AdminUICarViewModel adminUICarViewModel)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-
-            var jsonData = JsonConvert.SerializeObject(adminUICarViewModel.CreateCarData);
-            StringContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-            var responseMessage = await client.PostAsJsonAsync<CreateCarDto>("cars", adminUICarViewModel.CreateCarData);
-
-            if (responseMessage.IsSuccessStatusCode)
+            string coverImageUrlString = await _fileOperationHelper.CopyFileToFolder(new FileProperty
             {
-                var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+                FilePath = "/wwwroot/assets/car_photos/",
+                LoadedFile = adminUICarViewModel.CreateCarData.CoverImage
+            });
 
+            adminUICarViewModel.CreateCarData.CoverImageURL = coverImageUrlString;
+
+            string bigImageUrlString = await _fileOperationHelper.CopyFileToFolder(new FileProperty
+            {
+                FilePath = "/wwwroot/assets/car_photos/",
+                LoadedFile = adminUICarViewModel.CreateCarData.BigImage
+            });
+
+            adminUICarViewModel.CreateCarData.BigImageURL = bigImageUrlString;
+
+            HttpResponseMessage serviceResponse = await _carService.CreateCarService(adminUICarViewModel.CreateCarData);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
+
+            if (serviceResponse.IsSuccessStatusCode)
+            {
                 return RedirectToAction("Index", "AdminCar", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
             }
 
             return View(adminUICarViewModel);
@@ -89,17 +108,21 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
             ViewBag.TransmissionList = transmissionList;
             ViewBag.FuelTypeList = fuelTypeList;
 
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync($"cars/{id}");
+            UIServiceApiResponseSetting<ResultCarDto> serviceResponse = await _carService.GetCarByIdAsync(id);
 
             AdminUICarViewModel model = new AdminUICarViewModel();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
+                var jsonData = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
                 var value = JsonConvert.DeserializeObject<UpdateCarDto>(jsonData);
 
                 model.UpdateCarData = value;
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
             return View(model);
@@ -108,58 +131,69 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpPost("Update")]
         public async Task<IActionResult> UpdateCar(AdminUICarViewModel adminUICarViewModel)
         {
-            string coverImageUrlString = await _fileOperationHelper.CopyFileToFolder(new FileProperty
+            if (adminUICarViewModel.UpdateCarData.CoverImage != null)
             {
-                FilePath = "/wwwroot/assets/car_photos/",
-                LoadedFile = adminUICarViewModel.UpdateCarData.CoverImage
-            });
+                string coverImageUrlString = await _fileOperationHelper.CopyFileToFolder(new FileProperty
+                {
+                    FilePath = "/wwwroot/assets/car_photos/",
+                    LoadedFile = adminUICarViewModel.UpdateCarData.CoverImage
+                });
 
-            string bigImageUrlString = await _fileOperationHelper.CopyFileToFolder(new FileProperty
+                adminUICarViewModel.UpdateCarData.CoverImageURL = coverImageUrlString;
+            }
+
+            if (adminUICarViewModel.UpdateCarData.BigImage != null)
             {
-                FilePath = "/wwwroot/assets/car_photos/",
-                LoadedFile = adminUICarViewModel.UpdateCarData.BigImage
-            });
+                string bigImageUrlString = await _fileOperationHelper.CopyFileToFolder(new FileProperty
+                {
+                    FilePath = "/wwwroot/assets/car_photos/",
+                    LoadedFile = adminUICarViewModel.UpdateCarData.BigImage
+                });
 
-            adminUICarViewModel.UpdateCarData.CoverImageURL = coverImageUrlString;
-            adminUICarViewModel.UpdateCarData.BigImageURL = bigImageUrlString;
+                adminUICarViewModel.UpdateCarData.BigImageURL = bigImageUrlString;
+            }
 
-            //var client = _httpClientFactory.CreateClient("FullAuthClient");
-            //var responseMessage = await client.PutAsJsonAsync<UpdateCarDto>("cars", adminUICarViewModel.UpdateCarData);
+            HttpResponseMessage serviceResponse = await _carService.UpdateCarService(adminUICarViewModel.UpdateCarData);
 
-            //if (responseMessage.IsSuccessStatusCode)
-            //{
-            //    var apiMessage = await responseMessage.Content.ReadAsStringAsync();
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
 
-            //    return RedirectToAction("Index", "AdminCar", new { area = "Admin" });
-            //}
+            if (serviceResponse.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Index", "AdminCar", new { area = "Admin" });
+            }
+            else
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
+            }
 
-            await _carService.UpdateCarService(adminUICarViewModel.UpdateCarData);
-
-            return RedirectToAction("Index", "AdminCar", new { area = "Admin" });
-
-            //return View(adminUICarViewModel);
+            return View(adminUICarViewModel.UpdateCarData);
         }
 
         [HttpGet("Delete")]
         public async Task<IActionResult> DeleteCar(int id)
         {
-            var client = _httpClientFactory.CreateClient("FullAuthClient");
-            var responseMessage = await client.DeleteAsync($"cars?id={id}");
+            HttpResponseMessage serviceResponse = await _carService.DeleteCarService(id);
+            string apiMessage = await serviceResponse.Content.ReadAsStringAsync();
+
+            if (serviceResponse.IsSuccessStatusCode)
+            {
+                ViewBag.ErrorCode = serviceResponse.StatusCode;
+                ViewBag.ErrorMessage = apiMessage;
+            }
 
             return RedirectToAction("Index", "AdminCar", new { area = "Admin" });
         }
 
         private async Task<List<SelectListItem>> CarBrands()
         {
-            var client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            var responseMessage = await client.GetAsync("brands");
+            UIServiceApiResponseSetting<ResultBrandDto> serviceResponse = await _brandService.GetBrandAsync();
 
             List<SelectListItem> brandList = new List<SelectListItem>();
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var values = JsonConvert.DeserializeObject<List<ResultBrandDto>>(jsonData);
+                List<ResultBrandDto> values = serviceResponse.ResponseDatas;
 
                 brandList = (from item in values
                              select new SelectListItem

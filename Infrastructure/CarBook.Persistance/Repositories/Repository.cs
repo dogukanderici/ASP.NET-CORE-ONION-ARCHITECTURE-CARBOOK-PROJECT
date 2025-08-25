@@ -67,6 +67,11 @@ namespace CarBook.Persistance.Repositories
                 }
             }
 
+            if (dbQueryOptions.SkipNumber != -1)
+            {
+                query = query.Skip(dbQueryOptions.SkipNumber);
+            }
+
             if (dbQueryOptions.DataTakeNumber != -1)
             {
                 query = query.Take(dbQueryOptions.DataTakeNumber);

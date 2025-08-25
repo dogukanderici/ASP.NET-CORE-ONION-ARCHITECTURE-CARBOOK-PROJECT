@@ -16,5 +16,6 @@ namespace CarBook.Configurations
         public Expression<Func<TEntity, object>> shorting { get; set; } = null;
         public string shortingType { get; set; } = "ascending";
         public int DataTakeNumber { get; set; } = -1;
+        public int SkipNumber { get; set; } = -1;
     }
 }
