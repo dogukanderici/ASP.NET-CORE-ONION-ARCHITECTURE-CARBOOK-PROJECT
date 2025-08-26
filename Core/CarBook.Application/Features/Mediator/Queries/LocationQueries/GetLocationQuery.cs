@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace CarBook.Application.Features.Mediator.Queries.LocationQueries
 {
-    public class GetLocationQuery : IRequest<List<GetLocationQueryResult>>
+    public class GetLocationQuery : IRequest<GetLocationDataQueryResult>
     {
         public int SkipNumber { get; set; }
         public int TakeNumber { get; set; }
 
-        public GetLocationQuery(int skipNumber, int takeNumber)
+        public GetLocationQuery(int? skipNumber, int? takeNumber)
         {
-            SkipNumber = skipNumber;
-            TakeNumber = takeNumber;
+            SkipNumber = skipNumber ?? 0;
+            TakeNumber = takeNumber ?? 0;
         }
 
         public GetLocationQuery()

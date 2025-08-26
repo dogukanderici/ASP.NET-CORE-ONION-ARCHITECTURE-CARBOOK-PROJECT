@@ -16,23 +16,28 @@ namespace CarBook.WebUI.Services.LocationServices
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<UIServiceApiResponseSetting<ResultLocationDto>> GetLocationAsync()
+        public async Task<UIServiceApiResponseSetting<ResultLocationDto>> GetLocationAsync(int? skipNumber = null, int? takeNumber = null)
         {
-            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            HttpResponseMessage response = await client.GetAsync("locations");
+            skipNumber = skipNumber ?? 0;
+            takeNumber = takeNumber ?? 0;
 
-            List<ResultLocationDto> values = new List<ResultLocationDto>();
+            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            HttpResponseMessage response = await client.GetAsync($"locations/{skipNumber}/{takeNumber}");
+
+            ResultLocationDataDto values = new ResultLocationDataDto();
+            string jsonDataa = await response.Content.ReadAsStringAsync();
 
             if (response.IsSuccessStatusCode)
             {
                 string jsonData = await response.Content.ReadAsStringAsync();
-                values = JsonConvert.DeserializeObject<List<ResultLocationDto>>(jsonData);
+                values = JsonConvert.DeserializeObject<ResultLocationDataDto>(jsonData);
             }
 
             return new UIServiceApiResponseSetting<ResultLocationDto>
             {
                 HttpResponseMessage = response,
-                ResponseDatas = values
+                ResponseDatas = values.Locations,
+                TotalDataCount = values.LocationCount
             };
         }
 

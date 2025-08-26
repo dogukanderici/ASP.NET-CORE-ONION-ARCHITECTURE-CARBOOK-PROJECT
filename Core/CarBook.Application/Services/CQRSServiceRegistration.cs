@@ -43,6 +43,7 @@ namespace CarBook.Application.Services
 
             // Car
             services.AddScoped<GetCarQueryHandler>();
+            services.AddScoped<GetCarCountQueryHandler>();
             services.AddScoped<GetCarForOnlyCarPricingQueryHandler>();
             services.AddScoped<GetLast5CarsQueryHandler>();
             services.AddScoped<GetCarByIdQueryHandler>();

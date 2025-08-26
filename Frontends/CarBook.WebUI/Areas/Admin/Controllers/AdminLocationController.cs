@@ -23,19 +23,20 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            UIServiceApiResponseSetting<ResultLocationDto> serviceResponse = await _locationService.GetLocationAsync();
+            //UIServiceApiResponseSetting<ResultLocationDto> serviceResponse = await _locationService.GetLocationAsync(0,10);
 
             AdminUILocationViewModel model = new AdminUILocationViewModel();
+            model.ResultDatas = new List<ResultLocationDto>();
 
-            if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
-            {
-                model.ResultDatas = serviceResponse.ResponseDatas;
-            }
-            else
-            {
-                ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
-                ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
-            }
+            //if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
+            //{
+            //    model.ResultDatas = serviceResponse.ResponseDatas;
+            //}
+            //else
+            //{
+            //    ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+            //    ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
+            //}
 
             return View(model);
         }
@@ -49,7 +50,7 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
             int length = Convert.ToInt32(Request.Form["length"].FirstOrDefault());
             string searchValue = Request.Form["search[value]"].FirstOrDefault();
 
-            UIServiceApiResponseSetting<ResultLocationDto> serviceResponse = await _locationService.GetLocationAsync();
+            UIServiceApiResponseSetting<ResultLocationDto> serviceResponse = await _locationService.GetLocationAsync(start, length);
 
             AdminUILocationViewModel model = new AdminUILocationViewModel();
 
@@ -68,8 +69,8 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
             var response = new
             {
                 draw = draw,
-                recordsTotal = serviceResponse.ResponseDatas.Count(),
-                recordsFiltered = serviceResponse.ResponseDatas.Count(),
+                recordsTotal = serviceResponse.TotalDataCount,
+                recordsFiltered = serviceResponse.TotalDataCount,
                 data = data
             };
 

@@ -12,6 +12,7 @@ namespace CarBook.Application.Interfaces
     {
         Task<List<T>> GetAllAsync(DbQueryOptions<T> dbQueryOptions);
         Task<T> GetByIdAsync(DbQueryOptions<T> dbQueryOptions);
+        Task<int> GetDataCount(DbQueryOptions<T> dbQueryOptions);
         Task CreateAsync(T entity);
         Task UpdateAsync(T entity);
         Task RemoveAsync(T entity);

@@ -1,14 +1,8 @@
 ﻿using CarBook.Dto.LocationDtos;
-using CarBook.WebUI.Areas.Admin.Models;
-using CarBook.WebUI.Models;
 using CarBook.WebUI.Services.LocationServices;
 using CarBook.WebUI.Utilities.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Net.Http;
 
 namespace CarBook.WebUI.ViewComponents.RentACarFilterComponents
 {

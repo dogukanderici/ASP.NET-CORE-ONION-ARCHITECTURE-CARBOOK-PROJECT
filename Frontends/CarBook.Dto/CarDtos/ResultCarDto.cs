@@ -9,6 +9,11 @@ using System.Threading.Tasks;
 
 namespace CarBook.Dto.CarDtos
 {
+    public class ResultCarDataDto
+    {
+        public List<ResultCarDto> CarDatas { get; set; }
+        public int TotalDataCount { get; set; }
+    }
     public class ResultCarDto
     {
         public int CarID { get; set; }

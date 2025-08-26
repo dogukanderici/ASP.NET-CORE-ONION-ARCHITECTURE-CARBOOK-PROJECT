@@ -31,7 +31,33 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            UIServiceApiResponseSetting<ResultCarDto> serviceResponse = await _carService.GetCarsAsync();
+            //UIServiceApiResponseSetting<ResultCarDto> serviceResponse = await _carService.GetCarsAsync();
+
+            AdminUICarViewModel model = new AdminUICarViewModel();
+            model.CarDatas = new List<ResultCarDto>();
+
+            //if (serviceResponse.HttpResponseMessage.IsSuccessStatusCode)
+            //{
+            //    model.CarDatas = serviceResponse.ResponseDatas;
+            //}
+            //else
+            //{
+            //    ViewBag.ErrorCode = serviceResponse.HttpResponseMessage.StatusCode;
+            //    ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
+            //}
+
+            return View(model);
+        }
+
+        [HttpPost("PagingIndex")]
+        public async Task<IActionResult> PagingIndex()
+        {
+            // DataTables parametreleri alınıyor
+            string draw = Request.Form["draw"].FirstOrDefault();
+            int start = Convert.ToInt32(Request.Form["start"].FirstOrDefault());
+            int length = Convert.ToInt32(Request.Form["length"].FirstOrDefault());
+
+            UIServiceApiResponseSetting<ResultCarDto> serviceResponse = await _carService.GetCarsAsync(start, length);
 
             AdminUICarViewModel model = new AdminUICarViewModel();
 
@@ -45,7 +71,15 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
                 ViewBag.ErrorMessage = await serviceResponse.HttpResponseMessage.Content.ReadAsStringAsync();
             }
 
-            return View(model);
+            var dtResponse = new
+            {
+                draw = draw,
+                recordsTotal = serviceResponse.TotalDataCount,
+                recordsFiltered = serviceResponse.TotalDataCount,
+                data = model.CarDatas
+            };
+
+            return Json(dtResponse);
         }
 
         [HttpGet("Create")]

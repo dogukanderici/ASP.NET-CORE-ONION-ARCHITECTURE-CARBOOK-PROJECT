@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 
 namespace CarBook.Persistance.Repositories
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class Repository<TEntity> : IRepository<TEntity>
+        where TEntity : class
     {
         private readonly CarBookContext _context;
 
@@ -133,6 +134,20 @@ namespace CarBook.Persistance.Repositories
             }
 
             return await query.FirstOrDefaultAsync();
+        }
+
+        public async Task<int> GetDataCount(DbQueryOptions<TEntity> dbQueryOptions)
+        {
+            IQueryable<TEntity> query = _context.Set<TEntity>();
+
+            if (dbQueryOptions.filter != null)
+            {
+                query = query.Where(dbQueryOptions.filter);
+            }
+
+            int dataCount = await query.CountAsync();
+
+            return dataCount;
         }
 
         public IQueryable<TEntity> GetQueryableEntity(DbQueryOptions<TEntity> dbQueryOptions)

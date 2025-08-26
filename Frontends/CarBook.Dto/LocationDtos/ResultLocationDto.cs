@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace CarBook.Dto.LocationDtos
 {
+    public class ResultLocationDataDto
+    {
+        public List<ResultLocationDto> Locations { get; set; }
+        public int LocationCount { get; set; }
+    }
+
     public class ResultLocationDto
     {
         public int LocationID { get; set; }

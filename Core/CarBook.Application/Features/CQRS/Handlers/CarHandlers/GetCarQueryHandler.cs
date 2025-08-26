@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using CarBook.Application.Features.CQRS.Queries.CarQueries;
 using CarBook.Application.Features.CQRS.Results.CarResults;
 using CarBook.Application.Interfaces;
 using CarBook.Configurations;
 using CarBook.Domain.Entities;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,14 +18,16 @@ namespace CarBook.Application.Features.CQRS.Handlers.CarHandlers
     {
         private readonly IRepository<Car> _repository;
         private readonly IMapper _mapper;
+        private readonly GetCarCountQueryHandler _carCountQueryHandler;
 
-        public GetCarQueryHandler(IRepository<Car> repository, IMapper mapper)
+        public GetCarQueryHandler(IRepository<Car> repository, IMapper mapper, GetCarCountQueryHandler carCountQueryHandler)
         {
             _repository = repository;
             _mapper = mapper;
+            _carCountQueryHandler = carCountQueryHandler;
         }
 
-        public async Task<List<GetCarQueryResult>> Handle()
+        public async Task<GetCarDataQueryResult> Handle(GetCarQuery request)
         {
             Dictionary<Expression<Func<Car, object>>, List<Expression<Func<object, object>>>> thenIncludes =
                 new Dictionary<Expression<Func<Car, object>>, List<Expression<Func<object, object>>>>
@@ -58,11 +62,24 @@ namespace CarBook.Application.Features.CQRS.Handlers.CarHandlers
 
             dbQueryOptions.thenIncludes = thenIncludes;
 
+            if (request.TakeNumber > 0)
+            {
+                dbQueryOptions.SkipNumber = request.SkipNumber;
+                dbQueryOptions.DataTakeNumber = request.TakeNumber;
+            }
+
+            int carDataCount = await _carCountQueryHandler.Handle();
+
             List<Car> values = await _repository.GetAllAsync(dbQueryOptions);
 
             List<GetCarQueryResult> valueToDto = _mapper.Map<List<GetCarQueryResult>>(values);
 
-            return valueToDto;
+            GetCarDataQueryResult data = new GetCarDataQueryResult();
+
+            data.CarDatas = valueToDto;
+            data.TotalDataCount = carDataCount;
+
+            return data;
         }
     }
 }

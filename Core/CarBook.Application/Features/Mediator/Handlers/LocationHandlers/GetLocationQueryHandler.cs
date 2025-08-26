@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace CarBook.Application.Features.Mediator.Handlers.LocationHandlers
 {
-    public class GetLocationQueryHandler : IRequestHandler<GetLocationQuery, List<GetLocationQueryResult>>
+    public class GetLocationQueryHandler : IRequestHandler<GetLocationQuery, GetLocationDataQueryResult>
     {
         private readonly IRepository<Location> _repository;
         private readonly IMapper _mapper;
@@ -26,7 +26,7 @@ namespace CarBook.Application.Features.Mediator.Handlers.LocationHandlers
             _mediator = mediator;
         }
 
-        public async Task<List<GetLocationQueryResult>> Handle(GetLocationQuery request, CancellationToken cancellationToken)
+        public async Task<GetLocationDataQueryResult> Handle(GetLocationQuery request, CancellationToken cancellationToken)
         {
 
             DbQueryOptions<Location> dbQueryOptions = new DbQueryOptions<Location>();
@@ -42,11 +42,18 @@ namespace CarBook.Application.Features.Mediator.Handlers.LocationHandlers
 
             dbQueryOptions.shorting = x => x.LocationName;
 
+            int totalDataCount = await _mediator.Send(new GetLocationCountQuery());
+
             List<Location> values = await _repository.GetAllAsync(dbQueryOptions);
 
             List<GetLocationQueryResult> valueToDto = _mapper.Map<List<GetLocationQueryResult>>(values);
 
-            return valueToDto;
+            GetLocationDataQueryResult data = new GetLocationDataQueryResult();
+
+            data.Locations = valueToDto;
+            data.LocationCount = totalDataCount;
+
+            return data;
         }
     }
 }

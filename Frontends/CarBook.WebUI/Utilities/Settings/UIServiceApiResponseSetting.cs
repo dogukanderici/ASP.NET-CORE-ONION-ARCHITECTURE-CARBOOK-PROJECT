@@ -4,6 +4,7 @@
     {
         public TEntity ResponseData { get; set; }
         public List<TEntity> ResponseDatas { get; set; }
+        public int TotalDataCount { get; set; }
         public HttpResponseMessage HttpResponseMessage { get; set; }
     }
 }

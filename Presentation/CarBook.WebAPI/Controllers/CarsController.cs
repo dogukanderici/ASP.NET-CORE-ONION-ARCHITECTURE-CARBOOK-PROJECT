@@ -49,13 +49,13 @@ namespace CarBook.WebAPI.Controllers
             _validationResultMessageHelper = validationResultMessageHelper;
         }
 
-        [HttpGet]
+        [HttpGet("{skipNumber?}/{takeNumber?}")]
         [Authorize(Policy = "ReadPermissionPolicy")]
-        public async Task<IActionResult> CarList()
+        public async Task<IActionResult> CarList(int? skipNumber, int? takeNumber)
         {
             try
             {
-                var values = await _getCarQueryHandler.Handle();
+                var values = await _getCarQueryHandler.Handle(new GetCarQuery(skipNumber, takeNumber));
 
                 return Ok(values);
             }

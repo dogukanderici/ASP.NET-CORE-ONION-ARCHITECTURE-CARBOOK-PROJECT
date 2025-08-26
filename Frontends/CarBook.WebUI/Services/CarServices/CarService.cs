@@ -16,23 +16,27 @@ namespace CarBook.WebUI.Services.CarServices
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<UIServiceApiResponseSetting<ResultCarDto>> GetCarsAsync()
+        public async Task<UIServiceApiResponseSetting<ResultCarDto>> GetCarsAsync(int? skipNumber = null, int? takeNumber = null)
         {
-            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
-            HttpResponseMessage response = await client.GetAsync("cars");
+            skipNumber = skipNumber ?? 0;
+            takeNumber = takeNumber ?? 0;
 
-            List<ResultCarDto> values = new List<ResultCarDto>();
+            HttpClient client = _httpClientFactory.CreateClient("ReadOnlyClient");
+            HttpResponseMessage response = await client.GetAsync($"cars/{skipNumber}/{takeNumber}");
+
+            ResultCarDataDto values = new ResultCarDataDto();
 
             if (response.IsSuccessStatusCode)
             {
                 string jsonData = await response.Content.ReadAsStringAsync();
-                values = JsonConvert.DeserializeObject<List<ResultCarDto>>(jsonData);
+                values = JsonConvert.DeserializeObject<ResultCarDataDto>(jsonData);
             }
 
             return new UIServiceApiResponseSetting<ResultCarDto>
             {
                 HttpResponseMessage = response,
-                ResponseDatas = values
+                ResponseDatas = values.CarDatas,
+                TotalDataCount = values.TotalDataCount
             };
         }
 

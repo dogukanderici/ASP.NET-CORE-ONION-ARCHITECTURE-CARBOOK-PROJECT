@@ -5,7 +5,7 @@ namespace CarBook.WebUI.Services.CarServices
 {
     public interface ICarService
     {
-        Task<UIServiceApiResponseSetting<ResultCarDto>> GetCarsAsync();
+        Task<UIServiceApiResponseSetting<ResultCarDto>> GetCarsAsync(int? skipNumber = null, int? takeNumber = null);
         Task<UIServiceApiResponseSetting<ResultCarDto>> GetCarByIdAsync(int id);
         Task<UIServiceApiResponseSetting<ResultCarDto>> GetLast5CarsAsync();
         Task<UIServiceApiResponseSetting<ResultCarDto>> GetCarForOnlyWithPricing();

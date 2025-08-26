@@ -1,6 +1,8 @@
-﻿using CarBook.Application.Features.Mediator.Queries.LocationQueries;
+﻿using AutoMapper;
+using CarBook.Application.Features.Mediator.Queries.LocationQueries;
 using CarBook.Application.Features.Mediator.Results.LocationResults;
 using CarBook.Application.Interfaces;
+using CarBook.Configurations;
 using CarBook.Domain.Entities;
 using MediatR;
 using System;
@@ -11,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace CarBook.Application.Features.Mediator.Handlers.LocationHandlers
 {
-    public class GetLocationCountQueryHandler : IRequestHandler<GetLocationCountQuery, GetLocationCountQueryResult>
+    public class GetLocationCountQueryHandler : IRequestHandler<GetLocationCountQuery, int>
     {
         private readonly IRepository<Location> _repository;
 
@@ -20,9 +22,13 @@ namespace CarBook.Application.Features.Mediator.Handlers.LocationHandlers
             _repository = repository;
         }
 
-        public Task<GetLocationCountQueryResult> Handle(GetLocationCountQuery request, CancellationToken cancellationToken)
+        public async Task<int> Handle(GetLocationCountQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            DbQueryOptions<Location> dbQueryOptions = new DbQueryOptions<Location>();
+
+            int totalDataCount = await _repository.GetDataCount(dbQueryOptions);
+
+            return totalDataCount;
         }
     }
 }

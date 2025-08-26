@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace CarBook.Application.Features.Mediator.Results.LocationResults
 {
-    public class GetLocationCountQueryResult
+    public class GetLocationDataQueryResult
     {
+        public List<GetLocationQueryResult> Locations { get; set; }
         public int LocationCount { get; set; }
     }
 }
