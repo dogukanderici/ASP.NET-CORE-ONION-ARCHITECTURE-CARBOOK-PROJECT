@@ -7,5 +7,6 @@ namespace CarBook.WebUI.Services.ReservationServices
     {
         Task<HttpResponseMessage> CreateReservationForUI(CreateReservationDto createReservationDto);
         Task<List<ResultReservationDto>> GetRerservationByEmail(string email);
+        Task<ResultReservationDto> GetReservationById(Guid id);
     }
 }

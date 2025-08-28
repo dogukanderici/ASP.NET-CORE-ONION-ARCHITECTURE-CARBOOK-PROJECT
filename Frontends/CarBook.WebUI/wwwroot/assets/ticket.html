@@ -1,0 +1,198 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Araç Kiralama Bileti</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Delius&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100..900;1,100..900&family=Story+Script&display=swap" rel="stylesheet">
+    <style>
+        /* Genel sayfa stili */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: "Roboto", cursive;
+        }
+
+        /* Biletin ana kapsayıcısı */
+        .ticket-container {
+            position: relative;
+            width: 800px;
+            background: linear-gradient(135deg, #FF8800, #5C2D91); /* Turuncu ve mor renk geçişi */
+            height: 350px;
+            display: flex;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden; /* İçerik taşmasını engeller */
+        }
+
+        /* Biletin sol tarafı (geniş kısım) */
+        .ticket-main {
+            width: 75%;
+            position: relative;
+            padding: 0;
+            box-sizing: border-box;
+            border-top-left-radius: 20px;
+            border-bottom-left-radius: 20px;
+        }
+
+            /* Biletin delikli ayrım çizgisi */
+            .ticket-main::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 10px;
+                height: 100%;
+                background: radial-gradient(circle, #f0f0f0 6px, transparent 6px);
+                background-size: 8px 15px;
+                background-repeat: repeat-y;
+            }
+
+        /* Biletin sağ tarafı (dar kısım) */
+        .ticket-tear-off {
+            width: 25%;
+            border-top-right-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        /* Bilet Başlık Bölümü */
+        .ticket-header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #fff;
+            margin: 0 2rem;
+        }
+        .ticker-header-img {
+            padding-right: 1rem;
+            width: 50px;
+            height: 50px;
+        }
+
+        .ticket-header-text {
+            font-size: 1.5rem;
+            color: #fff
+        }
+
+        .ticket-header-resvr {
+            display: flex;
+            flex-direction: column;
+            color: #fff;
+            font-weight: 200;
+            font-size: .75rem;
+        }
+
+        /* Lokasyon Bilgileri*/
+
+        .location {
+            color: #fff;
+            font-weight: 600;
+            border-bottom: 1px solid #fff;
+            margin: 0 2rem;
+        }
+
+        .location-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ticket-container">
+
+        <!-- Biletin Sol Kısımı -->
+        <div class="ticket-main">
+
+            <!-- Başlık Bilgisi -->
+            <div>
+                <div class="ticket-header-info">
+                    <img src="https://uxwing.com/wp-content/themes/uxwing/download/location-travel-map/road-map-icon.png" class="ticker-header-img" />
+                    <h4 class="ticket-header-text"> CARBOOK TICKET</h4>
+                    <div>
+                        <div class="ticket-header-resvr">
+                            <span>Rezervasyon Tarihi</span>
+                            <span>01.01.2025 09:30</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lokasyon ve Sürücü Bilgisi -->
+            <div class="location">
+                <div class="location-inner">
+
+                    <!-- Lokasyon Bilgisi -->
+                    <div style=" width: 60%; padding: 1rem 0; color: black;">
+                        <div style="padding-bottom: .5rem; font-weight: 700;"><span>LOKASYON BİLGİLERİ</span></div>
+                        <div><span style="font-weight: 700;">ALIŞ: Eskişehir - Espark (ESK)</span></div>
+                        <div><span style="font-weight: 700;">TESLİM: İstanbul Airtport (IST)</span></div>
+                    </div>
+
+                    <!-- Sürücü Bilgisi -->
+                    <div style="width: 40%; padding: 1rem 0;">
+                        <div style="border-left: 1px solid #fff; padding-left: 1rem;">
+                            <div style="padding-bottom: .5rem; font-weight: 700; color: black;"><span>SÜRÜCÜ BİLGİLERİ</span></div>
+                            <div><span>ADI: DOĞUKAN</span></div>
+                            <div><span>SOYADI: DERİCİ</span></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Tarih ve Araç Bilgileri -->
+            <div style=" color: #fff; font-weight: 600; border-bottom: 1px solid #fff; margin: 0 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+
+                    <!-- Tarih Bilgisi -->
+                    <div style=" width: 60%; padding: 1rem 0; color: black; /*background: black;*/">
+                        <div style="padding-bottom: .5rem; font-weight: 700;"><span>TARİH BİLGİLERİ</span></div>
+                        <div><span style="font-weight: 700;">ALIŞ: 01.01.2025 / 12:30</span></div>
+                        <div><span style="font-weight: 700;">TESLİM: 08.01.2025 / 12:30</span></div>
+                    </div>
+
+                    <!-- Araç Bilgisi -->
+                    <div style="width: 40%; padding: 1rem 0; /*background: black;*/">
+                        <div style="border-left: 1px solid #fff; padding-left: 1rem;">
+                            <div style="padding-bottom: .5rem; font-weight: 700; color: black;"><span>ARAÇ BİLGİLERİ</span></div>
+                            <div><span style="color: black;">MARKA: Mercedes Benz</span></div>
+                            <!-- <div><span style="color: black;">MODEL: G-300</span></div> -->
+                            <div><span style="color: black;">PLAKA:</span> 34 ESK 2626</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div style="margin-top: 1rem;">
+                <span style="padding-left: 2rem; font-size: .55rem; font-style: italic; opacity: .5; color: #fff;">
+                    *** Mercedes Benz / G-300 - 34 ESK 2626 aracınızı almak için alış saatinin en geç 30 dakika sonrasına gelmeniz gerekmektedir.
+                </span>
+            </div>
+        </div>
+
+        <!-- Biletin Sağ Kısımı -->
+        <div class="ticket-tear-off" style="display: flex; flex-direction: column; justify-content: space-between; align-items: center">
+
+            <div style="display: flex; flex-direction: column; justify-content: end; align-items: center">
+                <img src="https://uxwing.com/wp-content/themes/uxwing/download/location-travel-map/road-map-icon.png" style="width:50px; height: 50px;" />
+                <img src="https://uxwing.com/wp-content/themes/uxwing/download/location-travel-map/road-map-icon.png" style="width:50px; height: 50px;" />
+            </div>
+            <div style="display: flex; flex-direction: column; justify-content: end; align-items: center">
+                <img src="https://uxwing.com/wp-content/themes/uxwing/download/location-travel-map/road-map-icon.png" style="width:50px; height: 50px;" />
+                <img src="https://uxwing.com/wp-content/themes/uxwing/download/location-travel-map/road-map-icon.png" style="width:50px; height: 50px;" />
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

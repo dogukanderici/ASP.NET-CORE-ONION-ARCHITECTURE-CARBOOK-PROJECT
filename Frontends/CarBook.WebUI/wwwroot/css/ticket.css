@@ -1,0 +1,78 @@
+﻿body-ticket {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+    font-family: "Roboto", cursive;
+}
+
+.ticket-container {
+    width: 1000px;
+    height: 350px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #FF8800, #5C2D91); /* Turuncu ve mor renk geçişi */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* İçerik taşmasını engeller */
+}
+
+.ticket-header-text {
+    font-size: 1.5rem;
+    color: #fff
+}
+
+.ticker-header-img {
+    width: 60px;
+    height: 60px;
+}
+
+.ticket-header-resvr {
+    color: #fff;
+    font-weight: 200;
+    font-size: .75rem;
+}
+
+.text-color-black {
+    color: black;
+}
+
+.text-color-white {
+    color: white;
+}
+
+.text-fs-10 {
+    font-size: 1rem;
+}
+
+.border-bottom-dashed {
+    border-right: 2px dashed #fff; /* sadece alt kenar */
+}
+
+.ticket-edge {
+    background: red;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%
+}
+
+.ticket-company-direction {
+    writing-mode: sideways-lr;
+    text-orientation: upright;
+}
+
+.ticket-company-name {
+    font-size: 4rem;
+    font-weight: 600;
+    background: #f2f2f2;
+    border-radius: 6px;
+    padding: .5rem 0;
+}
+
+.ticket-company-firstname {
+    color: green;
+}
+
+.ticket-company-lastname {
+    color: black;
+}

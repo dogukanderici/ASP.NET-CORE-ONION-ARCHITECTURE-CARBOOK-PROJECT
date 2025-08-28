@@ -10,7 +10,8 @@ namespace CarBook.WebUI.Models
             ResultDatas = new List<ResultReservationDto>();
         }
 
-        public CreateReservationDto CreateData { get; set; }
         public List<ResultReservationDto> ResultDatas { get; set; }
+        public ResultReservationDto ResultData { get; set; }
+        public CreateReservationDto CreateData { get; set; }
     }
 }

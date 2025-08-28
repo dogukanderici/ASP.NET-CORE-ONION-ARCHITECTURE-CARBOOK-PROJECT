@@ -31,7 +31,28 @@ namespace CarBook.Application.Features.Mediator.Handlers.ReservationHandlers
 
             Expression<Func<Reservation, bool>> filter = x => x.ReservationID == request.Id;
 
+            Dictionary<Expression<Func<Reservation, object>>, List<Expression<Func<object, object>>>> thenIncludes =
+                new Dictionary<Expression<Func<Reservation, object>>, List<Expression<Func<object, object>>>>
+                {
+                    {
+                        r=>r.Car,
+                        new List<Expression<Func<object, object>>>
+                        {
+                            b=>((Car)b).Brand
+                        }
+                    },
+                    {
+                        r=>r.PickUpLocation,
+                        new List<Expression<Func<object, object>>>{}
+                    },
+                    {
+                        r=>r.DropOffLocation,
+                        new List<Expression<Func<object, object>>>{}
+                    }
+                };
+
             dbQueryOptions.filter = filter;
+            dbQueryOptions.thenIncludes = thenIncludes;
 
             Reservation values = await _repository.GetByIdAsync(dbQueryOptions);
 

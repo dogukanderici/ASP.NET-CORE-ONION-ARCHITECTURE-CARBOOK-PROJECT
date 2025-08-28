@@ -1,4 +1,6 @@
-﻿using CarBook.Application.Features.Mediator.Results.RentACarResults;
+﻿using CarBook.Application.Features.CQRS.Results.CarResults;
+using CarBook.Application.Features.Mediator.Results.LocationResults;
+using CarBook.Application.Features.Mediator.Results.RentACarResults;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +24,9 @@ namespace CarBook.Application.Features.Mediator.Results.ReservationResults
         public string Description { get; set; }
         public DateTimeOffset PickUpDate { get; set; }
         public DateTimeOffset DropOffDate { get; set; }
+        public GetCarForReservationQueryResult Car { get; set; }
+        public GetLocationByIdQueryResult PickUpLocation { get; set; }
+        public GetLocationByIdQueryResult DropOffLocation { get; set; }
         public GetRentACarForReservationQueryResult RentACar { get; set; }
     }
 }

@@ -21,6 +21,7 @@
                             <th scope="col">Alış Tarihi</th>
                             <th scope="col">Teslim Tarihi</th>
                             <th scope="col">Araç Model</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -32,6 +33,11 @@
                                 <td>@history.PickUpDate.ToString("dd.MM.yyyy HH:mm")</td>
                                 <td>@history.DropOffDate.ToString("dd.MM.yyyy HH:mm")</td>
                                 <td>@($"{history.Car.Brand.BrandName} {history.Car.Model}")</td>
+                                <td>
+                                    <a href="/user/reservation/historydetail?id=@history.ReservationID" class="btn btn-primary rounded">
+                                        <i class="fa fa-ticket" aria-hidden="true"></i>
+                                    </a>
+                                </td>
                             </tr>
                         }
                     </tbody>

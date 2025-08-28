@@ -3,6 +3,7 @@ using CarBook.Dto.ReservationDtos;
 using CarBook.WebUI.Models;
 using CarBook.WebUI.Services.ReservationServices;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
 using System.Security.Claims;
 
 namespace CarBook.WebUI.Areas.User.Controllers
@@ -34,6 +35,25 @@ namespace CarBook.WebUI.Areas.User.Controllers
 
                 model.ResultDatas = result;
 
+            }
+
+            return View(model);
+        }
+
+        [HttpGet("HistoryDetail")]
+        public async Task<IActionResult> HistoryDetail(Guid id)
+        {
+            ViewBag.PageTitle = "Araç Kiralama";
+            ViewBag.MainPageTitle = "Geçmiş Kiralamalar";
+            ViewBag.SubPageTitle = "Kiralama Detayı";
+
+            ReservationUIViewModel model = new ReservationUIViewModel();
+
+            if (User.Identity.IsAuthenticated)
+            {
+                ResultReservationDto result = await _reservationService.GetReservationById(id);
+
+                model.ResultData = result;
             }
 
             return View(model);
